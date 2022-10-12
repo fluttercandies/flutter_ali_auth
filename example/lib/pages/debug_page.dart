@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_ali_auth/flutter_ali_auth.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
@@ -29,7 +31,7 @@ class _DebugPageState extends State<DebugPage> {
       sloganConfig: SloganConfig(sloganText: '欢迎登录FlutterCandies'),
       customViewBlockList: [
         const CustomViewBlock(
-            viewId: "1",
+            viewId: 1,
             width: 48,
             height: 48,
             offsetX: 88,
@@ -129,27 +131,52 @@ class _DebugPageState extends State<DebugPage> {
                     child:
                         _iconWithLabel(icon: Icons.phone_android, label: '全屏'),
                     onPressed: () async {
+                      final safeArea =
+                          MediaQueryData.fromWindow(ui.window).padding;
+                      const padding = 8.0;
+                      print(
+                          "safeArea：$safeArea ,offsetY: ${safeArea.top + kToolbarHeight * .5}");
                       await AliAuthClient.loginWithConfig(
                         _authConfig.copyWith(
                           authUIConfig: FullScreenUIConfig(
                             navConfig: NavConfig(
                               navIsHidden: true,
                             ),
-                            backgroundImage: "images/app_bg.jpg",
+                            backgroundImage: "images/app_bg.png",
                             logoConfig: LogoConfig(
                               logoIsHidden: false,
                               logoImage: "images/flutter_candies_logo.png",
+                              logoWidth: 100,
+                              logoHeight: 100,
+                              logoFrameOffsetY: 80 + kToolbarHeight,
                             ),
-                            sloganConfig:
-                                SloganConfig(sloganText: '欢迎登录FlutterCandies'),
+                            sloganConfig: SloganConfig(
+                              sloganText: '欢迎登录FlutterCandies',
+                              sloganTextSize: 28,
+                              sloganFrameOffsetY:
+                                  kToolbarHeight + 80 + 28 + 100,
+                            ),
+                            phoneNumberConfig: PhoneNumberConfig(
+                              numberFontSize: 24,
+                              numberFrameOffsetY:
+                                  kToolbarHeight + 80 + 28 + 100 + 28 + padding,
+                              numberColor: Colors.pinkAccent.toHex,
+                            ),
+                            loginButtonConfig: LoginButtonConfig(
+                              loginBtnTextColor: "#F9F9F9",
+                            ),
+                            changeButtonConfig: ChangeButtonConfig(
+                              changeBtnTextColor: "#A1A1A1",
+                            ),
                             customViewBlockList: [
                               const CustomViewBlock(
-                                  viewId: "1",
-                                  width: 48,
-                                  height: 48,
-                                  offsetX: 88,
-                                  offsetY: 88,
-                                  image: "images/icon_close_gray.png"),
+                                viewId: 1,
+                                width: 18,
+                                height: 18,
+                                offsetX: 20,
+                                offsetY: kToolbarHeight,
+                                image: "images/icon_close_gray.png",
+                              ),
                             ],
                           ),
                         ),

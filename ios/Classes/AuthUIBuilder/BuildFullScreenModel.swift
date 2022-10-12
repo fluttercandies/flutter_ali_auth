@@ -37,42 +37,9 @@ extension AuthUIBuilder {
             }
         }
 
-        let cunstomBtn = UIButton(type: UIButton.ButtonType.custom)
-//        cunstomBtn.setTitle("自定义空间", for: UIControl.State.normal)
-//        cunstomBtn.setTitleColor(UIColor.red, for: UIControl.State.normal)
-        cunstomBtn.setImage({ () -> UIImage in
-            guard let navBackImage = config.navBackImage else {
-                return BundleImage("icon_close_gray")!
-            }
-            return FlutterAssetImage(navBackImage)!
-        }(), for: UIControl.State.normal)
-        
-        
-
-
-
-        // 添加点击事件
-        cunstomBtn.addTarget(self, action: #selector(customBtnOnTap), for: UIControl.Event.touchUpInside)
-
-        model.customViewBlock = { superCustomView in
-            superCustomView.addSubview(cunstomBtn)
-        }
-        model.customViewLayoutBlock = { _, _, _, _, _, _, _, _, _, _ in
-
-            var x: CGFloat
-            var y: CGFloat
-            var width: CGFloat
-            var height: CGFloat
-
-            width = 56
-
-            height = 56
-
-            x = (WindowUtils.window?.safeAreaInsets.left ?? 15) + CGFloat(kPadding)
-
-            y = CGFloat(WindowUtils.xp_statusBarHeight() + WindowUtils.xp_navigationBarHeight() * 0.5 - 28)
-
-            cunstomBtn.frame = CGRect(x: x, y: y, width: width, height: height)
+        // customViewBlock
+        if let customViewBlockList = config.customViewBlockList {
+            buildCustomViewBlock(model: model, customViewConfigList: customViewBlockList)
         }
 
         // Nav
@@ -245,7 +212,7 @@ extension AuthUIBuilder {
             let offsetX: CGFloat = screenSize.width / 2 - (width / 2)
             // let offsetY: CGFloat = screenSize.width / 2 + kLoginButtonSize.height + CGFloat(kPadding)
 
-            let offsetY = CGFloat(config.numberFrameOffsetY ?? loginButtonOffsetY + Float(kLoginButtonSize.height) + kPadding)
+            let offsetY = CGFloat(config.changeBtnFrameOffsetY ?? loginButtonOffsetY + Float(kLoginButtonSize.height) + kPadding)
 
             return CGRect(x: offsetX, y: offsetY, width: width, height: height)
         }
@@ -309,7 +276,7 @@ extension AuthUIBuilder {
                 // (18.0, 715.5, 370.0, 39.5)
                 offsetY = CGFloat(config.privacyFrameOffsetY ?? screenHeight - kPadding - kBottomInset)
             } else {
-                offsetY = CGFloat(config.privacyFrameOffsetY ?? screenHeight - kPadding - 200)
+                offsetY = CGFloat(config.privacyFrameOffsetY ?? screenHeight - kPadding - 80)
             }
 
             let offsetX = CGFloat(screenSize.width / 2 - 148)
@@ -324,8 +291,76 @@ extension AuthUIBuilder {
         return model
     }
 
+    func buildCustomViewBlock(model: TXCustomModel, customViewConfigList: [CustomViewBlock]) {
+        print("customViewConfigList:\(customViewConfigList)")
+        var customViewList: [UIView] = []
+
+        for index in 0 ..< customViewConfigList.count {
+            let customView = UIButton(type: UIButton.ButtonType.custom)
+
+            let customViewConfig = customViewConfigList[index]
+
+            if let text = customViewConfig.text {
+                customView.setTitle(text, for: UIControl.State.normal)
+            }
+
+            if let textColor = customViewConfig.textColor {
+                customView.setTitleColor(textColor.uicolor(), for: UIControl.State.normal)
+            }
+
+            if let textSize = customViewConfig.textSize {
+                customView.titleLabel?.font = UIFont.systemFont(ofSize: CGFloat(textSize))
+            }
+            if let backgroundColor = customViewConfig.backgroundColor {
+                customView.backgroundColor = backgroundColor.uicolor()
+            }
+            if let image = customViewConfig.image {
+                if let imageFromFlutter = FlutterAssetImage(image) {
+                    customView.setImage(imageFromFlutter, for: UIControl.State.normal)
+                    customView.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+                    customView.imageView?.contentMode = .scaleAspectFill
+                }
+            }
+
+            // 添加点击事件
+            if let viewId = customViewConfig.viewId {
+                customView.tag = viewId
+                customView.addTarget(self, action: #selector(customBtnOnTap), for: UIControl.Event.touchUpInside)
+            }
+
+            customViewList.append(customView)
+        }
+
+        model.customViewBlock = { superCustomView in
+            for index in 0 ..< customViewList.count {
+                superCustomView.addSubview(customViewList[index])
+            }
+        }
+
+        model.customViewLayoutBlock = { _, _, _, _, _, _, _, _, _, _ in
+
+            for index in 0 ..< customViewConfigList.count {
+                let customViewConfig = customViewConfigList[index]
+                let customViewBlock = customViewList[index]
+
+                let x: Double = customViewConfig.offsetX ?? 0
+                let y: Double = customViewConfig.offsetY ?? 0
+                let width: Double = customViewConfig.width ?? 40
+                let height: Double = customViewConfig.height ?? 40
+
+                print("CGRect:\(CGRect(x: x, y: y, width: width, height: height))")
+                customViewBlock.frame = CGRect(x: x, y: y, width: width, height: height)
+            }
+        }
+    }
+
     @objc func customBtnOnTap(sender: UIButton) {
- 
+        let responseModel = ResponseModel(code: OnCustomViewTapCode, msg: String(describing: sender.tag))
+
+        print("customBtnOnTap,tag:\(sender.tag)")
+
+        onCustomViewTap?(responseModel)
+
         TXCommonHandler.sharedInstance().cancelLoginVC(animated: true, complete: nil)
     }
 }

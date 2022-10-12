@@ -286,10 +286,10 @@ class PrivacyConfig {
 
 @JsonSerializable(createFactory: false, includeIfNull: false)
 class CustomViewBlock {
-  final String viewId;
+  final int viewId; // 用于回调时候判断返回的Id判断
   final String? text;
   final String? textColor;
-  final String? textSize;
+  final double? textSize;
   final String? backgroundColor;
   final String? image;
   final double offsetX;

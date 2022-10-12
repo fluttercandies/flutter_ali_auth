@@ -49,7 +49,7 @@ extension SwiftFlutterAliAuthPlugin: FlutterStreamHandler {
 
     // MARK: - 发送消息到Flutter侧
 
-    func onSend(_ responseModel: ResponseModel) {
+    func onSend(_ responseModel: ResponseModel) -> Void {
         self._eventSink!(responseModel.json)
     }
 }

@@ -26,3 +26,5 @@ let kLogoOffset: Float = 80
 let kLogoSize: Float = 100
 let kPadding: Float = 8.0
 let kBottomInset: Float = 32
+
+let OnCustomViewTapCode = "700010"

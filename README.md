@@ -29,7 +29,7 @@ Language: 中文
 
 | 全屏 | 底部弹窗 | 中间弹窗 |
 | --- | --- | --- |
-| ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/full_screen_ios.PNG) | ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/bottomsheet_ios.PNG) | ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/alert_ios.PNG) |
+| ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/full_screen_image_ios.jpeg) | ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/bottomsheet_ios.PNG) | ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/alert_ios.PNG) |
 
 ### Android
 

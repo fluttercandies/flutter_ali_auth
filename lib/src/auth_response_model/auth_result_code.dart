@@ -117,7 +117,10 @@ enum AuthResultCode {
   liftBodyVerifyReadyStating("700005"),
 
   /// 用户主动取消操作UI事件，用户取消操作
-  errorUserCancel("700000");
+  errorUserCancel("700000"),
+
+  /// 用户点击了自定义控件的按钮，此时会[msg]会回调控件的viewId
+  onCustomViewTap("700010");
 
   const AuthResultCode(this.code);
 

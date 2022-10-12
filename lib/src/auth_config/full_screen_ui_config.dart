@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:copy_with_extension/copy_with_extension.dart';
 
 import '../auth_config/part_ui_config.dart';
@@ -46,9 +44,9 @@ class FullScreenUIConfig extends AuthUIConfig {
     writeNotNull('prefersStatusBarHidden', prefersStatusBarHidden);
     if (customViewBlockList != null &&
         (customViewBlockList?.isNotEmpty ?? false)) {
-      List<String> customViewBlockJsonList = <String>[];
+      List<MapWithStringKey> customViewBlockJsonList = <MapWithStringKey>[];
       customViewBlockList!.forEach((element) {
-        customViewBlockJsonList.add(jsonEncode(element));
+        customViewBlockJsonList.add(element.toJson());
       });
       json['customViewBlockList'] = customViewBlockJsonList;
     }
