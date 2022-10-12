@@ -286,16 +286,29 @@ class PrivacyConfig {
 
 @JsonSerializable(createFactory: false, includeIfNull: false)
 class CustomViewBlock {
-  String? viewId;
-  String? text;
-  String? textColor;
-  String? textSize;
-  String? backgroundColor;
-  String? image;
-  double? offsetX;
-  double? offsetY;
-  double? width;
-  double? height;
+  final String viewId;
+  final String? text;
+  final String? textColor;
+  final String? textSize;
+  final String? backgroundColor;
+  final String? image;
+  final double offsetX;
+  final double offsetY;
+  final double width;
+  final double height;
+
+  const CustomViewBlock({
+    required this.viewId,
+    required this.offsetX,
+    required this.offsetY,
+    required this.width,
+    required this.height,
+    this.text,
+    this.textColor,
+    this.textSize,
+    this.backgroundColor,
+    this.image,
+  });
 
   MapWithStringKey toJson() => _$CustomViewBlockToJson(this);
 }

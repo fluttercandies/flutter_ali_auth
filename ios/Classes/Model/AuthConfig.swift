@@ -13,7 +13,7 @@ struct AuthConfig {
     var authUIConfig: AuthUIConfig
 
     init(params: [String: Any]) {
-        // print("params:\(params)")
+        print("params:\(params)")
         iosSdk = params["iosSdk"] as! String
         let index = params["authUIStyle"] as! Int
         authUIStyle = AuthUIStyle(rawValue: index) ?? AuthUIStyle.FullScreen
@@ -22,7 +22,7 @@ struct AuthConfig {
         decoder.keyDecodingStrategy = .convertFromSnakeCase
 
         authUIConfig = (try? decoder.decode(AuthUIConfig.self, from: JSONSerialization.data(withJSONObject: params, options: []))) ?? AuthUIConfig()
-        // print("authUIConfig:\(authUIConfig)")
+        print("authUIConfig:\(authUIConfig)")
     }
 }
 
@@ -159,7 +159,7 @@ struct AuthUIConfig: Codable {
     var privacyOperatorSufText: String?
 
     var privacyOperatorIndex: Int?
-    
+
     var customViewBlockList: [CustomViewBlock]?
 }
 

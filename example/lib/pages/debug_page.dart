@@ -27,6 +27,15 @@ class _DebugPageState extends State<DebugPage> {
         logoImage: "images/flutter_candies_logo.png",
       ),
       sloganConfig: SloganConfig(sloganText: '欢迎登录FlutterCandies'),
+      customViewBlockList: [
+        const CustomViewBlock(
+            viewId: "1",
+            width: 48,
+            height: 48,
+            offsetX: 88,
+            offsetY: 88,
+            image: "images/icon_close_gray.png"),
+      ],
     ),
   );
 
@@ -79,17 +88,9 @@ class _DebugPageState extends State<DebugPage> {
               onPressed: () async {
                 try {
                   SmartDialog.showToast("正在初始化...");
-                  final responseModel = await AliAuthClient.initSdk(
+                  await AliAuthClient.initSdk(
                     authConfig: _authConfig,
                   );
-                  if (responseModel.resultCode == AuthResultCode.success.code) {
-                    SmartDialog.showToast(responseModel.msg ?? '初始化失败');
-                  } else if (responseModel.resultCode ==
-                          AuthResultCode.failed.code ||
-                      responseModel.resultCode ==
-                          AuthResultCode.decodeAppInfoFailed.code) {
-                    SmartDialog.showToast(responseModel.msg ?? '初始化失败');
-                  }
                 } catch (e) {
                   SmartDialog.dismiss(status: SmartStatus.loading);
                 }
@@ -141,7 +142,15 @@ class _DebugPageState extends State<DebugPage> {
                             ),
                             sloganConfig:
                                 SloganConfig(sloganText: '欢迎登录FlutterCandies'),
-                            customViewBlockList: [CustomViewBlock()],
+                            customViewBlockList: [
+                              const CustomViewBlock(
+                                  viewId: "1",
+                                  width: 48,
+                                  height: 48,
+                                  offsetX: 88,
+                                  offsetY: 88,
+                                  image: "images/icon_close_gray.png"),
+                            ],
                           ),
                         ),
                       );
