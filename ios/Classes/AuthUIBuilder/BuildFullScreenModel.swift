@@ -27,17 +27,59 @@ extension AuthUIBuilder {
             // Fallback on earlier versions
             model.preferredStatusBarStyle = UIStatusBarStyle.default
         }
-   
+
         model.prefersStatusBarHidden = config.prefersStatusBarHidden ?? false
 
-//        if #available(iOS 13.0, *) {
-//            model.preferredStatusBarStyle = UIStatusBarStyle.darkContent
-//        }
+        if let backgroundImage = config.backgroundImage {
+            if let image = FlutterAssetImage(backgroundImage) {
+                model.backgroundImage = image
+                model.backgroundImageContentMode = UIView.ContentMode.scaleAspectFill
+            }
+        }
+
+        let cunstomBtn = UIButton(type: UIButton.ButtonType.custom)
+//        cunstomBtn.setTitle("自定义空间", for: UIControl.State.normal)
+//        cunstomBtn.setTitleColor(UIColor.red, for: UIControl.State.normal)
+        cunstomBtn.setImage({ () -> UIImage in
+            guard let navBackImage = config.navBackImage else {
+                return BundleImage("icon_close_gray")!
+            }
+            return FlutterAssetImage(navBackImage)!
+        }(), for: UIControl.State.normal)
+        
+        
+
+
+
+        // 添加点击事件
+        cunstomBtn.addTarget(self, action: #selector(customBtnOnTap), for: UIControl.Event.touchUpInside)
+
+        model.customViewBlock = { superCustomView in
+            superCustomView.addSubview(cunstomBtn)
+        }
+        model.customViewLayoutBlock = { _, _, _, _, _, _, _, _, _, _ in
+
+            var x: CGFloat
+            var y: CGFloat
+            var width: CGFloat
+            var height: CGFloat
+
+            width = 56
+
+            height = 56
+
+            x = (WindowUtils.window?.safeAreaInsets.left ?? 15) + CGFloat(kPadding)
+
+            y = CGFloat(WindowUtils.xp_statusBarHeight() + WindowUtils.xp_navigationBarHeight() * 0.5 - 28)
+
+            cunstomBtn.frame = CGRect(x: x, y: y, width: width, height: height)
+        }
 
         // Nav
+
+        model.navIsHidden = config.navIsHidden ?? false
         model.hideNavBackItem = config.hideNavBackItem ?? false
         model.navColor = config.navColor?.uicolor() ?? UIColor.white
-
         model.navBackImage = { () -> UIImage in
             guard let navBackImage = config.navBackImage else {
                 return BundleImage("icon_nav_back_gray")!
@@ -280,5 +322,10 @@ extension AuthUIBuilder {
         }
 
         return model
+    }
+
+    @objc func customBtnOnTap(sender: UIButton) {
+ 
+        TXCommonHandler.sharedInstance().cancelLoginVC(animated: true, complete: nil)
     }
 }

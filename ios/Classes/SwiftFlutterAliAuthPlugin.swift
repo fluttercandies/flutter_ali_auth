@@ -190,12 +190,13 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
 
         let model = authUIBuilder.buildUIModel(authUIStyle: _authConfig!.authUIStyle, authUIConfig: _authConfig!.authUIConfig)
 
-        guard let viewController = getCurrentViewController() else {
+        guard let viewController = WindowUtils.getCurrentViewController() else {
             let responseModel = ResponseModel(code: PNSCodeLoginControllerPresentFailed, msg: "拉起授权页面失败,无法找到当前视图")
             onSend(responseModel)
             return
         }
         // print("拉起授权页面")
+
         TXCommonHandler.sharedInstance().checkEnvAvailable(with: PNSAuthType.loginToken) { (resultDict: [AnyHashable: Any]?) in
             guard let dict = resultDict as? [String: Any] else {
                 let _responseMoedel = ResponseModel(resultDict)
@@ -248,7 +249,7 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
                             isChecked = checked
                         }
                         if isChecked == 0 {
-                            guard let currentViewController = self.getCurrentViewController() else {
+                            guard let currentViewController = WindowUtils.getCurrentViewController() else {
                                 return
                             }
                             let hud = MBProgressHUD.showAdded(to: currentViewController.view, animated: true)
@@ -284,11 +285,13 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
 
         let model: TXCustomModel = authUIBuilder.buildUIModel(authUIStyle: _config!.authUIStyle, authUIConfig: _config!.authUIConfig)
 
-        guard let viewController = getCurrentViewController() else {
+        guard let viewController = WindowUtils.getCurrentViewController() else {
             let responseModel = ResponseModel(code: PNSCodeLoginControllerPresentFailed, msg: "拉起授权页面失败,无法找到当前视图")
             onSend(responseModel)
             return
         }
+
+        authUIBuilder.viewController = viewController
 
         TXCommonHandler.sharedInstance().checkEnvAvailable(with: PNSAuthType.loginToken) { (resultDict: [AnyHashable: Any]?) in
             guard let dict = resultDict as? [String: Any] else {
@@ -344,7 +347,7 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
                         }
                         if isChecked == 0 {
                             print("MBProgressHUD")
-                            guard let currentViewController = self.getCurrentViewController() else {
+                            guard let currentViewController = WindowUtils.getCurrentViewController() else {
                                 return
                             }
                             let hud = MBProgressHUD.showAdded(to: currentViewController.view, animated: true)

@@ -1,4 +1,6 @@
-part of flutter_ali_auth;
+import 'package:json_annotation/json_annotation.dart';
+
+part 'auth_response_model.g.dart';
 
 @JsonSerializable()
 class AuthResponseModel {

@@ -1,14 +1,12 @@
-part of flutter_ali_auth;
+import 'package:flutter/services.dart';
+
+import '../auth_config/auth_config.dart';
+import '../auth_response_model/auth_response_model.dart';
 
 class AliAuthClient {
   static const MethodChannel _methodChannel = MethodChannel('flutter_ali_auth');
 
   static const EventChannel _loginEventChannel = EventChannel('auth_event');
-
-  // AliAuthClient() {
-  //   print('$runtimeType init');
-  //   _completer = Completer<Stream<dynamic>>();
-  // }
 
   static Future<String?> getPlatformVersion() {
     return _methodChannel.invokeMethod('getPlatformVersion');
@@ -37,8 +35,6 @@ class AliAuthClient {
     return AuthResponseModel.fromJson(Map<String, dynamic>.from(res));
   }
 
-  //Completer<Stream<dynamic>>? _completer;
-
   static Stream<dynamic>? _pluginStream;
 
   static Future<void> onListen(
@@ -47,7 +43,10 @@ class AliAuthClient {
     VoidCallback? onDone,
     bool? cancelOnError,
   }) async {
-    _pluginStream ??= _loginEventChannel.receiveBroadcastStream();
+    if (_pluginStream != null) {
+      return;
+    }
+    _pluginStream = _loginEventChannel.receiveBroadcastStream();
     _pluginStream!.listen(
       onData,
       onError: onError,

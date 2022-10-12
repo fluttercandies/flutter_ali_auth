@@ -1,4 +1,9 @@
-part of flutter_ali_auth;
+import 'dart:ui' show Color;
+
+import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'part_ui_config.g.dart';
 
 typedef MapWithStringKey = Map<String, dynamic>;
 
@@ -279,20 +284,18 @@ class PrivacyConfig {
   MapWithStringKey toJson() => _$PrivacyConfigToJson(this);
 }
 
-// @JsonSerializable(createFactory: false,includeIfNull: false)
-// class PrivacyItem {
-//   String? name;
-//   String? url;
-//
-//   MapWithStringKey toJson() => _$PrivacyItemToJson(this);
-// }
-//
-// //[激活状态的图片,失效状态的图片,高亮状态的图片]
-// @JsonSerializable(createFactory: false,includeIfNull: false)
-// class ImageConfig {
-//   String? normal;
-//   String? unable;
-//   String? pressed;
-//
-//   MapWithStringKey toJson() => _$ImageConfigToJson(this);
-// }
+@JsonSerializable(createFactory: false, includeIfNull: false)
+class CustomViewBlock {
+  String? viewId;
+  String? text;
+  String? textColor;
+  String? textSize;
+  String? backgroundColor;
+  String? image;
+  double? offsetX;
+  double? offsetY;
+  double? width;
+  double? height;
+
+  MapWithStringKey toJson() => _$CustomViewBlockToJson(this);
+}

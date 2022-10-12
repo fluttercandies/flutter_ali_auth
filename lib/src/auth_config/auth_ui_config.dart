@@ -1,4 +1,4 @@
-part of flutter_ali_auth;
+import '../auth_config/part_ui_config.dart';
 
 abstract class AuthUIConfig {
   LogoConfig? logoConfig;
@@ -8,6 +8,7 @@ abstract class AuthUIConfig {
   ChangeButtonConfig? changeButtonConfig;
   CheckBoxConfig? checkBoxConfig;
   PrivacyConfig? privacyConfig;
+  List<CustomViewBlock>? customViewBlockList;
 
   AuthUIConfig({
     this.logoConfig,
@@ -17,6 +18,7 @@ abstract class AuthUIConfig {
     this.changeButtonConfig,
     this.checkBoxConfig,
     this.privacyConfig,
+    this.customViewBlockList,
   });
 
   MapWithStringKey toJson();

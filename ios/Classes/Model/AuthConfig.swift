@@ -13,7 +13,7 @@ struct AuthConfig {
     var authUIConfig: AuthUIConfig
 
     init(params: [String: Any]) {
-        //print("params:\(params)")
+        // print("params:\(params)")
         iosSdk = params["iosSdk"] as! String
         let index = params["authUIStyle"] as! Int
         authUIStyle = AuthUIStyle(rawValue: index) ?? AuthUIStyle.FullScreen
@@ -22,6 +22,7 @@ struct AuthConfig {
         decoder.keyDecodingStrategy = .convertFromSnakeCase
 
         authUIConfig = (try? decoder.decode(AuthUIConfig.self, from: JSONSerialization.data(withJSONObject: params, options: []))) ?? AuthUIConfig()
+        // print("authUIConfig:\(authUIConfig)")
     }
 }
 
@@ -39,14 +40,14 @@ struct AuthUIConfig: Codable {
     var alertBlurViewAlpha: Float? // 底部蒙层背景透明度，默认0.5
 
     var alertBorderRadius: Float? // 四个角的圆角，默认为10
-    
+
     var alertWindowWidth: Float?
-    
+
     var alertWindowHeight: Float?
 
     // status bar
     var prefersStatusBarHidden: Bool?
-    
+
     // nav
     var navIsHidden: Bool?
     var navTitle: String?
@@ -55,7 +56,7 @@ struct AuthUIConfig: Codable {
     var navFrameOffsetX: Float?
     var navFrameOffsetY: Float?
     var navColor: String?
-    
+
     // nav backItem
     var hideNavBackItem: Bool?
 
@@ -67,16 +68,14 @@ struct AuthUIConfig: Codable {
     var alertBarIsHidden: Bool?
     var alertCloseItemIsHidden: Bool?
     var alertTitleBarColor: String?
-    
-
 
     var alertTitleText: String?
     var alertTitleTextColor: String?
     var alertTittleTextSize: Int?
-    
+
     var alertCloseImage: String?
-    var alertCloseImageOffsetX:Float?
-    var alertCloseImageOffsetY:Float?
+    var alertCloseImageOffsetX: Float?
+    var alertCloseImageOffsetY: Float?
 
     // logo
     var logoIsHidden: Bool?
@@ -86,7 +85,6 @@ struct AuthUIConfig: Codable {
 
     var logoFrameOffsetX: Float?
     var logoFrameOffsetY: Float?
-
 
     // slogan
     var sloganIsHidden: Bool?
@@ -103,7 +101,6 @@ struct AuthUIConfig: Codable {
 
     var numberFrameOffsetX: Float?
     var numberFrameOffsetY: Float?
-
 
     // login button
     var loginBtnText: String?
@@ -123,19 +120,18 @@ struct AuthUIConfig: Codable {
     var loginBtnLRPadding: Float?
 
     // change button
-    var changeBtnIsHidden:Bool?
+    var changeBtnIsHidden: Bool?
     var changeBtnTitle: String?
     var changeBtnTextColor: String?
     var changeBtnTextSize: Int?
     var changeBtnFrameOffsetX: Float?
     var changeBtnFrameOffsetY: Float?
-    
 
     // checkBox
     var checkBoxIsChecked: Bool?
     var checkBoxIsHidden: Bool?
     var checkBoxWH: Float?
-    
+
     var checkedImage: String?
     var uncheckImage: String?
 
@@ -153,8 +149,6 @@ struct AuthUIConfig: Codable {
     var privacyFrameOffsetX: Float?
     var privacyFrameOffsetY: Float?
 
-    
-
     var privacyConnectTexts: String?
 
     var privacyPreText: String?
@@ -165,6 +159,21 @@ struct AuthUIConfig: Codable {
     var privacyOperatorSufText: String?
 
     var privacyOperatorIndex: Int?
+    
+    var customViewBlockList: [CustomViewBlock]?
+}
+
+struct CustomViewBlock: Codable {
+    var viewId: String?
+    var text: String?
+    var textColor: String?
+    var textSize: String?
+    var backgroundColor: String?
+    var image: String?
+    var offsetX: Float?
+    var offsetY: Float?
+    var width: Float?
+    var height: Float?
 }
 
 /*

@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 Flutter Ali Auth Plugin 阿里云一键登录Flutter插件
                        DESC
-  s.homepage         = 'https://github.com/fluttercandies/'
+  s.homepage         = 'https://github.com/ManInTheWind/flutter_ali_auth'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'kangkang' => 'kangkanglaile1205@163.com' }
   s.source           = { :path => '.' }

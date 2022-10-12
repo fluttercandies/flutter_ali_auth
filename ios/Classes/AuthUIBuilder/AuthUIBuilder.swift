@@ -15,7 +15,10 @@ enum AuthUIStyle: Int {
 }
 
 class AuthUIBuilder {
+    
     var register: FlutterPluginRegistrar?
+    
+    var viewController: UIViewController?;
 
     public func buildUIModel(authUIStyle: AuthUIStyle, authUIConfig: AuthUIConfig) -> TXCustomModel {
         switch authUIStyle {

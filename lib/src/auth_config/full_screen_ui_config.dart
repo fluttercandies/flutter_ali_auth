@@ -1,4 +1,11 @@
-part of flutter_ali_auth;
+import 'dart:convert';
+
+import 'package:copy_with_extension/copy_with_extension.dart';
+
+import '../auth_config/part_ui_config.dart';
+import 'auth_ui_config.dart';
+
+part 'full_screen_ui_config.g.dart';
 
 @CopyWith(skipFields: true, copyWithNull: false)
 class FullScreenUIConfig extends AuthUIConfig {
@@ -22,6 +29,7 @@ class FullScreenUIConfig extends AuthUIConfig {
     super.changeButtonConfig,
     super.checkBoxConfig,
     super.privacyConfig,
+    super.customViewBlockList,
   });
 
   @override
@@ -36,6 +44,14 @@ class FullScreenUIConfig extends AuthUIConfig {
     writeNotNull('backgroundColor', backgroundColor);
     writeNotNull('backgroundImage', backgroundImage);
     writeNotNull('prefersStatusBarHidden', prefersStatusBarHidden);
+    if (customViewBlockList != null &&
+        (customViewBlockList?.isNotEmpty ?? false)) {
+      List<String> customViewBlockJsonList = <String>[];
+      customViewBlockList!.forEach((element) {
+        customViewBlockJsonList.add(jsonEncode(element));
+      });
+      json['customViewBlockList'] = customViewBlockJsonList;
+    }
     if (navConfig != null) {
       json.addAll(navConfig!.toJson());
     }
