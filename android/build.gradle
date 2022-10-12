@@ -1,0 +1,75 @@
+group 'com.fluttercandies.flutter_ali_auth'
+version '1.0'
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.1.2'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        // 阿里云一键登录依赖
+        flatDir{
+            dirs project(":flutter_ali_auth").file("libs")
+        }
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 31
+
+    aaptOptions {
+        noCompress "mov"  //表示不让aapt压缩的文件后缀
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        minSdkVersion 16
+    }
+
+    buildTypes {
+        release {
+            debuggable false
+            // minifyEnabled true
+            proguardFile file('proguard-rules.pro')
+            zipAlignEnabled false
+            multiDexEnabled true
+
+        }
+
+        debug {
+            // minifyEnabled false
+            zipAlignEnabled false
+            multiDexEnabled true
+        }
+    }
+}
+
+dependencies{
+    implementation "androidx.appcompat:appcompat:1.4.1"
+
+    implementation "androidx.constraintlayout:constraintlayout:2.1.0"
+
+    // https://mvnrepository.com/artifact/com.alibaba.fastjson2/fastjson2
+    implementation 'com.alibaba.fastjson2:fastjson2:2.0.14.android'
+
+    implementation(name:'auth_number_product-2.12.9-log-online-standard-release', ext:'aar')
+    implementation(name:'crashshield-2.1.4-release', ext:'aar')
+    implementation(name:'main-2.1.4-release', ext:'aar')
+    implementation(name:'logger-2.1.4-release', ext:'aar')
+
+}

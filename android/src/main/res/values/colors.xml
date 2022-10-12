@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="black">#FF000000</color>
+    <color name="deepGrey">#FF151515</color>
+    <color name="md_grey_700">#616161</color>
+    <color name="white">#ffffffff</color>
+    <color name="navColor">#ff026ED2</color>
+</resources>

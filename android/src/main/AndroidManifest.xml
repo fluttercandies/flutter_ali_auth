@@ -1,0 +1,54 @@
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.fluttercandies.flutter_ali_auth">
+
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 网络访问 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 检查wifi网络状态 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 检查网络状态 -->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" /> <!-- 切换网络通道 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> <!-- 本地信息缓存 -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> <!-- 开关Wi-Fi状态，解决中国内地机型移动网络权限问题需要 -->
+
+    <!--目前中国移动提供的个别接口为HTTP请求，对于全局禁用HTTP的项目，需要设置HTTP白名单。以下为运营商HTTP接口域名：onekey.cmpassport.com，enrichgw.10010.com-->
+    <application
+        android:networkSecurityConfig="@xml/network_security_config"
+        tools:targetApi="m"
+        android:theme="@style/AppTheme"
+        android:name="${applicationName}"
+        >
+        <!--重点关注！！！！！！！-->
+        <!--如果不需要使用窗口模式，不要使用authsdk_activity_dialog主题，会出现异常动画-->
+        <!--如果需要使用authsdk_activity_dialog主题，则screenOrientation一定不能指定明确的方向，
+        比如portrait、sensorPortrait，在8.0的系统上不允许窗口模式指定orientation，会发生crash，需要指定为behind，
+        然后在授权页的前一个页面指定具体的orientation-->
+        <activity
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:name="com.mobile.auth.gatewayauth.LoginAuthActivity"
+            android:screenOrientation="behind"
+            android:theme="@style/authsdk_dialog"/>
+
+        <activity
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:name="com.mobile.auth.gatewayauth.PrivacyDialogActivity"
+            android:screenOrientation="behind"
+            android:theme="@style/authsdk_activity_dialog"/>
+
+        <activity
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:name="com.mobile.auth.gatewayauth.activity.AuthWebVeiwActivity"
+            android:screenOrientation="behind"/>
+
+        <!-- for override the enter animation-->
+        <activity android:name=".mask.DecoyMaskActivity"
+            android:theme="@style/TransparentTheme"
+            />
+    </application>
+
+</manifest>
