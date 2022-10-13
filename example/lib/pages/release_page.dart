@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ali_auth/flutter_ali_auth.dart';
+import 'package:flutter_ali_auth_example/main.dart';
 
 class ReleasePage extends StatefulWidget {
   const ReleasePage({Key? key}) : super(key: key);
@@ -15,12 +16,8 @@ class _ReleasePageState extends State<ReleasePage> {
     androidSdk: "",
     authUIStyle: AuthUIStyle.fullScreen,
     authUIConfig: FullScreenUIConfig(
-      navConfig: NavConfig(
-        navColor: Colors.pinkAccent.toHex,
-      ),
-      logoConfig: LogoConfig(
-        logoImage: "images/app_icon",
-      ),
+      navConfig: NavConfig(navColor: Colors.pinkAccent.toHex()),
+      logoConfig: const LogoConfig(logoImage: "images/app_icon"),
     ),
   );
 

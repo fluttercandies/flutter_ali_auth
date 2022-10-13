@@ -4,8 +4,6 @@ that can be found in the LICENSE file. -->
 
 # Changelog
 
-## 0.0.1
+## 0.1.0
 
-### First version.
-
-- SDK for ali_auth in Flutter
+- Initial release.

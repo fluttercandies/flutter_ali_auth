@@ -264,8 +264,7 @@ class _$LogoConfigCWProxyImpl implements _$LogoConfigCWProxy {
           : logoImage as String?,
       logoIsHidden: logoIsHidden == const $CopyWithPlaceholder()
           ? _value.logoIsHidden
-          // ignore: cast_nullable_to_non_nullable
-          : logoIsHidden as bool?,
+          : logoIsHidden as bool,
       logoWidth: logoWidth == const $CopyWithPlaceholder()
           ? _value.logoWidth
           // ignore: cast_nullable_to_non_nullable

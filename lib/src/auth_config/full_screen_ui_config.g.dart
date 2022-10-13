@@ -91,8 +91,7 @@ class _$FullScreenUIConfigCWProxyImpl implements _$FullScreenUIConfigCWProxy {
       prefersStatusBarHidden:
           prefersStatusBarHidden == const $CopyWithPlaceholder()
               ? _value.prefersStatusBarHidden
-              // ignore: cast_nullable_to_non_nullable
-              : prefersStatusBarHidden as bool?,
+              : prefersStatusBarHidden as bool,
       privacyConfig: privacyConfig == const $CopyWithPlaceholder()
           ? _value.privacyConfig
           // ignore: cast_nullable_to_non_nullable

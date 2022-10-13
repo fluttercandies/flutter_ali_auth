@@ -4,15 +4,16 @@ import '../auth_config/auth_config.dart';
 import '../auth_response_model/auth_response_model.dart';
 
 class AliAuthClient {
-  static const MethodChannel _methodChannel = MethodChannel('flutter_ali_auth');
+  const AliAuthClient._();
 
+  static const MethodChannel _methodChannel = MethodChannel('flutter_ali_auth');
   static const EventChannel _loginEventChannel = EventChannel('auth_event');
 
   static Future<String?> getPlatformVersion() {
     return _methodChannel.invokeMethod('getPlatformVersion');
   }
 
-  ///初始化
+  /// 初始化
   static Future<AuthResponseModel> initSdk({
     required AuthConfig authConfig,
   }) async {
@@ -20,18 +21,20 @@ class AliAuthClient {
     return AuthResponseModel.fromJson(Map<String, dynamic>.from(res));
   }
 
-  ///一键登陆
+  /// 一键登陆
   static Future<AuthResponseModel> login({double timeout = 5.0}) async {
     final res = await _methodChannel.invokeMethod('login', timeout);
     return AuthResponseModel.fromJson(Map<String, dynamic>.from(res));
   }
 
-  ///一键登陆，debug专用, 用新的配置去验证，耗时会比较久
+  /// 一键登陆，debug专用, 用新的配置去验证，耗时会比较久
   static Future<AuthResponseModel> loginWithConfig(
     AuthConfig authConfig,
   ) async {
     final res = await _methodChannel.invokeMethod(
-        'loginWithConfig', authConfig.toJson());
+      'loginWithConfig',
+      authConfig.toJson(),
+    );
     return AuthResponseModel.fromJson(Map<String, dynamic>.from(res));
   }
 
@@ -55,20 +58,20 @@ class AliAuthClient {
     );
   }
 
-  ///判断网络是否支持，一般不需要主动调用
+  /// 判断网络是否支持，一般不需要主动调用
   static Future<AuthResponseModel> checkVerifyEnable() async {
     ///{msg: 无SIM卡, requestId: 941e9389efee47b9, resultCode: 600007}
     final res = await _methodChannel.invokeMethod("checkEnv");
     return AuthResponseModel.fromJson(Map<String, dynamic>.from(res));
   }
 
-  ///预取号，一般不需要主动调用
+  /// 预取号，一般不需要主动调用
   static Future<AuthResponseModel> accelerateLoginPage() async {
     final res = await _methodChannel.invokeMethod('accelerateLoginPage');
     return AuthResponseModel.fromJson(Map<String, dynamic>.from(res));
   }
 
-  ///检查版本
+  /// 检查版本
   static Future<dynamic> get version {
     return _methodChannel.invokeMethod('getAliAuthVersion');
   }
