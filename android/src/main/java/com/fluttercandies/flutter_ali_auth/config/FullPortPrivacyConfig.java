@@ -95,7 +95,7 @@ public class FullPortPrivacyConfig extends BaseUIConfig {
         mAuthHelper.removeAuthRegisterViewConfig();
         //添加自定义切换其他登录方式
         mAuthHelper.addAuthRegistViewConfig("switch_msg", new AuthRegisterViewConfig.Builder()
-                .setView(initSwitchView(350))
+                .setView(initSwitchView())
                 .setRootViewId(AuthRegisterViewConfig.RootViewId.ROOT_VIEW_ID_BODY)
 //                .setCustomInterface(new CustomInterface() {
 //                    @Override

@@ -48,11 +48,11 @@ public abstract class BaseUIConfig {
         mEventSink = eventSink;
     }
 
-    protected View initSwitchView(int marginTop) {
+    protected View initSwitchView() {
         TextView switchTV = new TextView(mActivity);
         RelativeLayout.LayoutParams mLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, dp2px(mActivity, 50));
         //一键登录按钮默认marginTop 270dp
-        mLayoutParams.setMargins(0, dp2px(mContext, marginTop), 0, 0);
+        mLayoutParams.setMargins(0, dp2px(mContext, 350), 0, 0);
         mLayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
         switchTV.setText(R.string.switch_msg);
         switchTV.setTextColor(Color.BLACK);
