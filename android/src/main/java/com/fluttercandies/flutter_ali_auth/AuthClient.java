@@ -15,6 +15,7 @@ import com.fluttercandies.flutter_ali_auth.config.BaseUIConfig;
 import com.fluttercandies.flutter_ali_auth.mask.DecoyMaskActivity;
 import com.fluttercandies.flutter_ali_auth.model.AuthModel;
 import com.fluttercandies.flutter_ali_auth.model.AuthResponseModel;
+import com.fluttercandies.flutter_ali_auth.utils.Constant;
 import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper;
 import com.mobile.auth.gatewayauth.PreLoginResultListener;
 import com.mobile.auth.gatewayauth.ResultCode;
@@ -69,19 +70,17 @@ public class AuthClient {
 
     public void initSdk(Object arguments) {
         try {
-            authModel = AuthModel.fromJson(arguments);
+            authModel = AuthModel.Builder(arguments);
         } catch (Exception e) {
             AuthResponseModel authResponseModel = AuthResponseModel.initFailed(errorArgumentsMsg);
             eventSink.success(authResponseModel.toJson());
         }
 
-        if (Objects.isNull(authModel.androidSdk) || TextUtils.isEmpty(authModel.androidSdk)) {
+        if (Objects.isNull(authModel.getAndroidSdk()) || TextUtils.isEmpty(authModel.getAndroidSdk())) {
             AuthResponseModel authResponseModel = AuthResponseModel.nullSdkError();
             eventSink.success(authResponseModel.toJson());
             return;
         }
-        Log.i(TAG, "authModel:" + authModel);
-
         tokenResultListener = new TokenResultListener() {
             @Override
             public void onTokenSuccess(String s) {
@@ -116,8 +115,8 @@ public class AuthClient {
         };
         Context context = mActivity.get().getBaseContext();
         mAuthHelper = PhoneNumberAuthHelper.getInstance(context, tokenResultListener);
-        mAuthHelper.getReporter().setLoggerEnable(true);
-        mAuthHelper.setAuthSDKInfo(authModel.androidSdk);
+        mAuthHelper.getReporter().setLoggerEnable(authModel.getEnableLog());
+        mAuthHelper.setAuthSDKInfo(authModel.getAndroidSdk());
         checkEnv();
     }
 
@@ -148,7 +147,6 @@ public class AuthClient {
         mAuthHelper.accelerateLoginPage(mLoginTimeout, new PreLoginResultListener() {
             @Override
             public void onTokenSuccess(String s) {
-                Log.i(TAG, "预取成功：" + s);
                 try {
                     AuthResponseModel authResponseModel = AuthResponseModel.customModel(
                             MSG_GET_MASK_SUCCESS, preLoginSuccessMsg
@@ -163,7 +161,6 @@ public class AuthClient {
 
             @Override
             public void onTokenFailed(String s, String s1) {
-                Log.e(TAG, "预取号失败：" + s);
                 try {
                     AuthResponseModel authResponseModel = AuthResponseModel.customModel(
                             ResultCode.CODE_GET_MASK_FAIL, ResultCode.MSG_GET_MASK_FAIL
@@ -179,43 +176,31 @@ public class AuthClient {
     }
 
     public void getLoginToken() {
-
         if (Objects.isNull(mAuthHelper) || !sdkAvailable) {
             AuthResponseModel authResponseModel = AuthResponseModel.initFailed(initFailedMsg);
             eventSink.success(authResponseModel.toJson());
             return;
         }
-
         Activity activity = mActivity.get();
-
         Context context = activity.getBaseContext();
-
-        baseUIConfig = BaseUIConfig.init(authModel.authUIStyle, activity, mAuthHelper, eventSink);
-
+        baseUIConfig = BaseUIConfig.init(authModel.getAuthUIStyle(), activity, mAuthHelper, eventSink,flutterPluginBinding.getFlutterAssets());
         assert baseUIConfig != null;
-
         clearCached();
-
-        baseUIConfig.configAuthPage(flutterPluginBinding, authModel.authUIModel);
-
+        baseUIConfig.configAuthPage(authModel.getAuthUIModel());
         tokenResultListener = new TokenResultListener() {
             @Override
             public void onTokenSuccess(String s) {
-                // Log.w(TAG,"获取Token成功:"+s);
                 activity.runOnUiThread(() -> {
                     TokenRet tokenRet;
                     try {
                         tokenRet = TokenRet.fromJson(s);
-
                         AuthResponseModel authResponseModel = AuthResponseModel.fromTokenRect(tokenRet);
-
                         eventSink.success(authResponseModel.toJson());
                         if (ResultCode.CODE_SUCCESS.equals(tokenRet.getCode())) {
                             mAuthHelper.quitLoginPage();
                             mAuthHelper.setAuthListener(null);
                             clearCached();
                         }
-                        Log.i(TAG, "tokenRet:" + tokenRet);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -237,48 +222,33 @@ public class AuthClient {
             }
         };
         mAuthHelper.setAuthListener(tokenResultListener);
-
         // override the decoy activity open enter animation
-        if (authModel.authUIStyle.equals(Constant.DIALOG_PORT)) {
+        if (authModel.getAuthUIStyle().equals(Constant.DIALOG_PORT)) {
             activity.overridePendingTransition(R.anim.zoom_in, 0);
         } else {
             activity.overridePendingTransition(R.anim.slide_up, 0);
         }
-
         Intent intent = new Intent(context, DecoyMaskActivity.class);
-
         activity.startActivity(intent);
     }
-
     public void getLoginToken(Object arguments) {
-
         if (Objects.isNull(mAuthHelper) || !sdkAvailable) {
             AuthResponseModel authResponseModel = AuthResponseModel.initFailed(initFailedMsg);
             eventSink.success(authResponseModel.toJson());
             return;
         }
-
         Activity activity = mActivity.get();
-
         Context context = activity.getBaseContext();
-
         try {
-            authModel = AuthModel.fromJson(arguments);
+            authModel = AuthModel.Builder(arguments);
         } catch (Exception e) {
             AuthResponseModel authResponseModel = AuthResponseModel.initFailed(errorArgumentsMsg);
             eventSink.success(authResponseModel.toJson());
         }
-
-        Log.i(TAG, "AuthModel:" + authModel);
-
-        baseUIConfig = BaseUIConfig.init(authModel.authUIStyle, activity, mAuthHelper, eventSink);
-
+        baseUIConfig = BaseUIConfig.init(authModel.getAuthUIStyle(), activity, mAuthHelper, eventSink,flutterPluginBinding.getFlutterAssets());
         assert baseUIConfig != null;
-
         clearCached();
-
-        baseUIConfig.configAuthPage(flutterPluginBinding, authModel.authUIModel);
-
+        baseUIConfig.configAuthPage(authModel.getAuthUIModel());
         tokenResultListener = new TokenResultListener() {
             @Override
             public void onTokenSuccess(String s) {
@@ -318,14 +288,12 @@ public class AuthClient {
             }
         };
         mAuthHelper.setAuthListener(tokenResultListener);
-
-        // override the decoy activity open enter animation
-        if (authModel.authUIStyle.equals(Constant.DIALOG_PORT)) {
+        /// override the decoy activity open enter animation
+        if (authModel.getAuthUIStyle().equals(Constant.DIALOG_PORT)) {
             activity.overridePendingTransition(R.anim.zoom_in, 0);
         } else {
             activity.overridePendingTransition(R.anim.slide_up, 0);
         }
-
         Intent intent = new Intent(context, DecoyMaskActivity.class);
 
         activity.startActivity(intent);

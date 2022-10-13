@@ -16,23 +16,12 @@ import java.util.Map;
 import java.util.Objects;
 
 public class AuthResponseModel {
-   private String resultCode;
-   private String msg;
-   private String requestId;
-   private String token;
-   private String innerMsg;
-   private String innerCode;
-
-//    public AuthResponseModel(@NonNull String resultCode, @NonNull  String msg,
-//                             @NonNull  String requestId, @Nullable String token,
-//                             @Nullable String innerMsg, @Nullable String innerCode) {
-//        this.resultCode = resultCode;
-//        this.msg = msg;
-//        this.requestId = requestId;
-//        this.token = token;
-//        this.innerMsg = innerMsg;
-//        this.innerCode = innerCode;
-//    }
+    private String resultCode;
+    private String msg;
+    private String requestId;
+    private String token;
+    private String innerMsg;
+    private String innerCode;
 
     public static String initFailedMsg = "初始化失败或未初始化";
     public static String nullSdkErrorMsg = "初始化失败，sdk为空";
@@ -42,7 +31,7 @@ public class AuthResponseModel {
     public static String MSG_GET_MASK_SUCCESS = "600016";
     public static String preLoginSuccessMsg = "预取号成功";
 
-    public static AuthResponseModel customModel(String resultCode,String msg){
+    public static AuthResponseModel customModel(String resultCode, String msg) {
         String now = Long.toString(System.currentTimeMillis());
         AuthResponseModel authResponseModel = new AuthResponseModel();
         authResponseModel.setResultCode(resultCode);
@@ -51,17 +40,17 @@ public class AuthResponseModel {
         return authResponseModel;
     }
 
-   public static AuthResponseModel initFailed(@Nullable String msg){
+    public static AuthResponseModel initFailed(@Nullable String msg) {
         String now = Long.toString(System.currentTimeMillis());
-       assert msg != null;
-       AuthResponseModel authResponseModel = new AuthResponseModel();
-       authResponseModel.setResultCode(ResultCode.CODE_ERROR_ANALYZE_SDK_INFO);
-       authResponseModel.setMsg(msg);
-       authResponseModel.setRequestId(now);
-       return authResponseModel;
-   }
+        assert msg != null;
+        AuthResponseModel authResponseModel = new AuthResponseModel();
+        authResponseModel.setResultCode(ResultCode.CODE_ERROR_ANALYZE_SDK_INFO);
+        authResponseModel.setMsg(msg);
+        authResponseModel.setRequestId(now);
+        return authResponseModel;
+    }
 
-    public static AuthResponseModel nullSdkError(){
+    public static AuthResponseModel nullSdkError() {
         String now = Long.toString(System.currentTimeMillis());
         AuthResponseModel authResponseModel = new AuthResponseModel();
         authResponseModel.setResultCode(ResultCode.CODE_ERROR_ANALYZE_SDK_INFO);
@@ -70,7 +59,7 @@ public class AuthResponseModel {
         return authResponseModel;
     }
 
-    public static AuthResponseModel tokenDecodeFailed(){
+    public static AuthResponseModel tokenDecodeFailed() {
         String now = Long.toString(System.currentTimeMillis());
         AuthResponseModel authResponseModel = new AuthResponseModel();
         authResponseModel.setResultCode(ResultCode.MSG_ERROR_UNKNOWN_FAIL);
@@ -79,7 +68,16 @@ public class AuthResponseModel {
         return authResponseModel;
     }
 
-    public static AuthResponseModel fromTokenRect(TokenRet tokenRet){
+    public static AuthResponseModel onCustomViewBlocTap(Integer viewId){
+        String now = Long.toString(System.currentTimeMillis());
+        AuthResponseModel authResponseModel = new AuthResponseModel();
+        authResponseModel.setResultCode("700010");
+        authResponseModel.setMsg(viewId.toString());
+        authResponseModel.setRequestId(now);
+        return authResponseModel;
+    }
+
+    public static AuthResponseModel fromTokenRect(TokenRet tokenRet) {
 
         //TokenRet{vendorName='ct_sjl', code='600024', msg='终端支持认证', carrierFailedResultData=', requestId=8147329b-1618-4b9f-98ce-02e468d237ba', requestCode=0, token='null'}
 
@@ -93,18 +91,18 @@ public class AuthResponseModel {
 
         String token = tokenRet.getToken();
 
-        if(Objects.nonNull(token) && !TextUtils.isEmpty(token)  && !String.valueOf(token).equals("null") ){
+        if (Objects.nonNull(token) && !TextUtils.isEmpty(token) && !String.valueOf(token).equals("null")) {
             authResponseModel.setToken(token);
         }
 
         JSONObject carrierFailedResultData = JSON.parseObject(tokenRet.getCarrierFailedResultData());
 
         System.out.println(carrierFailedResultData);
-        if(Objects.nonNull(carrierFailedResultData)){
-            if(Objects.nonNull(carrierFailedResultData.get("innerCode"))){
+        if (Objects.nonNull(carrierFailedResultData)) {
+            if (Objects.nonNull(carrierFailedResultData.get("innerCode"))) {
                 authResponseModel.setInnerCode((String) carrierFailedResultData.get("innerCode"));
             }
-            if(Objects.nonNull(carrierFailedResultData.get("innerMsg"))){
+            if (Objects.nonNull(carrierFailedResultData.get("innerMsg"))) {
                 authResponseModel.setInnerMsg(((String) carrierFailedResultData.get("innerMsg")));
             }
         }
@@ -160,14 +158,14 @@ public class AuthResponseModel {
         return innerCode;
     }
 
-    public Map<String,Object> toJson( ){
+    public Map<String, Object> toJson() {
         Map<String, Object> map = new HashMap<>();
-        map.put("requestId",requestId);
-        map.put("resultCode",resultCode);
-        map.put("msg",msg);
-        map.put("token",token);
-        map.put("innerCode",innerCode);
-        map.put("innerMsg",innerMsg);
+        map.put("requestId", requestId);
+        map.put("resultCode", resultCode);
+        map.put("msg", msg);
+        map.put("token", token);
+        map.put("innerCode", innerCode);
+        map.put("innerMsg", innerMsg);
         return map;
     }
 }

@@ -96,7 +96,7 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
     public func initSdk(arguments: Any?) {
         var responseMoedel: ResponseModel
 
-        TXCommonHandler.sharedInstance().getReporter().setConsolePrintLoggerEnable(true)
+       
 
         guard let params = arguments as? [String: Any] else {
             // 参数有问题
@@ -114,6 +114,8 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
 
         // 设置参数
         _authConfig = AuthConfig(params: params)
+        
+        TXCommonHandler.sharedInstance().getReporter().setConsolePrintLoggerEnable(_authConfig!.enableLog)
 
         TXCommonHandler.sharedInstance().setAuthSDKInfo(sdk) { resultDict in
             guard let dict = resultDict as? [String: Any] else {
@@ -163,7 +165,7 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
     // MARK: - 一键登录预取号（accelerateLoginPageWithTimeout）
 
     public func accelerateLoginPage() {
-        print("开始一键登录预取号")
+        // print("开始一键登录预取号")
         TXCommonHandler.sharedInstance().accelerateLoginPage(withTimeout: 5.0) { resultDict in
             guard let dict = resultDict as? [String: Any] else {
                 self.onSend(ResponseModel(resultDict))
@@ -187,22 +189,17 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
 
     public func login(timeout: TimeInterval) {
         assert(_authConfig != nil, "AuthConfig不能为空")
-        
+
         guard let viewController = WindowUtils.getCurrentViewController() else {
             let responseModel = ResponseModel(code: PNSCodeLoginControllerPresentFailed, msg: "拉起授权页面失败,无法找到当前视图")
             onSend(responseModel)
             return
         }
-        
-        
-        let model = authUIBuilder.buildUIModel(authUIStyle: _authConfig!.authUIStyle, authUIConfig: _authConfig!.authUIConfig)
-        // print("拉起授权页面")
-        
-        if _authConfig!.authUIConfig.customViewBlockList != nil {
-            
-            authUIBuilder.onCustomViewTap = self.onSend;
-            
-        }
+
+        let model = authUIBuilder.buildUIModel(authUIStyle: _authConfig!.authUIStyle, authUIConfig: _authConfig!.authUIConfig, completionHandler: {
+            responseModel in
+            self.onSend(responseModel)
+        })
 
         TXCommonHandler.sharedInstance().checkEnvAvailable(with: PNSAuthType.loginToken) { (resultDict: [AnyHashable: Any]?) in
             guard let dict = resultDict as? [String: Any] else {
@@ -290,7 +287,10 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
 
         _config = _config ?? _authConfig
 
-        let model: TXCustomModel = authUIBuilder.buildUIModel(authUIStyle: _config!.authUIStyle, authUIConfig: _config!.authUIConfig)
+        let model: TXCustomModel = authUIBuilder.buildUIModel(authUIStyle: _config!.authUIStyle, authUIConfig: _config!.authUIConfig, completionHandler: {
+            responseModel in
+            self.onSend(responseModel)
+        })
 
         guard let viewController = WindowUtils.getCurrentViewController() else {
             let responseModel = ResponseModel(code: PNSCodeLoginControllerPresentFailed, msg: "拉起授权页面失败,无法找到当前视图")
@@ -315,7 +315,7 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
                 self.onSend(ResponseModel(dict))
                 return
             }
-            print("开始一键登录预取号")
+            // print("开始一键登录预取号")
             TXCommonHandler.sharedInstance().accelerateLoginPage(withTimeout: 5.0) { resultDict in
                 guard let dict = resultDict as? [String: Any] else {
                     let _responseMoedel = ResponseModel(resultDict)
@@ -332,7 +332,7 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
                     return
                 }
 
-                print("拉起授权页面")
+                // print("拉起授权页面")
                 TXCommonHandler.sharedInstance().getLoginToken(withTimeout: 3.0, controller: viewController, model: model) { resultDict in
                     var _responseModel: ResponseModel
                     guard let dict = resultDict as? [String: Any] else {
@@ -347,13 +347,12 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
                     }
 
                     if resultCode == PNSCodeLoginControllerClickLoginBtn {
-                        print("用户点击一键登录：\(dict)")
+                        // print("用户点击一键登录：\(dict)")
                         var isChecked = 0
                         if let checked = dict["isChecked"] as? Int {
                             isChecked = checked
                         }
                         if isChecked == 0 {
-                            print("MBProgressHUD")
                             guard let currentViewController = WindowUtils.getCurrentViewController() else {
                                 return
                             }
@@ -380,6 +379,7 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
     public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
         _authConfig = nil
         onCancel(withArguments: nil)
+        authUIBuilder.onDispose()
     }
 
 //    public func cancelListenLoginEvent(result: @escaping FlutterResult) {

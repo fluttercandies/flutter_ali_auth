@@ -27,12 +27,12 @@ import io.flutter.plugin.common.EventChannel;
 public class FullPortPrivacyConfig extends BaseUIConfig {
     private final String TAG = "全屏竖屏弹窗样式";
 
-    public FullPortPrivacyConfig(Activity activity, PhoneNumberAuthHelper authHelper, EventChannel.EventSink eventSink) {
-        super(activity, authHelper,eventSink);
+    public FullPortPrivacyConfig(Activity activity, PhoneNumberAuthHelper authHelper, EventChannel.EventSink eventSink,FlutterPlugin.FlutterAssets flutterAssets) {
+        super(activity, authHelper,eventSink,flutterAssets);
     }
 
     @Override
-    public void configAuthPage(FlutterPlugin.FlutterPluginBinding flutterPluginBinding, AuthUIModel authUIModel) {
+    public void configAuthPage( AuthUIModel authUIModel) {
         mAuthHelper.setUIClickListener(new AuthUIControlClickListener() {
             @Override
             public void onClick(String code, Context context, String jsonString) {

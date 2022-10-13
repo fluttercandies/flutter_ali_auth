@@ -10,31 +10,31 @@ import com.mobile.auth.gatewayauth.AuthUIConfig;
 import java.util.Map;
 
 public class AuthModel {
-   public String androidSdk;
-   public Integer authUIStyle;
-   public AuthUIModel authUIModel;
+   private String androidSdk;
+   private Boolean enableLog;
+   private Integer authUIStyle;
+   private AuthUIModel authUIModel;
 
    @NonNull
-   static public AuthModel fromJson(Object params){
+   static public AuthModel Builder(Object params){
       JSONObject json = (JSONObject) JSON.toJSON(params);
-
-      Integer authUIStyle = (Integer) json.get("authUIStyle");
-
+      AuthUIModel authUIModel = JSON.to(AuthUIModel.class, json);
       AuthModel authModel = new AuthModel();
-
-      authModel.setAndroidSdk(json.getString("androidSdk"));
-
-      authModel.setAuthUIStyle(authUIStyle);
-
-      AuthUIModel mAuthUIModel = JSON.to(AuthUIModel.class, json);
-
-      authModel.setAuthUIModel(mAuthUIModel);
-
+      Integer authUIStyle = (Integer) json.get("authUIStyle");
+      authModel.androidSdk  = json.getString("androidSdk");
+      authModel.enableLog = Boolean.valueOf(json.getString("enableLog"));
+      authModel.authUIStyle = authUIStyle;
+      authModel.authUIModel = authUIModel;
       return authModel;
    }
 
+
    public void setAndroidSdk(String androidSdk) {
       this.androidSdk = androidSdk;
+   }
+
+   public void setEnableLog(Boolean enableLog) {
+      this.enableLog = enableLog;
    }
 
    public void setAuthUIStyle(Integer authUIStyle) {
@@ -49,21 +49,15 @@ public class AuthModel {
       return androidSdk;
    }
 
+   public Boolean getEnableLog() {
+      return enableLog;
+   }
+
    public Integer getAuthUIStyle() {
       return authUIStyle;
    }
 
    public AuthUIModel getAuthUIModel() {
       return authUIModel;
-   }
-
-   @NonNull
-   @Override
-   public String toString() {
-      return "AuthModel{" +
-              "androidSdk='" + androidSdk + '\'' +
-              ", authUIStyle=" + authUIStyle +
-              ", authUIModel=" + authUIModel +
-              '}';
    }
 }

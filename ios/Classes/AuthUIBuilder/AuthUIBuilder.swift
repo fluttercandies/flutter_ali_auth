@@ -14,19 +14,27 @@ enum AuthUIStyle: Int {
     case Alert
 }
 
+typealias CustomViewBlockCallback = (ResponseModel) -> Void
+
 class AuthUIBuilder {
     var register: FlutterPluginRegistrar?
 
     var viewController: UIViewController?
 
-    var onCustomViewTap: ((ResponseModel) -> Void)?
+    var customViewBlockCallback: CustomViewBlockCallback?
 
-    public func buildUIModel(authUIStyle: AuthUIStyle, authUIConfig: AuthUIConfig) -> TXCustomModel {
+    public func buildUIModel(authUIStyle: AuthUIStyle, authUIConfig: AuthUIConfig,
+                             completionHandler: @escaping CustomViewBlockCallback) -> TXCustomModel
+    {
+        self.customViewBlockCallback = completionHandler
+
         switch authUIStyle {
         case .FullScreen:
             return self.buildFullScreenModel(config: authUIConfig)
+
         case .BottomSheet:
             return self.buildBottomSheetModel(config: authUIConfig)
+
         case .Alert:
             return self.buildAlertModel(config: authUIConfig)
         }
@@ -76,5 +84,11 @@ class AuthUIBuilder {
 
     func isHorizontal(_ screenSize: CGSize) -> Bool {
         screenSize.width > screenSize.height
+    }
+
+    func onDispose() {
+        self.register = nil
+        self.viewController = nil
+        self.customViewBlockCallback = nil
     }
 }

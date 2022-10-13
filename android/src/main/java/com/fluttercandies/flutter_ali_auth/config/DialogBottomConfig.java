@@ -1,19 +1,16 @@
 package com.fluttercandies.flutter_ali_auth.config;
 
-import static com.fluttercandies.flutter_ali_auth.Constant.Font_12;
-import static com.fluttercandies.flutter_ali_auth.Constant.Font_16;
-import static com.fluttercandies.flutter_ali_auth.Constant.Font_20;
-import static com.fluttercandies.flutter_ali_auth.Constant.Font_24;
-import static com.fluttercandies.flutter_ali_auth.Constant.kAlertLogoOffset;
-import static com.fluttercandies.flutter_ali_auth.Constant.kLogoOffset;
-import static com.fluttercandies.flutter_ali_auth.Constant.kLogoSize;
-import static com.fluttercandies.flutter_ali_auth.Constant.kPadding;
+import static com.fluttercandies.flutter_ali_auth.utils.Constant.Font_12;
+import static com.fluttercandies.flutter_ali_auth.utils.Constant.Font_16;
+import static com.fluttercandies.flutter_ali_auth.utils.Constant.Font_20;
+import static com.fluttercandies.flutter_ali_auth.utils.Constant.kAlertLogoOffset;
+import static com.fluttercandies.flutter_ali_auth.utils.Constant.kLogoSize;
+import static com.fluttercandies.flutter_ali_auth.utils.Constant.kPadding;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Build;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -30,12 +27,12 @@ import io.flutter.plugin.common.EventChannel;
 
 public class DialogBottomConfig extends BaseUIConfig {
 
-    public DialogBottomConfig(Activity activity, PhoneNumberAuthHelper authHelper, EventChannel.EventSink eventSink) {
-        super(activity, authHelper, eventSink);
+    public DialogBottomConfig(Activity activity, PhoneNumberAuthHelper authHelper, EventChannel.EventSink eventSink, FlutterPlugin.FlutterAssets flutterAssets) {
+        super(activity, authHelper, eventSink,flutterAssets);
     }
 
     @Override
-    public void configAuthPage(FlutterPlugin.FlutterPluginBinding flutterPluginBinding, AuthUIModel authUIModel) {
+    public void configAuthPage( AuthUIModel authUIModel) {
 
         int authPageOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT;
 
@@ -64,8 +61,7 @@ public class DialogBottomConfig extends BaseUIConfig {
 
         if (!logoIsHidden) {
             try {
-                FlutterPlugin.FlutterAssets flutterAssets = flutterPluginBinding.getFlutterAssets();
-                logoPath = flutterAssets.getAssetFilePathByName(authUIModel.logoImage);
+                logoPath = mFlutterAssets.getAssetFilePathByName(authUIModel.logoImage);
             } catch (Exception e) {
                 e.printStackTrace();
                 logoPath = "mytel_app_launcher";
@@ -101,6 +97,11 @@ public class DialogBottomConfig extends BaseUIConfig {
         String checkedImage = authUIModel.checkedImage == null ? "icon_check" : authUIModel.checkedImage;
 
         String unCheckImage = authUIModel.uncheckImage == null ? "icon_uncheck" : authUIModel.uncheckImage;
+
+        ///自定义控件
+        if (authUIModel.customViewBlockList != null) {
+            buildCustomView(authUIModel.customViewBlockList);
+        }
 
         mAuthHelper.addAuthRegisterXmlConfig(new AuthRegisterXmlConfig.Builder()
                 .setLayout(R.layout.dialog_action_bar, new AbstractPnsViewDelegate() {

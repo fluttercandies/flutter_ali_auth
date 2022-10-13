@@ -20,6 +20,7 @@ class _DebugPageState extends State<DebugPage> {
         "HoeXxTF5epZEkjl3bqTgjPmnpIoufj10VOnSGoZAHE0S2wvv95eWAzV18vTllsaDXAdjoDOsCe4curE7IblQqHGP9cBQiCsjSQcAQJGbKkSa27/zbgENswdjiVF91SDMtHiVT0lok13kyI1fCg0bHWxvPQXG9zYszxUy9svAGL8hfHuoQGoatuK6xe6Zwb18MrtfpCAabeU7K0gtMJxf0sPAVUvwLupuq98uWPcTgqq5swkRp13kOq7Kv/YAADfK65XqGv0RDCMSSpN08lJDbd+L/stVtooIhJwyy4MXE4A=",
     androidSdk:
         "cDayqs3OUxdTERwuS4cCSEHuTqqsEvva7nkfdxKqfxAOIq46rES8NiSGFzU7xyk1qD02WkPsLAwfs82Oi1xpn+cOv3lr4nUzcsjdIgzgphoLlky9JKcMkGZW9i6ZM6WX8o9htuufxJV90bEtHYH/im5ZLxVDB1hbAi1Bg4zZ9sHeG160cAt0lLmAh3btrKvPqglD++Zel5L0N/Y4bVm2hvgRqusRvHW8Uqng9MzHOc9FgW9oXoA1AwvyQWXRXR98Hh2gBiF2VJGL1fwgkC2xFUvzIM2sMw5JMJ8KxRspWmKyLIp1EOOgUd6bY4TctbzX2DGgiTPtdrVF3ZZ8q6BCQQ==",
+    enableLog: false,
     authUIStyle: AuthUIStyle.fullScreen,
     authUIConfig: FullScreenUIConfig(
       navConfig: NavConfig(navColor: Colors.cyan.toHex()),
@@ -28,31 +29,26 @@ class _DebugPageState extends State<DebugPage> {
         logoImage: "images/flutter_candies_logo.png",
       ),
       sloganConfig: const SloganConfig(sloganText: '欢迎登录FlutterCandies'),
-      customViewBlockList: [
-        const CustomViewBlock(
-          viewId: 1,
-          width: 48,
-          height: 48,
-          offsetX: 88,
-          offsetY: 88,
-          image: "images/icon_close_gray.png",
-        ),
-      ],
     ),
   );
 
   /// 登录成功处理
   void _onEvent(dynamic event) async {
     final responseModel = AuthResponseModel.fromJson(Map.from(event));
-    //print("responseModel:$responseModel");
+    print(responseModel);
     if (responseModel.resultCode == AuthResultCode.success.code &&
         responseModel.token != null) {
+      // login success
       setState(() {
         _token = responseModel.token;
       });
     } else if (responseModel.resultCode ==
         AuthResultCode.decodeAppInfoFailed.code) {
+      // init failed
       SmartDialog.showToast(responseModel.msg ?? '未初始化或者初始化失败');
+    } else if (responseModel.resultCode ==
+        AuthResultCode.onCustomViewTap.code) {
+      SmartDialog.showToast("点击自定义控件：${responseModel.msg}");
     } else {
       SmartDialog.showToast(
         responseModel.msg ?? '未知错误，code:${responseModel.resultCode}',
@@ -133,64 +129,10 @@ class _DebugPageState extends State<DebugPage> {
                       label: '全屏',
                     ),
                     onPressed: () async {
-                      const padding = 8.0;
-                      double loginSize = 100;
-                      double logoFrameOffsetY =
-                          (Platform.isAndroid ? 20 : 80) + kToolbarHeight;
-                      double sloganFrameOffsetY =
-                          logoFrameOffsetY + loginSize + padding;
-                      int sloganTextSize = 28;
-                      double numberFrameOffsetY =
-                          sloganFrameOffsetY + sloganTextSize + padding;
+                      final extraUIConfig = _extraUIBuilder(context);
                       await AliAuthClient.loginWithConfig(
                         _authConfig.copyWith(
-                          authUIConfig: FullScreenUIConfig(
-                            navConfig: const NavConfig(
-                              navIsHidden: true,
-                            ),
-                            backgroundImage: "images/app_bg.png",
-                            logoConfig: LogoConfig(
-                              logoIsHidden: false,
-                              logoImage: "images/flutter_candies_logo.png",
-                              logoWidth: loginSize,
-                              logoHeight: loginSize,
-                              logoFrameOffsetY: logoFrameOffsetY,
-                            ),
-                            sloganConfig: SloganConfig(
-                              sloganIsHidden: false,
-                              sloganText: '欢迎登录FlutterCandies',
-                              sloganTextSize: sloganTextSize,
-                              sloganFrameOffsetY: sloganFrameOffsetY,
-                            ),
-                            phoneNumberConfig: PhoneNumberConfig(
-                              numberFontSize: 24,
-                              numberFrameOffsetY: numberFrameOffsetY,
-                              numberColor: Colors.pinkAccent.toHex(),
-                            ),
-                            loginButtonConfig: LoginButtonConfig(
-                              loginBtnTextColor: "#F9F9F9",
-                              loginBtnNormalImage:
-                                  "images/login_btn_normal.png",
-                              loginBtnUnableImage:
-                                  "images/login_btn_unable.png",
-                              loginBtnPressedImage:
-                                  "images/login_btn_press.png",
-                            ),
-                            changeButtonConfig: const ChangeButtonConfig(
-                              changeBtnTextColor: "#A1A1A1",
-                            ),
-                            customViewBlockList: [
-                              CustomViewBlock(
-                                viewId: 1,
-                                width: 18,
-                                height: 18,
-                                offsetX: 20,
-                                offsetY:
-                                    Platform.isAndroid ? 0 : kToolbarHeight,
-                                image: "images/icon_close_gray.png",
-                              ),
-                            ],
-                          ),
+                          authUIConfig: extraUIConfig,
                         ),
                       );
                     },
@@ -224,6 +166,95 @@ class _DebugPageState extends State<DebugPage> {
           ],
         ),
       ),
+    );
+  }
+
+  FullScreenUIConfig _extraUIBuilder(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    const padding = 8.0;
+    double loginSize = 100;
+    double logoFrameOffsetY = (Platform.isAndroid ? 20 : 120) + kToolbarHeight;
+    double sloganFrameOffsetY = logoFrameOffsetY + loginSize + padding;
+    int sloganTextSize = 28;
+    double numberFrameOffsetY = sloganFrameOffsetY + sloganTextSize + padding;
+    int changeBtnTextSize = 14;
+    double changeBtnFrameOffsetY =
+        screenSize.height * (Platform.isAndroid ? 0.65 : 0.75);
+    double iconSize = 48;
+    double iconPadding = 12;
+    double iconTotalSize = 48 * 3 + iconPadding * 2;
+    double iconOffsetX1 = screenSize.width * 0.5 - iconTotalSize * 0.5;
+    double iconOffsetY = changeBtnFrameOffsetY + changeBtnTextSize + 18;
+    return FullScreenUIConfig(
+      navConfig: const NavConfig(
+        navIsHidden: true,
+      ),
+      backgroundImage: "images/app_bg.png",
+      logoConfig: LogoConfig(
+        logoIsHidden: false,
+        logoImage: "images/flutter_candies_logo.png",
+        logoWidth: loginSize,
+        logoHeight: loginSize,
+        logoFrameOffsetY: logoFrameOffsetY,
+      ),
+      sloganConfig: SloganConfig(
+        sloganIsHidden: false,
+        sloganText: '欢迎登录FlutterCandies',
+        sloganTextSize: sloganTextSize,
+        sloganFrameOffsetY: sloganFrameOffsetY,
+      ),
+      phoneNumberConfig: PhoneNumberConfig(
+        numberFontSize: 24,
+        numberFrameOffsetY: numberFrameOffsetY,
+        numberColor: Colors.pinkAccent.toHex(),
+      ),
+      loginButtonConfig: LoginButtonConfig(
+        loginBtnTextColor: "#F9F9F9",
+        loginBtnNormalImage: "images/login_btn_normal.png",
+        loginBtnUnableImage: "images/login_btn_unable.png",
+        loginBtnPressedImage: "images/login_btn_press.png",
+      ),
+      changeButtonConfig: ChangeButtonConfig(
+        changeBtnTextColor: "#A1A1A1",
+        changeBtnFrameOffsetY: changeBtnFrameOffsetY,
+        changeBtnTextSize: changeBtnTextSize,
+      ),
+      customViewBlockList: [
+        //关闭按钮
+        CustomViewBlock(
+          viewId: 1,
+          width: 18,
+          height: 18,
+          offsetX: 20,
+          offsetY: Platform.isAndroid ? 0 : kToolbarHeight,
+          image: "images/icon_close_gray.png",
+        ),
+        //其他登录方式
+        CustomViewBlock(
+          viewId: 2,
+          width: iconSize,
+          height: iconSize,
+          offsetX: iconOffsetX1,
+          offsetY: iconOffsetY,
+          image: "images/wx.png",
+        ),
+        CustomViewBlock(
+          viewId: 3,
+          width: iconSize,
+          height: iconSize,
+          offsetX: iconOffsetX1 + iconSize + iconPadding,
+          offsetY: iconOffsetY,
+          image: "images/tb.png",
+        ),
+        CustomViewBlock(
+          viewId: 4,
+          width: iconSize,
+          height: iconSize,
+          offsetX: iconOffsetX1 + iconSize * 2 + iconPadding * 2,
+          offsetY: iconOffsetY,
+          image: "images/wb.png",
+        ),
+      ],
     );
   }
 

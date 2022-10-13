@@ -1,47 +1,27 @@
 package com.fluttercandies.flutter_ali_auth.config;
 
-import static com.fluttercandies.flutter_ali_auth.Constant.*;
-import static com.fluttercandies.flutter_ali_auth.utils.AppUtils.dp2px;
+import static com.fluttercandies.flutter_ali_auth.utils.Constant.*;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.pm.ActivityInfo;
-import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
-import android.util.Log;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
-import com.fluttercandies.flutter_ali_auth.AuthClient;
 import com.fluttercandies.flutter_ali_auth.R;
-import com.fluttercandies.flutter_ali_auth.helper.CustomAuthUIControlClickListener;
 import com.fluttercandies.flutter_ali_auth.model.AuthUIModel;
-import com.fluttercandies.flutter_ali_auth.model.CustomViewBlock;
-import com.mobile.auth.gatewayauth.AuthRegisterViewConfig;
 import com.mobile.auth.gatewayauth.AuthUIConfig;
-import com.mobile.auth.gatewayauth.CustomInterface;
 import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper;
-
-import java.io.InputStream;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.EventChannel;
 
 public class FullPortConfig extends BaseUIConfig {
-    private final String TAG = "全屏竖屏样式";
-
-    public FullPortConfig(Activity activity, PhoneNumberAuthHelper authHelper, EventChannel.EventSink eventSink) {
-        super(activity, authHelper, eventSink);
+    public FullPortConfig(Activity activity, PhoneNumberAuthHelper authHelper, EventChannel.EventSink eventSink, FlutterPlugin.FlutterAssets flutterAssets) {
+        super(activity, authHelper, eventSink,flutterAssets);
     }
-
-
     @Override
-    public void configAuthPage(FlutterPlugin.FlutterPluginBinding flutterPluginBinding, AuthUIModel authUIModel) {
-
-        FlutterPlugin.FlutterAssets flutterAssets = flutterPluginBinding.getFlutterAssets();
+    public void configAuthPage( AuthUIModel authUIModel) {
 
         CustomAuthUIControlClickListener customAuthUIControlClickListener = new CustomAuthUIControlClickListener(mAuthHelper, mContext, mEventSink);
 
@@ -65,8 +45,7 @@ public class FullPortConfig extends BaseUIConfig {
 
         if (!logoIsHidden) {
             try {
-                logoPath = flutterAssets.getAssetFilePathByName(authUIModel.logoImage);
-                Log.i("FullPortConfig", "logoPath:" + logoPath);
+                logoPath = mFlutterAssets.getAssetFilePathByName(authUIModel.logoImage);
             } catch (Exception e) {
                 e.printStackTrace();
                 logoPath = "mytel_app_launcher";
@@ -100,7 +79,7 @@ public class FullPortConfig extends BaseUIConfig {
         String loginBtnImage = null;
         if (authUIModel.loginBtnNormalImage != null) {
             try {
-                loginBtnImage = flutterAssets.getAssetFilePathByName(authUIModel.loginBtnNormalImage);
+                loginBtnImage = mFlutterAssets.getAssetFilePathByName(authUIModel.loginBtnNormalImage);
             } catch (Exception e) {
                 e.printStackTrace();
                 loginBtnImage = "login_btn_bg";
@@ -124,7 +103,7 @@ public class FullPortConfig extends BaseUIConfig {
         String backgroundImagePath = null;
         if (authUIModel.backgroundImage != null) {
             try {
-                backgroundImagePath = flutterAssets.getAssetFilePathByName(authUIModel.backgroundImage);
+                backgroundImagePath = mFlutterAssets.getAssetFilePathByName(authUIModel.backgroundImage);
                 System.out.println(backgroundImagePath);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -133,9 +112,8 @@ public class FullPortConfig extends BaseUIConfig {
 
         ///自定义控件
         if (authUIModel.customViewBlockList != null) {
-            buildCustomView(flutterAssets, authUIModel.customViewBlockList.get(0));
+            buildCustomView(authUIModel.customViewBlockList);
         }
-
 
         mAuthHelper.setAuthUIConfig(new AuthUIConfig.Builder()
                 .setStatusBarColor(Color.WHITE)
@@ -207,48 +185,5 @@ public class FullPortConfig extends BaseUIConfig {
                 .create());
     }
 
-    private void buildCustomView(FlutterPlugin.FlutterAssets flutterAssets, CustomViewBlock customViewBlock) {
-        System.out.println("customViewBlock:"+customViewBlock);
-        ImageView imageView = new ImageView(mContext);
-        String flutterAssetFilePath = flutterAssets.getAssetFilePathByName(customViewBlock.image);
-        AssetManager assets = mContext.getAssets();
-        try {
-            InputStream open = assets.open(flutterAssetFilePath);
-            Bitmap bitmap = BitmapFactory.decodeStream(open);
-            imageView.setImageBitmap(bitmap);
-        }catch (Exception e){
-            System.out.println("加载失败");
-            e.printStackTrace();
-        }
-        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-
-        int width = dp2px(mContext, customViewBlock.width == null ? 30 : customViewBlock.width.floatValue());
-
-        int height = dp2px(mContext, customViewBlock.height == null ? 30 : customViewBlock.height.floatValue());
-
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
-
-        int offsetX = dp2px(mContext, customViewBlock.offsetX == null ? 0 : customViewBlock.offsetX.floatValue());
-
-        int offsetY = dp2px(mContext, customViewBlock.offsetY == null ? 0 : customViewBlock.offsetY.floatValue());
-
-        layoutParams.setMargins(offsetX,  offsetY, 0, 0);
-
-        System.out.println("offsetY:" + offsetY);
-
-        imageView.setLayoutParams(layoutParams);
-
-        mAuthHelper.addAuthRegistViewConfig(customViewBlock.viewId.toString(), new AuthRegisterViewConfig.Builder()
-                .setView(imageView)
-                .setRootViewId(AuthRegisterViewConfig.RootViewId.ROOT_VIEW_ID_BODY)
-                .setCustomInterface(new CustomInterface() {
-                    @Override
-                    public void onClick(Context context) {
-                        mAuthHelper.quitLoginPage();
-                        AuthClient.getInstance().clearCached();
-                    }
-                }).build()
-        );
-    }
 
 }

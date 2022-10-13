@@ -1,11 +1,11 @@
 package com.fluttercandies.flutter_ali_auth.config;
 
-import static com.fluttercandies.flutter_ali_auth.Constant.Font_12;
-import static com.fluttercandies.flutter_ali_auth.Constant.Font_16;
-import static com.fluttercandies.flutter_ali_auth.Constant.Font_20;
-import static com.fluttercandies.flutter_ali_auth.Constant.kAlertLogoOffset;
-import static com.fluttercandies.flutter_ali_auth.Constant.kLogoSize;
-import static com.fluttercandies.flutter_ali_auth.Constant.kPadding;
+import static com.fluttercandies.flutter_ali_auth.utils.Constant.Font_12;
+import static com.fluttercandies.flutter_ali_auth.utils.Constant.Font_16;
+import static com.fluttercandies.flutter_ali_auth.utils.Constant.Font_20;
+import static com.fluttercandies.flutter_ali_auth.utils.Constant.kAlertLogoOffset;
+import static com.fluttercandies.flutter_ali_auth.utils.Constant.kLogoSize;
+import static com.fluttercandies.flutter_ali_auth.utils.Constant.kPadding;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
@@ -16,7 +16,6 @@ import android.widget.ImageView;
 
 import com.fluttercandies.flutter_ali_auth.R;
 import com.fluttercandies.flutter_ali_auth.model.AuthUIModel;
-import com.mobile.auth.gatewayauth.AuthRegisterViewConfig;
 import com.mobile.auth.gatewayauth.AuthRegisterXmlConfig;
 import com.mobile.auth.gatewayauth.AuthUIConfig;
 import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper;
@@ -32,13 +31,13 @@ public class DialogPortConfig extends BaseUIConfig {
      */
     private String mPackageName;
 
-    public DialogPortConfig(Activity activity, PhoneNumberAuthHelper authHelper, EventChannel.EventSink eventSink) {
-        super(activity, authHelper,eventSink);
+    public DialogPortConfig(Activity activity, PhoneNumberAuthHelper authHelper, EventChannel.EventSink eventSink, FlutterPlugin.FlutterAssets flutterAssets) {
+        super(activity, authHelper,eventSink,flutterAssets);
         mPackageName = AppUtils.getPackageName(activity);
     }
 
     @Override
-    public void configAuthPage(FlutterPlugin.FlutterPluginBinding flutterPluginBinding, AuthUIModel authUIModel){
+    public void configAuthPage( AuthUIModel authUIModel){
         int authPageOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT;
 
         if (Build.VERSION.SDK_INT == 26) {
@@ -64,8 +63,7 @@ public class DialogPortConfig extends BaseUIConfig {
 
         if (!logoIsHidden) {
             try {
-                FlutterPlugin.FlutterAssets flutterAssets = flutterPluginBinding.getFlutterAssets();
-                logoPath = flutterAssets.getAssetFilePathByName(authUIModel.logoImage);
+                logoPath = mFlutterAssets.getAssetFilePathByName(authUIModel.logoImage);
             } catch (Exception e) {
                 e.printStackTrace();
                 logoPath = "mytel_app_launcher";

@@ -40,6 +40,7 @@ class _$AuthConfigCWProxyImpl implements _$AuthConfigCWProxy {
     Object? authUIConfig = const $CopyWithPlaceholder(),
     Object? authUIStyle = const $CopyWithPlaceholder(),
     Object? iosSdk = const $CopyWithPlaceholder(),
+    Object? enableLog = const $CopyWithPlaceholder(),
   }) {
     return AuthConfig(
       androidSdk:
@@ -51,7 +52,10 @@ class _$AuthConfigCWProxyImpl implements _$AuthConfigCWProxy {
           authUIConfig == const $CopyWithPlaceholder() || authUIConfig == null
               ? _value.authUIConfig
               // ignore: cast_nullable_to_non_nullable
-              : authUIConfig as dynamic,
+              : authUIConfig as AuthUIConfig,
+      enableLog: enableLog == const $CopyWithPlaceholder() || enableLog == null
+          ? _value.enableLog
+          : enableLog as bool,
       authUIStyle:
           authUIStyle == const $CopyWithPlaceholder() || authUIStyle == null
               ? _value.authUIStyle

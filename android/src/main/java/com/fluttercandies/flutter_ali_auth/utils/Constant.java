@@ -1,4 +1,4 @@
-package com.fluttercandies.flutter_ali_auth;
+package com.fluttercandies.flutter_ali_auth.utils;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;

@@ -3,18 +3,33 @@ package com.fluttercandies.flutter_ali_auth.config;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.TypedValue;
 import android.view.Surface;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import com.fluttercandies.flutter_ali_auth.Constant;
+
+import com.fluttercandies.flutter_ali_auth.AuthClient;
+import com.fluttercandies.flutter_ali_auth.utils.Constant;
+import com.fluttercandies.flutter_ali_auth.model.AuthResponseModel;
 import com.fluttercandies.flutter_ali_auth.model.AuthUIModel;
+import com.fluttercandies.flutter_ali_auth.model.CustomViewBlock;
 import com.fluttercandies.flutter_ali_auth.utils.AppUtils;
+import com.mobile.auth.gatewayauth.AuthRegisterViewConfig;
 import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper;
 import static com.fluttercandies.flutter_ali_auth.utils.AppUtils.dp2px;
+
+import androidx.annotation.NonNull;
+
 import com.fluttercandies.flutter_ali_auth.R;
+
+import java.io.InputStream;
+import java.util.List;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.EventChannel;
@@ -27,26 +42,31 @@ public abstract class BaseUIConfig {
     public int mScreenWidthDp;
     public int mScreenHeightDp;
     public EventChannel.EventSink mEventSink;
+    public FlutterPlugin.FlutterAssets mFlutterAssets;
 
-    public static BaseUIConfig init(int type, Activity activity, PhoneNumberAuthHelper authHelper, EventChannel.EventSink eventSink) {
+    public BaseUIConfig(Activity activity, PhoneNumberAuthHelper authHelper,EventChannel.EventSink eventSink, FlutterPlugin.FlutterAssets flutterAssets) {
+        mActivity = activity;
+        mContext = activity.getApplicationContext();
+        mAuthHelper = authHelper;
+        mEventSink = eventSink;
+        mFlutterAssets = flutterAssets;
+    }
+
+
+    public static BaseUIConfig init(int type, Activity activity, PhoneNumberAuthHelper authHelper, EventChannel.EventSink eventSink,FlutterPlugin.FlutterAssets flutterAssets) {
         switch (type) {
             case Constant.FULL_PORT:
-                return new FullPortConfig(activity, authHelper,eventSink);
+                return new FullPortConfig(activity, authHelper,eventSink,flutterAssets);
             case Constant.DIALOG_BOTTOM:
-                return new DialogBottomConfig(activity, authHelper,eventSink);
+                return new DialogBottomConfig(activity, authHelper,eventSink,flutterAssets);
             case Constant.DIALOG_PORT:
-                return new DialogPortConfig(activity, authHelper,eventSink);
+                return new DialogPortConfig(activity, authHelper,eventSink,flutterAssets);
             default:
                 return null;
         }
     }
 
-    public BaseUIConfig(Activity activity, PhoneNumberAuthHelper authHelper,EventChannel.EventSink eventSink) {
-        mActivity = activity;
-        mContext = activity.getApplicationContext();
-        mAuthHelper = authHelper;
-        mEventSink = eventSink;
-    }
+
 
     protected View initSwitchView() {
         TextView switchTV = new TextView(mActivity);
@@ -93,7 +113,7 @@ public abstract class BaseUIConfig {
         }
     }
 
-    public abstract void configAuthPage(FlutterPlugin.FlutterPluginBinding flutterPluginBinding,AuthUIModel authUIModel);
+    public abstract void configAuthPage(AuthUIModel authUIModel);
 
     /**
      *  在横屏APP弹竖屏一键登录页面或者竖屏APP弹横屏授权页时处理特殊逻辑
@@ -102,4 +122,41 @@ public abstract class BaseUIConfig {
     public void onResume() {
 
     }
+
+    public void buildCustomView( @NonNull List<CustomViewBlock> customViewConfigList) {
+        for (CustomViewBlock customViewBlock : customViewConfigList) {
+            ImageView imageView = new ImageView(mContext);
+            String flutterAssetFilePath = mFlutterAssets.getAssetFilePathByName(customViewBlock.image);
+            AssetManager assets = mContext.getAssets();
+            try {
+                InputStream open = assets.open(flutterAssetFilePath);
+                Bitmap bitmap = BitmapFactory.decodeStream(open);
+                imageView.setImageBitmap(bitmap);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            int width = dp2px(mContext, customViewBlock.width == null ? 30 : customViewBlock.width.floatValue());
+            int height = dp2px(mContext, customViewBlock.height == null ? 30 : customViewBlock.height.floatValue());
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
+            int offsetX = dp2px(mContext, customViewBlock.offsetX == null ? 0 : customViewBlock.offsetX.floatValue());
+            int offsetY = dp2px(mContext, customViewBlock.offsetY == null ? 0 : customViewBlock.offsetY.floatValue());
+            layoutParams.setMargins(offsetX,  offsetY, 0, 0);
+            imageView.setLayoutParams(layoutParams);
+            mAuthHelper.addAuthRegistViewConfig(customViewBlock.viewId.toString(), new AuthRegisterViewConfig.Builder()
+                    .setView(imageView)
+                    .setRootViewId(AuthRegisterViewConfig.RootViewId.ROOT_VIEW_ID_BODY)
+                    .setCustomInterface(context -> {
+
+                        AuthResponseModel authResponseModel = AuthResponseModel.onCustomViewBlocTap(customViewBlock.viewId);
+                        mEventSink.success(authResponseModel.toJson());
+                        mAuthHelper.quitLoginPage();
+                        AuthClient.getInstance().clearCached();
+
+                    }).build()
+            );
+        }
+    }
+
+
 }

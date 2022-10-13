@@ -22,7 +22,7 @@ extension String {
         }
         // 如果传入的字符数量不足6位按照后边都为0处理，当然你也可以进行其它操作
         if hex.count < 6 {
-            for _ in 0..<6-hex.count {
+            for _ in 0..<6 - hex.count {
                 hex += "0"
             }
         }
@@ -38,4 +38,3 @@ extension String {
         return UIColor(red: CGFloat(red)/255.0, green: CGFloat(green)/255.0, blue: CGFloat(blue)/255.0, alpha: alpha)
     }
 }
-

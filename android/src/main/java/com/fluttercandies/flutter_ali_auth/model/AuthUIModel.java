@@ -1,7 +1,7 @@
 package com.fluttercandies.flutter_ali_auth.model;
 
-import static com.fluttercandies.flutter_ali_auth.Constant.Font_12;
-import static com.fluttercandies.flutter_ali_auth.Constant.Font_14;
+import static com.fluttercandies.flutter_ali_auth.utils.Constant.Font_12;
+import static com.fluttercandies.flutter_ali_auth.utils.Constant.Font_14;
 
 import androidx.annotation.NonNull;
 

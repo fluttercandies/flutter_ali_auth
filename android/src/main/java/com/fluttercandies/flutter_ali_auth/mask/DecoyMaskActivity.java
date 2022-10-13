@@ -7,11 +7,10 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.fluttercandies.flutter_ali_auth.AuthClient;
-import com.fluttercandies.flutter_ali_auth.Constant;
+import com.fluttercandies.flutter_ali_auth.utils.Constant;
 import com.fluttercandies.flutter_ali_auth.R;
 import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper;
 
-import java.lang.ref.WeakReference;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +27,7 @@ public class DecoyMaskActivity extends Activity {
         AuthClient authClient = AuthClient.getInstance();
 
         // override the auth path open enter animation
-        if (authClient.getAuthModel().authUIStyle == Constant.DIALOG_PORT){
+        if (authClient.getAuthModel().getAuthUIStyle() == Constant.DIALOG_PORT){
             overridePendingTransition(R.anim.zoom_in,R.anim.stay_animation);
         }else{
             overridePendingTransition(R.anim.slide_up,R.anim.stay_animation);

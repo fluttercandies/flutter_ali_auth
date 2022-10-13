@@ -178,9 +178,9 @@ extension AuthUIBuilder {
 
             let offsetX = CGFloat(config.loginBtnFrameOffsetX ?? Float(screenSize.width / 2 - kLoginButtonSize.width / 2))
 
-            let kMiddleHeight = Float(screenSize.height / 2)
+            // let kMiddleHeight = Float(screenSize.height / 2)
 
-            loginButtonOffsetY = config.loginBtnFrameOffsetY ?? kMiddleHeight + kPadding
+            loginButtonOffsetY = config.loginBtnFrameOffsetY ?? Float(screenSize.height) * 0.55 + kPadding
 
             let offsetY = CGFloat(loginButtonOffsetY)
 
@@ -292,7 +292,6 @@ extension AuthUIBuilder {
     }
 
     func buildCustomViewBlock(model: TXCustomModel, customViewConfigList: [CustomViewBlock]) {
-        print("customViewConfigList:\(customViewConfigList)")
         var customViewList: [UIView] = []
 
         for index in 0 ..< customViewConfigList.count {
@@ -317,7 +316,7 @@ extension AuthUIBuilder {
             if let image = customViewConfig.image {
                 if let imageFromFlutter = FlutterAssetImage(image) {
                     customView.setImage(imageFromFlutter, for: UIControl.State.normal)
-                    customView.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+//                    customView.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
                     customView.imageView?.contentMode = .scaleAspectFill
                 }
             }
@@ -348,18 +347,18 @@ extension AuthUIBuilder {
                 let width: Double = customViewConfig.width ?? 40
                 let height: Double = customViewConfig.height ?? 40
 
-                print("CGRect:\(CGRect(x: x, y: y, width: width, height: height))")
                 customViewBlock.frame = CGRect(x: x, y: y, width: width, height: height)
             }
         }
     }
 
     @objc func customBtnOnTap(sender: UIButton) {
-        let responseModel = ResponseModel(code: OnCustomViewTapCode, msg: String(describing: sender.tag))
+        // 回调自定义控件的点击事件，并且把viewId传递到flutter
+        if let callback = customViewBlockCallback {
+            let responseModel = ResponseModel(code: OnCustomViewTapCode, msg: String(describing: sender.tag))
 
-        print("customBtnOnTap,tag:\(sender.tag)")
-
-        onCustomViewTap?(responseModel)
+            callback(responseModel)
+        }
 
         TXCommonHandler.sharedInstance().cancelLoginVC(animated: true, complete: nil)
     }

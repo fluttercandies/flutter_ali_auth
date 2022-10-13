@@ -7,6 +7,7 @@ class AuthConfig {
   const AuthConfig({
     required this.iosSdk,
     required this.androidSdk,
+    required this.enableLog,
     this.authUIStyle = AuthUIStyle.fullScreen,
     this.authUIConfig,
   });
@@ -15,11 +16,13 @@ class AuthConfig {
   final String androidSdk;
   final AuthUIStyle authUIStyle;
   final AuthUIConfig? authUIConfig;
+  final bool enableLog;
 
   Map<String, dynamic> toJson() {
     return {
       'iosSdk': iosSdk,
       'androidSdk': androidSdk,
+      'enableLog': enableLog,
       'authUIStyle': authUIStyle.index,
       ...?authUIConfig?.toJson(),
     }..removeWhere((key, value) => value == null);

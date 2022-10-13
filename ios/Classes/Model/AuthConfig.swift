@@ -9,20 +9,18 @@ import Foundation
 
 struct AuthConfig {
     var iosSdk: String
+    var enableLog: Bool
     var authUIStyle: AuthUIStyle
     var authUIConfig: AuthUIConfig
 
     init(params: [String: Any]) {
-        //print("params:\(params)")
-        iosSdk = params["iosSdk"] as! String
-        let index = params["authUIStyle"] as! Int
+        iosSdk = params["iosSdk"] as? String ?? ""
+        enableLog = params["enableLog"] as? Bool ?? false
+        let index = params["authUIStyle"] as? Int ?? 0
         authUIStyle = AuthUIStyle(rawValue: index) ?? AuthUIStyle.FullScreen
-
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
-
         authUIConfig = (try? decoder.decode(AuthUIConfig.self, from: JSONSerialization.data(withJSONObject: params, options: []))) ?? AuthUIConfig()
-        //print("authUIConfig:\(authUIConfig)")
     }
 }
 
