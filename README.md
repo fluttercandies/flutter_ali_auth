@@ -121,12 +121,13 @@ authConfig: const AuthConfig(),
 ```
 需要通过 `AuthConfig` 来配置安卓和IOS端的秘钥，以及UI的配置 `AuthUIConfig`,成员如下
 
-| 参数名 | 类型 | 描述 |
-| --- | --- | --- |
-| iosSdk | String | IOS秘钥 |
-| androidSdk | String | Android秘钥 |
-| authUIStyle | Enum | fullScreen(全屏) bottomSheet(底部弹窗) alert(中间弹窗) 目前暂时配置了三种常用竖屏的形式,更多形式参考[官方文档](https://help.aliyun.com/document_detail/144232.html) 后续将陆续支持 |
-| authUIConfig | AuthUIConfig | UI配置类 |
+| 参数名 | 类型           | 描述                                                                                                                                      |
+| --- |--------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| iosSdk | String       | IOS秘钥                                                                                                                                   |
+| androidSdk | String       | Android秘钥                                                                                                                               |
+| enableLog | bool         | 是否打印日志                                                                                                                                  |
+| authUIStyle | Enum         | fullScreen(全屏) bottomSheet(底部弹窗) alert(中间弹窗) 目前暂时配置了三种常用竖屏的形式,更多形式参考[官方文档](https://help.aliyun.com/document_detail/144232.html) 后续将陆续支持 |
+| authUIConfig | AuthUIConfig | UI配置类                                                                                                                                   |
 
 `AuthUIConfig`为UI的配置类型,分为全屏UI配置 `FullScreenUIConfig` 和弹窗UI配置 `AlertUIConfig`
 
