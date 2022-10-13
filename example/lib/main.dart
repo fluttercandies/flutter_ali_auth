@@ -20,7 +20,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  //String _platformVersion = '系统版本';
   String _aliAuthVersion = '获取阿里云插件版本中';
 
   @override
@@ -33,26 +32,15 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
-    String platformVersion;
     String aliAuthVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
     try {
-      //platformVersion = await AliAuthClient.getPlatformVersion() ?? '未知系统版本';
       aliAuthVersion = (await AliAuthClient.version) as String? ?? '未知阿里云插件版本';
     } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
       aliAuthVersion = 'Failed to get ali auth plugin version.';
     }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
     if (!mounted) return;
     setState(() {
-      //_platformVersion = platformVersion;
       _aliAuthVersion = aliAuthVersion;
     });
   }

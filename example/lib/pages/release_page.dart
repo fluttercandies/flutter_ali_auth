@@ -47,7 +47,7 @@ class _ReleasePageState extends State<ReleasePage> {
               final res = await AliAuthClient.initSdk(
                 authConfig: _authConfig,
               );
-              print(res);
+              //print(res);
             },
           ),
           ElevatedButton(
