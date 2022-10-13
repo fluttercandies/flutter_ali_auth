@@ -4,15 +4,12 @@ import 'auth_ui_config.dart';
 part 'full_screen_ui_config.g.dart';
 
 class FullScreenUIConfig extends AuthUIConfig {
-  NavConfig? navConfig;
+  final NavConfig? navConfig;
+  final String? backgroundColor; //十六进制的颜色
+  final String? backgroundImage;
+  final bool? prefersStatusBarHidden; //状态栏是否隐藏，默认显示
 
-  String? backgroundColor; //十六进制的颜色
-
-  String? backgroundImage;
-
-  bool? prefersStatusBarHidden; //状态栏是否隐藏，默认显示
-
-  FullScreenUIConfig({
+  const FullScreenUIConfig({
     this.navConfig,
     this.backgroundImage,
     this.backgroundColor,

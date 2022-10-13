@@ -6,21 +6,15 @@ import 'auth_ui_config.dart';
 part 'alert_ui_config.g.dart';
 
 class AlertUIConfig extends AuthUIConfig {
-  AlertTitleBarConfig? alertTitleBarConfig;
+  final AlertTitleBarConfig? alertTitleBarConfig;
+  final String? alertContentViewColor; //十六进制的颜色
+  final String? alertBlurViewColor; //底部蒙层背景颜色，默认黑色
+  final double? alertBlurViewAlpha; //底部蒙层背景透明度，默认0.5
+  final double? alertBorderRadius; // 四个角的圆角，默认为10
+  final double? alertWindowWidth;
+  final double? alertWindowHeight;
 
-  String? alertContentViewColor; //十六进制的颜色
-
-  String? alertBlurViewColor; //底部蒙层背景颜色，默认黑色
-
-  double? alertBlurViewAlpha; //底部蒙层背景透明度，默认0.5
-
-  double? alertBorderRadius; // 四个角的圆角，默认为10
-
-  double? alertWindowWidth;
-
-  double? alertWindowHeight;
-
-  AlertUIConfig({
+  const AlertUIConfig({
     this.alertTitleBarConfig,
     this.alertContentViewColor,
     this.alertBlurViewColor,

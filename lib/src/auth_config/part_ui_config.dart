@@ -21,22 +21,22 @@ extension HexColor on Color {
 
 @JsonSerializable(createFactory: false, includeIfNull: false)
 class NavConfig {
-  bool? navIsHidden;
-  String? navTitle;
-  String? navTitleColor;
-  int? navTitleSize;
-  double? navFrameOffsetX;
-  double? navFrameOffsetY;
+  final bool? navIsHidden;
+  final String? navTitle;
+  final String? navTitleColor;
+  final int? navTitleSize;
+  final double? navFrameOffsetX;
+  final double? navFrameOffsetY;
 
-  String? navColor;
+  final String? navColor;
 
-  bool? hideNavBackItem;
+  final bool? hideNavBackItem;
 
-  String? navBackImage;
-  double? navBackButtonOffsetX;
-  double? navBackButtonOffsetY;
+  final String? navBackImage;
+  final double? navBackButtonOffsetX;
+  final double? navBackButtonOffsetY;
 
-  NavConfig({
+  const NavConfig({
     this.navIsHidden,
     this.navTitle,
     this.navTitleColor,
@@ -56,19 +56,19 @@ class NavConfig {
 //alert title bar 设置 仅弹窗生效
 @JsonSerializable(createFactory: false, includeIfNull: false)
 class AlertTitleBarConfig {
-  bool? alertBarIsHidden;
-  bool? alertCloseItemIsHidden;
-  String? alertTitleBarColor;
+  final bool? alertBarIsHidden;
+  final bool? alertCloseItemIsHidden;
+  final String? alertTitleBarColor;
 
-  String? alertTitleText;
-  String? alertTitleTextColor;
-  int? alertTittleTextSize;
+  final String? alertTitleText;
+  final String? alertTitleTextColor;
+  final int? alertTittleTextSize;
 
-  String? alertCloseImage;
-  double? alertCloseImageOffsetX;
-  double? alertCloseImageOffsetY;
+  final String? alertCloseImage;
+  final double? alertCloseImageOffsetX;
+  final double? alertCloseImageOffsetY;
 
-  AlertTitleBarConfig({
+  const AlertTitleBarConfig({
     this.alertBarIsHidden,
     this.alertCloseItemIsHidden,
     this.alertTitleBarColor,
@@ -86,15 +86,15 @@ class AlertTitleBarConfig {
 //logo设置
 @JsonSerializable(createFactory: false, includeIfNull: false)
 class LogoConfig {
-  bool? logoIsHidden; //默认显示
-  String? logoImage;
-  double? logoWidth;
-  double? logoHeight;
+  final bool? logoIsHidden; //默认显示
+  final String? logoImage;
+  final double? logoWidth;
+  final double? logoHeight;
 
-  double? logoFrameOffsetX;
-  double? logoFrameOffsetY;
+  final double? logoFrameOffsetX;
+  final double? logoFrameOffsetY;
 
-  LogoConfig({
+  const LogoConfig({
     this.logoIsHidden,
     this.logoImage,
     this.logoWidth,
@@ -109,15 +109,15 @@ class LogoConfig {
 //slogan设置
 @JsonSerializable(createFactory: false, includeIfNull: false)
 class SloganConfig {
-  bool? sloganIsHidden;
-  String? sloganText;
-  String? sloganTextColor;
-  int? sloganTextSize;
+  final bool? sloganIsHidden;
+  final String? sloganText;
+  final String? sloganTextColor;
+  final int? sloganTextSize;
 
-  double? sloganFrameOffsetX;
-  double? sloganFrameOffsetY;
+  final double? sloganFrameOffsetX;
+  final double? sloganFrameOffsetY;
 
-  SloganConfig({
+  const SloganConfig({
     this.sloganIsHidden,
     this.sloganText,
     this.sloganTextColor,
@@ -132,13 +132,13 @@ class SloganConfig {
 //phone number设置
 @JsonSerializable(createFactory: false, includeIfNull: false)
 class PhoneNumberConfig {
-  String? numberColor;
-  int? numberFontSize;
+  final String? numberColor;
+  final int? numberFontSize;
 
-  double? numberFrameOffsetX;
-  double? numberFrameOffsetY;
+  final double? numberFrameOffsetX;
+  final double? numberFrameOffsetY;
 
-  PhoneNumberConfig({
+  const PhoneNumberConfig({
     this.numberColor,
     this.numberFontSize,
     this.numberFrameOffsetX,
@@ -151,22 +151,22 @@ class PhoneNumberConfig {
 //login button设置
 @JsonSerializable(createFactory: false, includeIfNull: false)
 class LoginButtonConfig {
-  String? loginBtnText;
-  String? loginBtnTextColor;
-  int? loginBtnTextSize;
+  final String? loginBtnText;
+  final String? loginBtnTextColor;
+  final int? loginBtnTextSize;
 
   ////登录按钮背景图片组  [激活状态的图片,失效状态的图片,高亮状态的图片]
-  String? loginBtnNormalImage;
-  String? loginBtnUnableImage;
-  String? loginBtnPressedImage;
+  final String? loginBtnNormalImage;
+  final String? loginBtnUnableImage;
+  final String? loginBtnPressedImage;
 
-  double? loginBtnFrameOffsetX;
-  double? loginBtnFrameOffsetY;
+  final double? loginBtnFrameOffsetX;
+  final double? loginBtnFrameOffsetY;
 
-  double? loginBtnWidth;
-  double? loginBtnHeight; //登录按钮高度 默认高度50.0pt 小于20.0pt不生效
+  final double? loginBtnWidth;
+  final double? loginBtnHeight; //登录按钮高度 默认高度50.0pt 小于20.0pt不生效
 
-  LoginButtonConfig({
+  const LoginButtonConfig({
     this.loginBtnText,
     this.loginBtnTextColor,
     this.loginBtnTextSize,
@@ -185,14 +185,14 @@ class LoginButtonConfig {
 // change button 设置
 @JsonSerializable(createFactory: false, includeIfNull: false)
 class ChangeButtonConfig {
-  bool? changeBtnIsHidden;
-  String? changeBtnTitle;
-  String? changeBtnTextColor;
-  int? changeBtnTextSize;
-  double? changeBtnFrameOffsetX;
-  double? changeBtnFrameOffsetY;
+  final bool? changeBtnIsHidden;
+  final String? changeBtnTitle;
+  final String? changeBtnTextColor;
+  final int? changeBtnTextSize;
+  final double? changeBtnFrameOffsetX;
+  final double? changeBtnFrameOffsetY;
 
-  ChangeButtonConfig({
+  const ChangeButtonConfig({
     this.changeBtnIsHidden,
     this.changeBtnTitle,
     this.changeBtnTextColor,
@@ -207,13 +207,13 @@ class ChangeButtonConfig {
 //check box 设置
 @JsonSerializable(createFactory: false, includeIfNull: false)
 class CheckBoxConfig {
-  bool? checkBoxIsChecked;
-  bool? checkBoxIsHidden;
-  String? checkedImage; //[uncheckedImg,checkedImg]*
-  String? uncheckImage;
-  double? checkBoxWH;
+  final bool? checkBoxIsChecked;
+  final bool? checkBoxIsHidden;
+  final String? checkedImage; //[uncheckedImg,checkedImg]*
+  final String? uncheckImage;
+  final double? checkBoxWH;
 
-  CheckBoxConfig({
+  const CheckBoxConfig({
     this.checkBoxIsChecked,
     this.checkBoxIsHidden,
     this.checkedImage,
@@ -226,33 +226,33 @@ class CheckBoxConfig {
 
 @JsonSerializable(createFactory: false, includeIfNull: false)
 class PrivacyConfig {
-  String? privacyOneName;
-  String? privacyOneUrl;
-  String? privacyTwoName;
-  String? privacyTwoUrl;
-  String? privacyThreeName;
-  String? privacyThreeUrl;
+  final String? privacyOneName;
+  final String? privacyOneUrl;
+  final String? privacyTwoName;
+  final String? privacyTwoUrl;
+  final String? privacyThreeName;
+  final String? privacyThreeUrl;
 
-  int? privacyFontSize;
-  String? privacyFontColor;
+  final int? privacyFontSize;
+  final String? privacyFontColor;
 
-  double? privacyFrameOffsetX;
-  double? privacyFrameOffsetY;
+  final double? privacyFrameOffsetX;
+  final double? privacyFrameOffsetY;
 
   //协议名称之间连接字符串数组，默认 ["和","、","、"] ，即第一个为"和"，其他为"、"，按顺序读取，为空则取默认 ["和", "和"]
-  String? privacyConnectTexts;
+  final String? privacyConnectTexts;
 
   // privacyAlignment	long long	0
-  String? privacyPreText; // 协议文案支持居中、居左、居右设置，默认居左
-  String? privacySufText;
+  final String? privacyPreText; // 协议文案支持居中、居左、居右设置，默认居左
+  final String? privacySufText;
 
-  String? privacyOperatorPreText; //协议整体文案，后缀部分文案
+  final String? privacyOperatorPreText; //协议整体文案，后缀部分文案
 
-  String? privacyOperatorSufText; //协议整体文案，后缀部分文案
+  final String? privacyOperatorSufText; //协议整体文案，后缀部分文案
 
-  int? privacyOperatorIndex; // 运营商协议指定显示顺序，默认0，即第1个协议显示，最大值可为3，即第4个协议显示
+  final int? privacyOperatorIndex; // 运营商协议指定显示顺序，默认0，即第1个协议显示，最大值可为3，即第4个协议显示
 
-  PrivacyConfig({
+  const PrivacyConfig({
     this.privacyOneName,
     this.privacyOneUrl,
     this.privacyConnectTexts,
