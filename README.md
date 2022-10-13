@@ -29,13 +29,13 @@ Language: 中文
 
 | 全屏 | 底部弹窗 | 中间弹窗 |
 | --- | --- | --- |
-| ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/full_screen_image_ios.jpeg) | ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/bottomsheet_ios.PNG) | ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/alert_ios.PNG) |
+| ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/full_screen_image_ios.PNG "full_screen_image_ios") | ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/bottomsheet_ios.PNG) | ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/alert_ios.PNG) |
 
 ### Android
 
 | 全屏 | 底部弹窗 | 中间弹窗 |
 | --- | --- | --- |
-| ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/full_screen_android.jpg "full_screen_android") | ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/bottomsheet_android.jpg) | ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/alert_android.jpg) |
+| ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/full_screen_image_android.jpg "full_screen_image_android") | ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/bottomsheet_android.jpg) | ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/alert_android.jpg) |
 
 ## 准备工作 🔧
 

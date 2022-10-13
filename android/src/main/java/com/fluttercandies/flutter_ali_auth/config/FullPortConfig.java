@@ -232,14 +232,14 @@ public class FullPortConfig extends BaseUIConfig {
 
         int offsetY = dp2px(mContext, customViewBlock.offsetY == null ? 0 : customViewBlock.offsetY.floatValue());
 
-        layoutParams.setMargins(customViewBlock.offsetX.intValue(),  customViewBlock.offsetY.intValue(), 0, 0);
+        layoutParams.setMargins(offsetX,  offsetY, 0, 0);
 
         System.out.println("offsetY:" + offsetY);
 
         imageView.setLayoutParams(layoutParams);
 
         mAuthHelper.addAuthRegistViewConfig(customViewBlock.viewId.toString(), new AuthRegisterViewConfig.Builder()
-                .setView(initBackBtn())
+                .setView(imageView)
                 .setRootViewId(AuthRegisterViewConfig.RootViewId.ROOT_VIEW_ID_BODY)
                 .setCustomInterface(new CustomInterface() {
                     @Override
@@ -249,18 +249,6 @@ public class FullPortConfig extends BaseUIConfig {
                     }
                 }).build()
         );
-    }
-
-    private ImageView initBackBtn() {
-        ImageView pImageView = new ImageView(mContext);
-        pImageView.setImageResource(R.drawable.icon_close);
-        pImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        RelativeLayout.LayoutParams pParams = new RelativeLayout.LayoutParams(dp2px(mContext, 20), dp2px(mContext, 20));
-        pParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-        pParams.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
-        pParams.setMargins(dp2px(mContext, 12.0F), 0, 0, 0);
-        pImageView.setLayoutParams(pParams);
-        return pImageView;
     }
 
 }

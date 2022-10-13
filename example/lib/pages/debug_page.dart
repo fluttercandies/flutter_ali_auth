@@ -189,7 +189,7 @@ class _DebugPageState extends State<DebugPage> {
                                 height: 18,
                                 offsetX: 20,
                                 offsetY:
-                                    Platform.isAndroid ? 5 : kToolbarHeight,
+                                    Platform.isAndroid ? 0 : kToolbarHeight,
                                 image: "images/icon_close_gray.png",
                               ),
                             ],
