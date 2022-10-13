@@ -3,6 +3,9 @@ package com.fluttercandies.flutter_ali_auth.config;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.view.View;
@@ -17,6 +20,8 @@ import com.mobile.auth.gatewayauth.CustomInterface;
 import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper;
 
 import static com.fluttercandies.flutter_ali_auth.utils.AppUtils.dp2px;
+
+import java.io.InputStream;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.EventChannel;
@@ -119,4 +124,6 @@ public class CustomViewConfig extends BaseUIConfig {
         pImageView.setLayoutParams(pParams);
         return pImageView;
     }
+
+
 }

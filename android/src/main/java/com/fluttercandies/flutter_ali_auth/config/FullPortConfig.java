@@ -1,19 +1,31 @@
 package com.fluttercandies.flutter_ali_auth.config;
 
 import static com.fluttercandies.flutter_ali_auth.Constant.*;
+import static com.fluttercandies.flutter_ali_auth.utils.AppUtils.dp2px;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
+import com.fluttercandies.flutter_ali_auth.AuthClient;
 import com.fluttercandies.flutter_ali_auth.R;
 import com.fluttercandies.flutter_ali_auth.helper.CustomAuthUIControlClickListener;
 import com.fluttercandies.flutter_ali_auth.model.AuthUIModel;
+import com.fluttercandies.flutter_ali_auth.model.CustomViewBlock;
+import com.mobile.auth.gatewayauth.AuthRegisterViewConfig;
 import com.mobile.auth.gatewayauth.AuthUIConfig;
+import com.mobile.auth.gatewayauth.CustomInterface;
 import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper;
+
+import java.io.InputStream;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.EventChannel;
@@ -28,6 +40,8 @@ public class FullPortConfig extends BaseUIConfig {
 
     @Override
     public void configAuthPage(FlutterPlugin.FlutterPluginBinding flutterPluginBinding, AuthUIModel authUIModel) {
+
+        FlutterPlugin.FlutterAssets flutterAssets = flutterPluginBinding.getFlutterAssets();
 
         CustomAuthUIControlClickListener customAuthUIControlClickListener = new CustomAuthUIControlClickListener(mAuthHelper, mContext, mEventSink);
 
@@ -44,7 +58,6 @@ public class FullPortConfig extends BaseUIConfig {
 
         int navColor = mActivity.getResources().getColor(R.color.white);
 
-        int sloganColor = mActivity.getResources().getColor(R.color.deepGrey);
 
         String logoPath = null;
 
@@ -52,7 +65,6 @@ public class FullPortConfig extends BaseUIConfig {
 
         if (!logoIsHidden) {
             try {
-                FlutterPlugin.FlutterAssets flutterAssets = flutterPluginBinding.getFlutterAssets();
                 logoPath = flutterAssets.getAssetFilePathByName(authUIModel.logoImage);
                 Log.i("FullPortConfig", "logoPath:" + logoPath);
             } catch (Exception e) {
@@ -61,7 +73,21 @@ public class FullPortConfig extends BaseUIConfig {
             }
         }
 
+        double logoSize = authUIModel.logoWidth == null ? kLogoSize : authUIModel.logoWidth;
+
+        double logoOffsetY = authUIModel.logoFrameOffsetY == null ? kLogoOffset : authUIModel.logoFrameOffsetY;
+
+        boolean sloganIsHidden = authUIModel.sloganIsHidden == null || authUIModel.sloganIsHidden;
+
+        int sloganColor = authUIModel.sloganTextColor == null ? mActivity.getResources().getColor(R.color.deepGrey) : Color.parseColor(authUIModel.sloganTextColor);
+
+        String sloganText = authUIModel.sloganText == null ? "欢迎登录" + appName : authUIModel.sloganText;
+
         double sloganFrameOffsetY = authUIModel.sloganFrameOffsetY == null ? (kLogoOffset + kLogoSize + kPadding) : authUIModel.sloganFrameOffsetY;
+
+        int numberFontSize = authUIModel.numberFontSize == null ? Font_20 : authUIModel.numberFontSize;
+
+        int numberFontColor = authUIModel.numberColor == null ? Color.parseColor("#FF4081") : Color.parseColor(authUIModel.numberColor);
 
         double numberFrameOffsetY = authUIModel.numberFrameOffsetY == null ? (sloganFrameOffsetY + Font_24 + kPadding) : authUIModel.numberFrameOffsetY;
 
@@ -71,7 +97,15 @@ public class FullPortConfig extends BaseUIConfig {
 
         double loginBtnHeight = authUIModel.loginBtnHeight == null ? 48 : authUIModel.loginBtnHeight;
 
-        String loginBtnImage = authUIModel.loginBtnNormalImage == null ? "login_btn_bg" : authUIModel.loginBtnNormalImage;
+        String loginBtnImage = null;
+        if (authUIModel.loginBtnNormalImage != null) {
+            try {
+                loginBtnImage = flutterAssets.getAssetFilePathByName(authUIModel.loginBtnNormalImage);
+            } catch (Exception e) {
+                e.printStackTrace();
+                loginBtnImage = "login_btn_bg";
+            }
+        }
 
         boolean changeBtnIsHidden = authUIModel.changeBtnIsHidden == null || authUIModel.changeBtnIsHidden;
 
@@ -87,14 +121,30 @@ public class FullPortConfig extends BaseUIConfig {
 
         String unCheckImage = authUIModel.uncheckImage == null ? "icon_uncheck" : authUIModel.uncheckImage;
 
+        String backgroundImagePath = null;
+        if (authUIModel.backgroundImage != null) {
+            try {
+                backgroundImagePath = flutterAssets.getAssetFilePathByName(authUIModel.backgroundImage);
+                System.out.println(backgroundImagePath);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        ///自定义控件
+        if (authUIModel.customViewBlockList != null) {
+            buildCustomView(flutterAssets, authUIModel.customViewBlockList.get(0));
+        }
+
 
         mAuthHelper.setAuthUIConfig(new AuthUIConfig.Builder()
                 .setStatusBarColor(Color.WHITE)
                 .setLightColor(true)
 
                 //沉浸式状态栏
+                .setNavHidden(authUIModel.navIsHidden)
                 .setNavColor(navColor)
-                .setNavReturnImgPath("icon_return")
+                .setNavReturnImgPath("icon_close")
                 .setNavReturnScaleType(ImageView.ScaleType.CENTER_INSIDE)
                 .setNavReturnImgWidth(20)
                 .setNavReturnImgHeight(20)
@@ -105,18 +155,19 @@ public class FullPortConfig extends BaseUIConfig {
                 .setWebNavTextColor(Color.DKGRAY)
 
                 .setLogoHidden(logoIsHidden)
-                .setLogoOffsetY(kLogoOffset)
-                .setLogoWidth(kLogoSize)
-                .setLogoHeight(kLogoSize)
+                .setLogoOffsetY(((int) logoOffsetY))
+                .setLogoWidth(((int) logoSize))
+                .setLogoHeight(((int) logoSize))
                 .setLogoImgPath(logoPath)
 
+                .setSloganHidden(sloganIsHidden)
                 .setSloganTextSizeDp(Font_24)
-                .setSloganText("欢迎登陆")
+                .setSloganText(sloganText)
                 .setSloganTextColor(sloganColor)
                 .setSloganOffsetY(((int) sloganFrameOffsetY))
 
-                .setNumberSizeDp(Font_20)
-                .setNumberColor(Color.parseColor(authUIModel.numberColor))
+                .setNumberSizeDp(numberFontSize)
+                .setNumberColor(numberFontColor)
                 .setNumFieldOffsetY(((int) numberFrameOffsetY))
 
                 .setLogBtnText(authUIModel.loginBtnText)
@@ -150,13 +201,66 @@ public class FullPortConfig extends BaseUIConfig {
                 .setUncheckedImgPath(unCheckImage)
                 .setCheckBoxWidth(authUIModel.checkBoxWH.intValue())
                 .setCheckBoxHeight(authUIModel.checkBoxWH.intValue())
-
-                .setPageBackgroundPath(authUIModel.backgroundImage)
-
+                .setPageBackgroundPath(backgroundImagePath)
                 .setAuthPageActIn(String.valueOf(R.anim.slide_up), String.valueOf(R.anim.slide_down))
                 .setAuthPageActOut(String.valueOf(R.anim.slide_up), String.valueOf(R.anim.slide_down))
                 .create());
     }
 
+    private void buildCustomView(FlutterPlugin.FlutterAssets flutterAssets, CustomViewBlock customViewBlock) {
+        System.out.println("customViewBlock:"+customViewBlock);
+        ImageView imageView = new ImageView(mContext);
+        String flutterAssetFilePath = flutterAssets.getAssetFilePathByName(customViewBlock.image);
+        AssetManager assets = mContext.getAssets();
+        try {
+            InputStream open = assets.open(flutterAssetFilePath);
+            Bitmap bitmap = BitmapFactory.decodeStream(open);
+            imageView.setImageBitmap(bitmap);
+        }catch (Exception e){
+            System.out.println("加载失败");
+            e.printStackTrace();
+        }
+        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+        int width = dp2px(mContext, customViewBlock.width == null ? 30 : customViewBlock.width.floatValue());
+
+        int height = dp2px(mContext, customViewBlock.height == null ? 30 : customViewBlock.height.floatValue());
+
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
+
+        int offsetX = dp2px(mContext, customViewBlock.offsetX == null ? 0 : customViewBlock.offsetX.floatValue());
+
+        int offsetY = dp2px(mContext, customViewBlock.offsetY == null ? 0 : customViewBlock.offsetY.floatValue());
+
+        layoutParams.setMargins(customViewBlock.offsetX.intValue(),  customViewBlock.offsetY.intValue(), 0, 0);
+
+        System.out.println("offsetY:" + offsetY);
+
+        imageView.setLayoutParams(layoutParams);
+
+        mAuthHelper.addAuthRegistViewConfig(customViewBlock.viewId.toString(), new AuthRegisterViewConfig.Builder()
+                .setView(initBackBtn())
+                .setRootViewId(AuthRegisterViewConfig.RootViewId.ROOT_VIEW_ID_BODY)
+                .setCustomInterface(new CustomInterface() {
+                    @Override
+                    public void onClick(Context context) {
+                        mAuthHelper.quitLoginPage();
+                        AuthClient.getInstance().clearCached();
+                    }
+                }).build()
+        );
+    }
+
+    private ImageView initBackBtn() {
+        ImageView pImageView = new ImageView(mContext);
+        pImageView.setImageResource(R.drawable.icon_close);
+        pImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        RelativeLayout.LayoutParams pParams = new RelativeLayout.LayoutParams(dp2px(mContext, 20), dp2px(mContext, 20));
+        pParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+        pParams.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
+        pParams.setMargins(dp2px(mContext, 12.0F), 0, 0, 0);
+        pImageView.setLayoutParams(pParams);
+        return pImageView;
+    }
 
 }

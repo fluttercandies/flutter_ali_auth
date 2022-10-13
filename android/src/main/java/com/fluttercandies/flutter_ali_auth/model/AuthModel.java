@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.JSONReader;
 import com.mobile.auth.gatewayauth.AuthUIConfig;
 
 import java.util.Map;
@@ -16,12 +17,17 @@ public class AuthModel {
    @NonNull
    static public AuthModel fromJson(Object params){
       JSONObject json = (JSONObject) JSON.toJSON(params);
+
       Integer authUIStyle = (Integer) json.get("authUIStyle");
-      //AuthUIStyle authUIStyle  = AuthUIStyle.values()[authUIStyleIndex];
+
       AuthModel authModel = new AuthModel();
+
       authModel.setAndroidSdk(json.getString("androidSdk"));
+
       authModel.setAuthUIStyle(authUIStyle);
-      AuthUIModel  mAuthUIModel = JSON.to(AuthUIModel.class, json);
+
+      AuthUIModel mAuthUIModel = JSON.to(AuthUIModel.class, json);
+
       authModel.setAuthUIModel(mAuthUIModel);
 
       return authModel;

@@ -3,6 +3,7 @@ package com.fluttercandies.flutter_ali_auth;
 import static com.fluttercandies.flutter_ali_auth.model.AuthResponseModel.failedListeningMsg;
 
 import android.app.Activity;
+import android.content.res.AssetManager;
 
 import androidx.annotation.NonNull;
 

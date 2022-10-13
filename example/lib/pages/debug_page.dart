@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -133,9 +134,17 @@ class _DebugPageState extends State<DebugPage> {
                     onPressed: () async {
                       final safeArea =
                           MediaQueryData.fromWindow(ui.window).padding;
+                      print("safeArea:$safeArea");
                       const padding = 8.0;
-                      print(
-                          "safeArea：$safeArea ,offsetY: ${safeArea.top + kToolbarHeight * .5}");
+                      double loginSize = 100;
+
+                      double logoFrameOffsetY =
+                          (Platform.isAndroid ? 20 : 80) + kToolbarHeight;
+                      double sloganFrameOffsetY =
+                          logoFrameOffsetY + loginSize + padding;
+                      int sloganTextSize = 28;
+                      double numberFrameOffsetY =
+                          sloganFrameOffsetY + sloganTextSize + padding;
                       await AliAuthClient.loginWithConfig(
                         _authConfig.copyWith(
                           authUIConfig: FullScreenUIConfig(
@@ -146,35 +155,41 @@ class _DebugPageState extends State<DebugPage> {
                             logoConfig: LogoConfig(
                               logoIsHidden: false,
                               logoImage: "images/flutter_candies_logo.png",
-                              logoWidth: 100,
-                              logoHeight: 100,
-                              logoFrameOffsetY: 80 + kToolbarHeight,
+                              logoWidth: loginSize,
+                              logoHeight: loginSize,
+                              logoFrameOffsetY: logoFrameOffsetY,
                             ),
                             sloganConfig: SloganConfig(
+                              sloganIsHidden: false,
                               sloganText: '欢迎登录FlutterCandies',
-                              sloganTextSize: 28,
-                              sloganFrameOffsetY:
-                                  kToolbarHeight + 80 + 28 + 100,
+                              sloganTextSize: sloganTextSize,
+                              sloganFrameOffsetY: sloganFrameOffsetY,
                             ),
                             phoneNumberConfig: PhoneNumberConfig(
                               numberFontSize: 24,
-                              numberFrameOffsetY:
-                                  kToolbarHeight + 80 + 28 + 100 + 28 + padding,
+                              numberFrameOffsetY: numberFrameOffsetY,
                               numberColor: Colors.pinkAccent.toHex,
                             ),
                             loginButtonConfig: LoginButtonConfig(
                               loginBtnTextColor: "#F9F9F9",
+                              loginBtnNormalImage:
+                                  "images/login_btn_normal.png",
+                              loginBtnUnableImage:
+                                  "images/login_btn_unable.png",
+                              loginBtnPressedImage:
+                                  "images/login_btn_press.png",
                             ),
                             changeButtonConfig: ChangeButtonConfig(
                               changeBtnTextColor: "#A1A1A1",
                             ),
                             customViewBlockList: [
-                              const CustomViewBlock(
+                              CustomViewBlock(
                                 viewId: 1,
                                 width: 18,
                                 height: 18,
                                 offsetX: 20,
-                                offsetY: kToolbarHeight,
+                                offsetY:
+                                    Platform.isAndroid ? 5 : kToolbarHeight,
                                 image: "images/icon_close_gray.png",
                               ),
                             ],

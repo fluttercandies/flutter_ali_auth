@@ -5,6 +5,8 @@ import static com.fluttercandies.flutter_ali_auth.Constant.Font_14;
 
 import androidx.annotation.NonNull;
 
+import java.util.List;
+
 public class AuthUIModel {
     // gloabal config both fullscreen and alert
 
@@ -28,7 +30,7 @@ public class AuthUIModel {
     public Boolean prefersStatusBarHidden;
 
     // nav
-    public Boolean navIsHidden;
+    public Boolean navIsHidden = false;
     public String navTitle;
     public String navTitleColor;
     public Integer navTitleSize;
@@ -64,8 +66,8 @@ public class AuthUIModel {
     public Double logoHeight;
 
     public Double logoFrameOffsetX;
-    public Double logoFrameOffsetY;
 
+    public Double logoFrameOffsetY;
 
     // slogan
     public Boolean sloganIsHidden;
@@ -145,7 +147,10 @@ public class AuthUIModel {
 
     public Integer privacyOperatorIndex;
 
+    public List<CustomViewBlock> customViewBlockList;
+
     @NonNull
+
     @Override
     public String toString() {
         return "AuthUIModel{" +
@@ -232,6 +237,9 @@ public class AuthUIModel {
                 ", privacyOperatorPreText='" + privacyOperatorPreText + '\'' +
                 ", privacyOperatorSufText='" + privacyOperatorSufText + '\'' +
                 ", privacyOperatorIndex=" + privacyOperatorIndex +
+                ", customViewBlockList=" + customViewBlockList +
                 '}';
     }
 }
+
+

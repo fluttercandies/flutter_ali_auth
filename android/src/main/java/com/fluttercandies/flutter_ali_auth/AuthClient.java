@@ -82,18 +82,12 @@ public class AuthClient {
         }
         Log.i(TAG, "authModel:" + authModel);
 
-
-
         tokenResultListener = new TokenResultListener() {
             @Override
             public void onTokenSuccess(String s) {
-                System.out.println("onTokenSuccess");
-                //eventSink.success(JSON.parseObject(tokenRet.toJsonString(),Map.class));
                 TokenRet tokenRet;
                 try {
                     tokenRet = TokenRet.fromJson(s);
-                    Log.w(TAG, "tokenRet:" + tokenRet);
-
                     if (ResultCode.CODE_ERROR_ENV_CHECK_SUCCESS.equals(tokenRet.getCode())) {
                         //终端支持认证 当前环境可以进行一键登录
                         AuthResponseModel authResponseModel = AuthResponseModel.fromTokenRect(tokenRet);
@@ -106,10 +100,7 @@ public class AuthClient {
 
             @Override
             public void onTokenFailed(String s) {
-                Log.e(TAG, "获取token失败：" + s);
-
                 sdkAvailable = false;
-
                 TokenRet tokenRet;
                 try {
                     tokenRet = TokenRet.fromJson(s);
@@ -277,7 +268,6 @@ public class AuthClient {
             AuthResponseModel authResponseModel = AuthResponseModel.initFailed(errorArgumentsMsg);
             eventSink.success(authResponseModel.toJson());
         }
-
 
         Log.i(TAG, "AuthModel:" + authModel);
 
