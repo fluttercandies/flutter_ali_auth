@@ -44,7 +44,7 @@ class _ReleasePageState extends State<ReleasePage> {
             child: const Text('初始化SDK'),
             onPressed: () async {
               await AliAuthClient.onListen(_onEvent, onError: _onError);
-              final res = await AliAuthClient.initSdk(
+              await AliAuthClient.initSdk(
                 authConfig: _authConfig,
               );
               //print(res);
