@@ -15,7 +15,7 @@ abstract class _$AuthConfigCWProxy {
   /// ````
   AuthConfig call({
     String? androidSdk,
-    dynamic? authUIConfig,
+    AuthUIConfig? authUIConfig,
     AuthUIStyle? authUIStyle,
     String? iosSdk,
   });

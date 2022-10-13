@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_ali_auth/flutter_ali_auth.dart';
@@ -44,9 +43,8 @@ class _DebugPageState extends State<DebugPage> {
 
   /// 登录成功处理
   void _onEvent(dynamic event) async {
-    //print("-------------成功分割线-------------");
     final responseModel = AuthResponseModel.fromJson(Map.from(event));
-    print("responseModel:$responseModel");
+    //print("responseModel:$responseModel");
     if (responseModel.resultCode == AuthResultCode.success.code &&
         responseModel.token != null) {
       setState(() {
@@ -63,8 +61,8 @@ class _DebugPageState extends State<DebugPage> {
 
   /// 登录错误处理
   void _onError(Object error) {
-    print("-------------失败分割线------------");
-    print(error);
+    //print("-------------失败分割线------------");
+    debugPrint("error:$error");
   }
 
   @override
@@ -132,19 +130,20 @@ class _DebugPageState extends State<DebugPage> {
                     child:
                         _iconWithLabel(icon: Icons.phone_android, label: '全屏'),
                     onPressed: () async {
-                      final safeArea =
-                          MediaQueryData.fromWindow(ui.window).padding;
-                      print("safeArea:$safeArea");
                       const padding = 8.0;
                       double loginSize = 100;
 
                       double logoFrameOffsetY =
                           (Platform.isAndroid ? 20 : 80) + kToolbarHeight;
+
                       double sloganFrameOffsetY =
                           logoFrameOffsetY + loginSize + padding;
+
                       int sloganTextSize = 28;
+
                       double numberFrameOffsetY =
                           sloganFrameOffsetY + sloganTextSize + padding;
+
                       await AliAuthClient.loginWithConfig(
                         _authConfig.copyWith(
                           authUIConfig: FullScreenUIConfig(

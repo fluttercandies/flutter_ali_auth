@@ -1003,3 +1003,8 @@ Map<String, dynamic> _$CustomViewBlockToJson(CustomViewBlock instance) {
   writeNotNull('height', instance.height);
   return val;
 }
+
+/// This placeholder object is a default value for nullable fields to handle cases when the user wants to nullify the value.
+class $CopyWithPlaceholder {
+  const $CopyWithPlaceholder();
+}

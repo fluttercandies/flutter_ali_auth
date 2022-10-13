@@ -14,13 +14,3 @@ AuthResponseModel _$AuthResponseModelFromJson(Map<String, dynamic> json) =>
       ..token = json['token'] as String?
       ..innerMsg = json['innerMsg'] as String?
       ..innerCode = json['innerCode'] as String?;
-
-Map<String, dynamic> _$AuthResponseModelToJson(AuthResponseModel instance) =>
-    <String, dynamic>{
-      'resultCode': instance.resultCode,
-      'msg': instance.msg,
-      'requestId': instance.requestId,
-      'token': instance.token,
-      'innerMsg': instance.innerMsg,
-      'innerCode': instance.innerCode,
-    };

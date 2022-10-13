@@ -1,11 +1,8 @@
-import 'package:copy_with_extension/copy_with_extension.dart';
-
 import 'auth_ui_config.dart';
 import 'part_ui_config.dart';
 
 part 'auth_config.g.dart';
 
-@CopyWith(skipFields: true, copyWithNull: false)
 class AuthConfig {
   final String iosSdk;
   final String androidSdk;

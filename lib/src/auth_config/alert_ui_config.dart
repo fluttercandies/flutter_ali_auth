@@ -1,13 +1,10 @@
 import 'dart:convert' show jsonEncode;
 
-import 'package:copy_with_extension/copy_with_extension.dart';
-
 import '../auth_config/part_ui_config.dart';
 import 'auth_ui_config.dart';
 
 part 'alert_ui_config.g.dart';
 
-@CopyWith(skipFields: true, copyWithNull: false)
 class AlertUIConfig extends AuthUIConfig {
   AlertTitleBarConfig? alertTitleBarConfig;
 
@@ -58,9 +55,9 @@ class AlertUIConfig extends AuthUIConfig {
     if (customViewBlockList != null &&
         (customViewBlockList?.isNotEmpty ?? false)) {
       List<String> customViewBlockJsonList = <String>[];
-      customViewBlockList!.forEach((element) {
+      for (final element in customViewBlockList!) {
         customViewBlockJsonList.add(jsonEncode(element));
-      });
+      }
       json['customViewBlockList'] = customViewBlockJsonList;
     }
     if (alertTitleBarConfig != null) {

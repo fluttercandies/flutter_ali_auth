@@ -1,11 +1,8 @@
-import 'package:copy_with_extension/copy_with_extension.dart';
-
 import '../auth_config/part_ui_config.dart';
 import 'auth_ui_config.dart';
 
 part 'full_screen_ui_config.g.dart';
 
-@CopyWith(skipFields: true, copyWithNull: false)
 class FullScreenUIConfig extends AuthUIConfig {
   NavConfig? navConfig;
 
@@ -45,9 +42,9 @@ class FullScreenUIConfig extends AuthUIConfig {
     if (customViewBlockList != null &&
         (customViewBlockList?.isNotEmpty ?? false)) {
       List<MapWithStringKey> customViewBlockJsonList = <MapWithStringKey>[];
-      customViewBlockList!.forEach((element) {
+      for (final element in customViewBlockList!) {
         customViewBlockJsonList.add(element.toJson());
-      });
+      }
       json['customViewBlockList'] = customViewBlockJsonList;
     }
     if (navConfig != null) {

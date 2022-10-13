@@ -26,14 +26,12 @@ class _ReleasePageState extends State<ReleasePage> {
 
   /// 登录成功处理
   void _onEvent(dynamic event) async {
-    //print("-------------成功分割线-------------");
-    print(event);
+    //print(event);
   }
 
   /// 登录错误处理
   void _onError(Object error) {
-    print("-------------失败分割线------------");
-    print(error);
+    //print(error);
   }
 
   @override

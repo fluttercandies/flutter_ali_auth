@@ -12,7 +12,6 @@ dependencies:
     sdk: flutter
   plugin_platform_interface: ^2.0.2
   json_annotation: ^4.7.0
-  copy_with_extension: ^4.0.3
 
 dev_dependencies:
   flutter_test:
@@ -20,7 +19,6 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   build_runner: ^2.2.1
   json_serializable: ^6.4.1
-  copy_with_extension_gen: ^4.0.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

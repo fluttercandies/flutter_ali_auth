@@ -36,13 +36,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.16.0"
-  copy_with_extension:
-    dependency: transitive
-    description:
-      name: copy_with_extension
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "4.0.3"
   cupertino_icons:
     dependency: "direct main"
     description:

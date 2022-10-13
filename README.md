@@ -201,7 +201,7 @@ await AliAuthClient.accelerateLoginPage();
 
 ## 注意事项 ⚠️
 ### 关于权限
-1. 安卓权限，本插件已经添加必要的权限支持,增加usesCleartextTraffic配置：
+1. 安卓权限，本插件已经添加必要的权限支持：
 ```xml
 <uses-permission android:name="android.permission.INTERNET" /> <!-- 网络访问 -->
 <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 检查wifi网络状态 -->
@@ -210,6 +210,7 @@ await AliAuthClient.accelerateLoginPage();
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> <!-- 本地信息缓存 -->
 <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> <!-- 开关Wi-Fi状态，解决中国内地机型移动网络权限问题需要 -->
 ```
+  已经添加增加usesCleartextTraffic配置
 ```xml
  <application
         android:name=".DemoApplication"
