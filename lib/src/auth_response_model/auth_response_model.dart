@@ -1,20 +1,29 @@
+import 'dart:convert';
+
 part 'auth_response_model.g.dart';
 
 class AuthResponseModel {
-  String? resultCode;
-  String? msg;
-  String? requestId;
-  String? token;
-  String? innerMsg;
-  String? innerCode;
-
-  AuthResponseModel();
+  const AuthResponseModel({
+    this.resultCode,
+    this.msg,
+    this.requestId,
+    this.token,
+    this.innerMsg,
+    this.innerCode,
+  });
 
   factory AuthResponseModel.fromJson(Map<String, dynamic> json) =>
       _$AuthResponseModelFromJson(json);
 
+  final String? resultCode;
+  final String? msg;
+  final String? requestId;
+  final String? token;
+  final String? innerMsg;
+  final String? innerCode;
+
+  Map<String, dynamic> toJson() => _$AuthResponseModelToJson(this);
+
   @override
-  String toString() {
-    return 'AuthResponseModel{resultCode: $resultCode, msg: $msg, requestId: $requestId, token: $token, innerMsg: $innerMsg, innerCode: $innerCode}';
-  }
+  String toString() => jsonEncode(toJson());
 }

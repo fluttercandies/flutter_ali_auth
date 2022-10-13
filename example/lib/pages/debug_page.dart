@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_ali_auth/flutter_ali_auth.dart';
+import 'package:flutter_ali_auth_example/main.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
 class DebugPage extends StatefulWidget {
@@ -21,22 +22,21 @@ class _DebugPageState extends State<DebugPage> {
         "cDayqs3OUxdTERwuS4cCSEHuTqqsEvva7nkfdxKqfxAOIq46rES8NiSGFzU7xyk1qD02WkPsLAwfs82Oi1xpn+cOv3lr4nUzcsjdIgzgphoLlky9JKcMkGZW9i6ZM6WX8o9htuufxJV90bEtHYH/im5ZLxVDB1hbAi1Bg4zZ9sHeG160cAt0lLmAh3btrKvPqglD++Zel5L0N/Y4bVm2hvgRqusRvHW8Uqng9MzHOc9FgW9oXoA1AwvyQWXRXR98Hh2gBiF2VJGL1fwgkC2xFUvzIM2sMw5JMJ8KxRspWmKyLIp1EOOgUd6bY4TctbzX2DGgiTPtdrVF3ZZ8q6BCQQ==",
     authUIStyle: AuthUIStyle.fullScreen,
     authUIConfig: FullScreenUIConfig(
-      navConfig: NavConfig(
-        navColor: Colors.cyan.toHex,
-      ),
-      logoConfig: LogoConfig(
+      navConfig: NavConfig(navColor: Colors.cyan.toHex()),
+      logoConfig: const LogoConfig(
         logoIsHidden: false,
         logoImage: "images/flutter_candies_logo.png",
       ),
-      sloganConfig: SloganConfig(sloganText: '欢迎登录FlutterCandies'),
+      sloganConfig: const SloganConfig(sloganText: '欢迎登录FlutterCandies'),
       customViewBlockList: [
         const CustomViewBlock(
-            viewId: 1,
-            width: 48,
-            height: 48,
-            offsetX: 88,
-            offsetY: 88,
-            image: "images/icon_close_gray.png"),
+          viewId: 1,
+          width: 48,
+          height: 48,
+          offsetX: 88,
+          offsetY: 88,
+          image: "images/icon_close_gray.png",
+        ),
       ],
     ),
   );
@@ -55,7 +55,8 @@ class _DebugPageState extends State<DebugPage> {
       SmartDialog.showToast(responseModel.msg ?? '未初始化或者初始化失败');
     } else {
       SmartDialog.showToast(
-          responseModel.msg ?? '未知错误，code:${responseModel.resultCode}');
+        responseModel.msg ?? '未知错误，code:${responseModel.resultCode}',
+      );
     }
   }
 
@@ -127,27 +128,24 @@ class _DebugPageState extends State<DebugPage> {
                 crossAxisSpacing: 20,
                 children: [
                   OutlinedButton(
-                    child:
-                        _iconWithLabel(icon: Icons.phone_android, label: '全屏'),
+                    child: _iconWithLabel(
+                      icon: Icons.phone_android,
+                      label: '全屏',
+                    ),
                     onPressed: () async {
                       const padding = 8.0;
                       double loginSize = 100;
-
                       double logoFrameOffsetY =
                           (Platform.isAndroid ? 20 : 80) + kToolbarHeight;
-
                       double sloganFrameOffsetY =
                           logoFrameOffsetY + loginSize + padding;
-
                       int sloganTextSize = 28;
-
                       double numberFrameOffsetY =
                           sloganFrameOffsetY + sloganTextSize + padding;
-
                       await AliAuthClient.loginWithConfig(
                         _authConfig.copyWith(
                           authUIConfig: FullScreenUIConfig(
-                            navConfig: NavConfig(
+                            navConfig: const NavConfig(
                               navIsHidden: true,
                             ),
                             backgroundImage: "images/app_bg.png",
@@ -167,7 +165,7 @@ class _DebugPageState extends State<DebugPage> {
                             phoneNumberConfig: PhoneNumberConfig(
                               numberFontSize: 24,
                               numberFrameOffsetY: numberFrameOffsetY,
-                              numberColor: Colors.pinkAccent.toHex,
+                              numberColor: Colors.pinkAccent.toHex(),
                             ),
                             loginButtonConfig: LoginButtonConfig(
                               loginBtnTextColor: "#F9F9F9",
@@ -178,7 +176,7 @@ class _DebugPageState extends State<DebugPage> {
                               loginBtnPressedImage:
                                   "images/login_btn_press.png",
                             ),
-                            changeButtonConfig: ChangeButtonConfig(
+                            changeButtonConfig: const ChangeButtonConfig(
                               changeBtnTextColor: "#A1A1A1",
                             ),
                             customViewBlockList: [
@@ -199,7 +197,9 @@ class _DebugPageState extends State<DebugPage> {
                   ),
                   OutlinedButton(
                     child: _iconWithLabel(
-                        icon: Icons.call_to_action_outlined, label: '底部弹窗'),
+                      icon: Icons.call_to_action_outlined,
+                      label: '底部弹窗',
+                    ),
                     onPressed: () async {
                       await AliAuthClient.loginWithConfig(_authConfig.copyWith(
                         authUIStyle: AuthUIStyle.bottomSheet,
@@ -207,7 +207,10 @@ class _DebugPageState extends State<DebugPage> {
                     },
                   ),
                   OutlinedButton(
-                    child: _iconWithLabel(icon: Icons.video_label, label: '弹窗'),
+                    child: _iconWithLabel(
+                      icon: Icons.video_label,
+                      label: '弹窗',
+                    ),
                     onPressed: () async {
                       await AliAuthClient.loginWithConfig(_authConfig.copyWith(
                         authUIStyle: AuthUIStyle.alert,
@@ -225,10 +228,7 @@ class _DebugPageState extends State<DebugPage> {
   }
 
   Widget _divider(String text) {
-    const dividerGap = Flexible(
-      flex: 2,
-      child: Divider(),
-    );
+    const dividerGap = Flexible(flex: 2, child: Divider());
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20),
       child: Flex(
@@ -252,12 +252,7 @@ class _DebugPageState extends State<DebugPage> {
   }
 
   Widget _tokenWidget() {
-    return Column(
-      children: [
-        _divider("Token"),
-        Text(_token!),
-      ],
-    );
+    return Column(children: [_divider("Token"), Text(_token!)]);
   }
 
   Widget _iconWithLabel({required IconData icon, required String label}) {
@@ -266,10 +261,7 @@ class _DebugPageState extends State<DebugPage> {
       children: [
         Icon(icon),
         const SizedBox(height: 8.0),
-        Text(
-          label,
-          textAlign: TextAlign.center,
-        ),
+        Text(label, textAlign: TextAlign.center),
       ],
     );
   }

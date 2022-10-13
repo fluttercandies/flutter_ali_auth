@@ -4,11 +4,6 @@ import 'part_ui_config.dart';
 part 'auth_config.g.dart';
 
 class AuthConfig {
-  final String iosSdk;
-  final String androidSdk;
-  final AuthUIStyle authUIStyle;
-  final AuthUIConfig? authUIConfig;
-
   const AuthConfig({
     required this.iosSdk,
     required this.androidSdk,
@@ -16,14 +11,17 @@ class AuthConfig {
     this.authUIConfig,
   });
 
-  MapWithStringKey toJson() {
-    final Map<String, dynamic> json = <String, dynamic>{};
-    json['iosSdk'] = iosSdk;
-    json['androidSdk'] = androidSdk;
-    json['authUIStyle'] = authUIStyle.index;
-    if (authUIConfig != null) {
-      json.addAll(authUIConfig!.toJson());
-    }
-    return json;
+  final String iosSdk;
+  final String androidSdk;
+  final AuthUIStyle authUIStyle;
+  final AuthUIConfig? authUIConfig;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'iosSdk': iosSdk,
+      'androidSdk': androidSdk,
+      'authUIStyle': authUIStyle.index,
+      ...?authUIConfig?.toJson(),
+    }..removeWhere((key, value) => value == null);
   }
 }

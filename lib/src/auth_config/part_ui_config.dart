@@ -1,41 +1,8 @@
-import 'dart:ui' show Color;
-
-import 'package:json_annotation/json_annotation.dart';
-
 part 'part_ui_config.g.dart';
 
-typedef MapWithStringKey = Map<String, dynamic>;
+enum AuthUIStyle { fullScreen, bottomSheet, alert }
 
-enum AuthUIStyle {
-  fullScreen,
-  bottomSheet,
-  alert,
-}
-
-extension HexColor on Color {
-  String get toHex {
-    int ignoreAlpha = 0xFFFFFF & value;
-    return '#${ignoreAlpha.toRadixString(16).padLeft(6, '0')}';
-  }
-}
-
-@JsonSerializable(createFactory: false, includeIfNull: false)
 class NavConfig {
-  final bool? navIsHidden;
-  final String? navTitle;
-  final String? navTitleColor;
-  final int? navTitleSize;
-  final double? navFrameOffsetX;
-  final double? navFrameOffsetY;
-
-  final String? navColor;
-
-  final bool? hideNavBackItem;
-
-  final String? navBackImage;
-  final double? navBackButtonOffsetX;
-  final double? navBackButtonOffsetY;
-
   const NavConfig({
     this.navIsHidden,
     this.navTitle,
@@ -50,24 +17,23 @@ class NavConfig {
     this.navBackButtonOffsetY,
   });
 
-  MapWithStringKey toJson() => _$NavConfigToJson(this);
+  final bool? navIsHidden;
+  final String? navTitle;
+  final String? navTitleColor;
+  final int? navTitleSize;
+  final double? navFrameOffsetX;
+  final double? navFrameOffsetY;
+  final String? navColor;
+  final bool? hideNavBackItem;
+  final String? navBackImage;
+  final double? navBackButtonOffsetX;
+  final double? navBackButtonOffsetY;
+
+  Map<String, dynamic> toJson() => _$NavConfigToJson(this);
 }
 
-//alert title bar 设置 仅弹窗生效
-@JsonSerializable(createFactory: false, includeIfNull: false)
+/// alert title bar 设置，仅弹窗生效
 class AlertTitleBarConfig {
-  final bool? alertBarIsHidden;
-  final bool? alertCloseItemIsHidden;
-  final String? alertTitleBarColor;
-
-  final String? alertTitleText;
-  final String? alertTitleTextColor;
-  final int? alertTittleTextSize;
-
-  final String? alertCloseImage;
-  final double? alertCloseImageOffsetX;
-  final double? alertCloseImageOffsetY;
-
   const AlertTitleBarConfig({
     this.alertBarIsHidden,
     this.alertCloseItemIsHidden,
@@ -80,22 +46,25 @@ class AlertTitleBarConfig {
     this.alertCloseImageOffsetX,
   });
 
-  MapWithStringKey toJson() => _$AlertTitleBarConfigToJson(this);
+  final bool? alertBarIsHidden;
+  final bool? alertCloseItemIsHidden;
+  final String? alertTitleBarColor;
+
+  final String? alertTitleText;
+  final String? alertTitleTextColor;
+  final int? alertTittleTextSize;
+
+  final String? alertCloseImage;
+  final double? alertCloseImageOffsetX;
+  final double? alertCloseImageOffsetY;
+
+  Map<String, dynamic> toJson() => _$AlertTitleBarConfigToJson(this);
 }
 
-//logo设置
-@JsonSerializable(createFactory: false, includeIfNull: false)
+/// logo设置
 class LogoConfig {
-  final bool? logoIsHidden; //默认显示
-  final String? logoImage;
-  final double? logoWidth;
-  final double? logoHeight;
-
-  final double? logoFrameOffsetX;
-  final double? logoFrameOffsetY;
-
   const LogoConfig({
-    this.logoIsHidden,
+    this.logoIsHidden = false,
     this.logoImage,
     this.logoWidth,
     this.logoHeight,
@@ -103,20 +72,18 @@ class LogoConfig {
     this.logoFrameOffsetY,
   });
 
-  MapWithStringKey toJson() => _$LogoConfigToJson(this);
+  final bool logoIsHidden;
+  final String? logoImage;
+  final double? logoWidth;
+  final double? logoHeight;
+  final double? logoFrameOffsetX;
+  final double? logoFrameOffsetY;
+
+  Map<String, dynamic> toJson() => _$LogoConfigToJson(this);
 }
 
-//slogan设置
-@JsonSerializable(createFactory: false, includeIfNull: false)
+/// slogan设置
 class SloganConfig {
-  final bool? sloganIsHidden;
-  final String? sloganText;
-  final String? sloganTextColor;
-  final int? sloganTextSize;
-
-  final double? sloganFrameOffsetX;
-  final double? sloganFrameOffsetY;
-
   const SloganConfig({
     this.sloganIsHidden,
     this.sloganText,
@@ -126,18 +93,18 @@ class SloganConfig {
     this.sloganFrameOffsetY,
   });
 
-  MapWithStringKey toJson() => _$SloganConfigToJson(this);
+  final bool? sloganIsHidden;
+  final String? sloganText;
+  final String? sloganTextColor;
+  final int? sloganTextSize;
+  final double? sloganFrameOffsetX;
+  final double? sloganFrameOffsetY;
+
+  Map<String, dynamic> toJson() => _$SloganConfigToJson(this);
 }
 
-//phone number设置
-@JsonSerializable(createFactory: false, includeIfNull: false)
+/// phone number设置
 class PhoneNumberConfig {
-  final String? numberColor;
-  final int? numberFontSize;
-
-  final double? numberFrameOffsetX;
-  final double? numberFrameOffsetY;
-
   const PhoneNumberConfig({
     this.numberColor,
     this.numberFontSize,
@@ -145,28 +112,17 @@ class PhoneNumberConfig {
     this.numberFrameOffsetY,
   });
 
-  MapWithStringKey toJson() => _$PhoneNumberConfigToJson(this);
+  final String? numberColor;
+  final int? numberFontSize;
+  final double? numberFrameOffsetX;
+  final double? numberFrameOffsetY;
+
+  Map<String, dynamic> toJson() => _$PhoneNumberConfigToJson(this);
 }
 
-//login button设置
-@JsonSerializable(createFactory: false, includeIfNull: false)
+/// login button设置
 class LoginButtonConfig {
-  final String? loginBtnText;
-  final String? loginBtnTextColor;
-  final int? loginBtnTextSize;
-
-  ////登录按钮背景图片组  [激活状态的图片,失效状态的图片,高亮状态的图片]
-  final String? loginBtnNormalImage;
-  final String? loginBtnUnableImage;
-  final String? loginBtnPressedImage;
-
-  final double? loginBtnFrameOffsetX;
-  final double? loginBtnFrameOffsetY;
-
-  final double? loginBtnWidth;
-  final double? loginBtnHeight; //登录按钮高度 默认高度50.0pt 小于20.0pt不生效
-
-  const LoginButtonConfig({
+  LoginButtonConfig({
     this.loginBtnText,
     this.loginBtnTextColor,
     this.loginBtnTextSize,
@@ -179,19 +135,32 @@ class LoginButtonConfig {
     this.loginBtnHeight,
   });
 
-  MapWithStringKey toJson() => _$LoginButtonConfigToJson(this);
+  final String? loginBtnText;
+  final String? loginBtnTextColor;
+  final int? loginBtnTextSize;
+
+  /// 激活状态的图片
+  final String? loginBtnNormalImage;
+
+  /// 失效状态的图片
+  final String? loginBtnUnableImage;
+
+  /// 高亮状态的图片
+  final String? loginBtnPressedImage;
+
+  final double? loginBtnFrameOffsetX;
+  final double? loginBtnFrameOffsetY;
+
+  final double? loginBtnWidth;
+
+  /// 默认高度50.0pt 小于20.0pt不生效
+  final double? loginBtnHeight;
+
+  Map<String, dynamic> toJson() => _$LoginButtonConfigToJson(this);
 }
 
-// change button 设置
-@JsonSerializable(createFactory: false, includeIfNull: false)
+/// change button 设置
 class ChangeButtonConfig {
-  final bool? changeBtnIsHidden;
-  final String? changeBtnTitle;
-  final String? changeBtnTextColor;
-  final int? changeBtnTextSize;
-  final double? changeBtnFrameOffsetX;
-  final double? changeBtnFrameOffsetY;
-
   const ChangeButtonConfig({
     this.changeBtnIsHidden,
     this.changeBtnTitle,
@@ -201,18 +170,18 @@ class ChangeButtonConfig {
     this.changeBtnFrameOffsetY,
   });
 
-  MapWithStringKey toJson() => _$ChangeButtonConfigToJson(this);
+  final bool? changeBtnIsHidden;
+  final String? changeBtnTitle;
+  final String? changeBtnTextColor;
+  final int? changeBtnTextSize;
+  final double? changeBtnFrameOffsetX;
+  final double? changeBtnFrameOffsetY;
+
+  Map<String, dynamic> toJson() => _$ChangeButtonConfigToJson(this);
 }
 
-//check box 设置
-@JsonSerializable(createFactory: false, includeIfNull: false)
+/// check box 设置
 class CheckBoxConfig {
-  final bool? checkBoxIsChecked;
-  final bool? checkBoxIsHidden;
-  final String? checkedImage; //[uncheckedImg,checkedImg]*
-  final String? uncheckImage;
-  final double? checkBoxWH;
-
   const CheckBoxConfig({
     this.checkBoxIsChecked,
     this.checkBoxIsHidden,
@@ -221,37 +190,16 @@ class CheckBoxConfig {
     this.checkBoxWH,
   });
 
-  MapWithStringKey toJson() => _$CheckBoxConfigToJson(this);
+  final bool? checkBoxIsChecked;
+  final bool? checkBoxIsHidden;
+  final String? checkedImage;
+  final String? uncheckImage;
+  final double? checkBoxWH;
+
+  Map<String, dynamic> toJson() => _$CheckBoxConfigToJson(this);
 }
 
-@JsonSerializable(createFactory: false, includeIfNull: false)
 class PrivacyConfig {
-  final String? privacyOneName;
-  final String? privacyOneUrl;
-  final String? privacyTwoName;
-  final String? privacyTwoUrl;
-  final String? privacyThreeName;
-  final String? privacyThreeUrl;
-
-  final int? privacyFontSize;
-  final String? privacyFontColor;
-
-  final double? privacyFrameOffsetX;
-  final double? privacyFrameOffsetY;
-
-  //协议名称之间连接字符串数组，默认 ["和","、","、"] ，即第一个为"和"，其他为"、"，按顺序读取，为空则取默认 ["和", "和"]
-  final String? privacyConnectTexts;
-
-  // privacyAlignment	long long	0
-  final String? privacyPreText; // 协议文案支持居中、居左、居右设置，默认居左
-  final String? privacySufText;
-
-  final String? privacyOperatorPreText; //协议整体文案，后缀部分文案
-
-  final String? privacyOperatorSufText; //协议整体文案，后缀部分文案
-
-  final int? privacyOperatorIndex; // 运营商协议指定显示顺序，默认0，即第1个协议显示，最大值可为3，即第4个协议显示
-
   const PrivacyConfig({
     this.privacyOneName,
     this.privacyOneUrl,
@@ -271,22 +219,38 @@ class PrivacyConfig {
     this.privacyTwoUrl,
   });
 
-  MapWithStringKey toJson() => _$PrivacyConfigToJson(this);
+  final String? privacyOneName;
+  final String? privacyOneUrl;
+  final String? privacyTwoName;
+  final String? privacyTwoUrl;
+  final String? privacyThreeName;
+  final String? privacyThreeUrl;
+  final int? privacyFontSize;
+  final String? privacyFontColor;
+  final double? privacyFrameOffsetX;
+  final double? privacyFrameOffsetY;
+
+  /// 协议名称之间连接字符串数组，默认 [和, 、, 、] ，即第一个为「和」，其他为「、」，
+  /// 按顺序读取，为空则取默认 [和, 和]
+  final String? privacyConnectTexts;
+
+  /// 协议文案支持居中、居左、居右设置，默认居左
+  final String? privacyPreText;
+  final String? privacySufText;
+
+  ///协议整体文案，后缀部分文案
+  final String? privacyOperatorPreText;
+
+  ///协议整体文案，后缀部分文案
+  final String? privacyOperatorSufText;
+
+  /// 运营商协议指定显示顺序，默认0，即第1个协议显示，最大值可为3，即第4个协议显示
+  final int? privacyOperatorIndex;
+
+  Map<String, dynamic> toJson() => _$PrivacyConfigToJson(this);
 }
 
-@JsonSerializable(createFactory: false, includeIfNull: false)
 class CustomViewBlock {
-  final int viewId; // 用于回调时候判断返回的Id判断
-  final String? text;
-  final String? textColor;
-  final double? textSize;
-  final String? backgroundColor;
-  final String? image;
-  final double offsetX;
-  final double offsetY;
-  final double width;
-  final double height;
-
   const CustomViewBlock({
     required this.viewId,
     required this.offsetX,
@@ -300,5 +264,17 @@ class CustomViewBlock {
     this.image,
   });
 
-  MapWithStringKey toJson() => _$CustomViewBlockToJson(this);
+  /// 用于回调时候判断返回的 id 判断
+  final int viewId;
+  final String? text;
+  final String? textColor;
+  final double? textSize;
+  final String? backgroundColor;
+  final String? image;
+  final double offsetX;
+  final double offsetY;
+  final double width;
+  final double height;
+
+  Map<String, dynamic> toJson() => _$CustomViewBlockToJson(this);
 }
