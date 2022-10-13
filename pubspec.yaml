@@ -1,6 +1,6 @@
 name: flutter_ali_auth
 description: Flutter Ali Auth Plugin 阿里云一键登录Flutter插件
-version: 0.0.1
+version: 0.1.0
 homepage: https://github.com/fluttercandies/flutter_ali_auth
 
 environment:
