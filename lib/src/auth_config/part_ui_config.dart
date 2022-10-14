@@ -122,7 +122,7 @@ class PhoneNumberConfig {
 
 /// login button设置
 class LoginButtonConfig {
-  LoginButtonConfig({
+  const LoginButtonConfig({
     this.loginBtnText,
     this.loginBtnTextColor,
     this.loginBtnTextSize,
