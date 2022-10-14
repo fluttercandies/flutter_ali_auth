@@ -35,23 +35,71 @@ class _DebugPageState extends State<DebugPage> {
   /// 登录成功处理
   void _onEvent(dynamic event) async {
     final responseModel = AuthResponseModel.fromJson(Map.from(event));
-    if (responseModel.resultCode == AuthResultCode.success.code &&
-        responseModel.token != null) {
-      // login success
-      setState(() {
-        _token = responseModel.token;
-      });
-    } else if (responseModel.resultCode ==
-        AuthResultCode.decodeAppInfoFailed.code) {
-      // init failed
-      SmartDialog.showToast(responseModel.msg ?? '未初始化或者初始化失败');
-    } else if (responseModel.resultCode ==
-        AuthResultCode.onCustomViewTap.code) {
-      SmartDialog.showToast("点击自定义控件：${responseModel.msg}");
-    } else {
-      SmartDialog.showToast(
-        responseModel.msg ?? '未知错误，code:${responseModel.resultCode}',
-      );
+    final resultCode = AuthResultCode.fromCode(responseModel.resultCode!);
+    switch (resultCode) {
+      case AuthResultCode.success:
+        if (responseModel.token != null) {
+          setState(() {
+            _token = responseModel.token;
+          });
+        }
+        break;
+      case AuthResultCode.envCheckFail:
+        SmartDialog.showToast("当前网络环境不支持一键登录，请稍后重试");
+        break;
+      case AuthResultCode.noCellularNetwork:
+        SmartDialog.showToast('移动数据网络未开启,请切换为移动网络后再尝试');
+        break;
+      case AuthResultCode.loginControllerClickChangeBtn:
+        //点击切换按钮，切换到其他方式
+        break;
+      case AuthResultCode.noSIMCard:
+        SmartDialog.showToast("当前设备不支持一键登录");
+        break;
+      case AuthResultCode.unknownError:
+      case AuthResultCode.getTokenFailed:
+      case AuthResultCode.interfaceTimeout:
+      case AuthResultCode.loginControllerPresentFailed:
+        SmartDialog.showToast('登录失败，请稍后重试');
+        break;
+      case AuthResultCode.codeSDKInfoInvalid:
+        SmartDialog.showToast('SDK设置错误');
+        break;
+      case AuthResultCode.interfaceDemoted:
+      case AuthResultCode.interfaceLimited:
+      case AuthResultCode.featureInvalid:
+      case AuthResultCode.outOfService:
+        SmartDialog.showToast('暂时无法一键登录，请使用其他登录方式');
+        break;
+      case AuthResultCode.failed:
+      case AuthResultCode.errorNetwork:
+      case AuthResultCode.errorClientTimestamp:
+      case AuthResultCode.statusBusy:
+        SmartDialog.showToast('请求遇到问题，请稍后重试');
+        break;
+      case AuthResultCode.decodeAppInfoFailed:
+        SmartDialog.showToast(responseModel.msg ?? 'SDK密钥错误');
+        break;
+      case AuthResultCode.onCustomViewTap:
+        SmartDialog.showToast("点击自定义控件：${responseModel.msg}");
+        break;
+      case AuthResultCode.getMaskPhoneFailed:
+      case AuthResultCode.getMaskPhoneSuccess:
+      case AuthResultCode.carrierChanged:
+      case AuthResultCode.loginControllerPresentSuccess:
+      case AuthResultCode.callPreLoginInAuthPage:
+      case AuthResultCode.loginControllerClickCancel:
+      case AuthResultCode.loginControllerClickLoginBtn:
+      case AuthResultCode.loginControllerClickCheckBoxBtn:
+      case AuthResultCode.loginControllerClickProtocol:
+      case AuthResultCode.loginClickPrivacyAlertView:
+      case AuthResultCode.loginPrivacyAlertViewClose:
+      case AuthResultCode.loginPrivacyAlertViewClickContinue:
+      case AuthResultCode.loginPrivacyAlertViewPrivacyContentClick:
+      case AuthResultCode.liftBodyVerifyReadyStating:
+      case AuthResultCode.errorUserCancel:
+      default:
+        break;
     }
   }
 
@@ -207,7 +255,7 @@ class _DebugPageState extends State<DebugPage> {
         numberFrameOffsetY: numberFrameOffsetY,
         numberColor: Colors.pinkAccent.toHex(),
       ),
-      loginButtonConfig: LoginButtonConfig(
+      loginButtonConfig: const LoginButtonConfig(
         loginBtnTextColor: "#F9F9F9",
         loginBtnNormalImage: "images/login_btn_normal.png",
         loginBtnUnableImage: "images/login_btn_unable.png",
