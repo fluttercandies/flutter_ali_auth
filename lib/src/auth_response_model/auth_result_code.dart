@@ -122,6 +122,9 @@ enum AuthResultCode {
   /// 用户点击了自定义控件的按钮，此时会[msg]会回调控件的viewId
   onCustomViewTap("700010");
 
+  factory AuthResultCode.fromCode(String resultCode) {
+    return values.firstWhere((element) => element.code == resultCode);
+  }
   const AuthResultCode(this.code);
 
   final String code;
