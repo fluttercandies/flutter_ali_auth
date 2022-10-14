@@ -377,9 +377,9 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
     }
 
     public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
-        _authConfig = nil
-        onCancel(withArguments: nil)
-        authUIBuilder.onDispose()
+        self._authConfig = nil
+        self.onCancel(withArguments: nil)
+        self.authUIBuilder.onDispose()
     }
 
 //    public func cancelListenLoginEvent(result: @escaping FlutterResult) {

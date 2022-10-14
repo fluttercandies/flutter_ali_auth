@@ -40,6 +40,18 @@ extension AuthUIBuilder {
         
         model.alertCornerRadiusArray = [borderRadius, borderRadius, borderRadius, borderRadius]
         
+        if let backgroundImage = config.backgroundImage {
+            if let image = FlutterAssetImage(backgroundImage) {
+                model.backgroundImage = image
+                model.backgroundImageContentMode = UIView.ContentMode.scaleAspectFill
+            }
+        }
+
+        // customViewBlock
+        if let customViewBlockList = config.customViewBlockList {
+            buildCustomViewBlock(model: model, customViewConfigList: customViewBlockList)
+        }
+        
         model.changeBtnIsHidden = config.changeBtnIsHidden ?? true
         
         model.entryAnimation = entryAnimation

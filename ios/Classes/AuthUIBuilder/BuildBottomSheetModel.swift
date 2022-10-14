@@ -38,6 +38,18 @@ extension AuthUIBuilder {
         
         let borderRadius = NSNumber(value: config.alertBorderRadius ?? 10)
         
+        if let backgroundImage = config.backgroundImage {
+            if let image = FlutterAssetImage(backgroundImage) {
+                model.backgroundImage = image
+                model.backgroundImageContentMode = UIView.ContentMode.scaleAspectFill
+            }
+        }
+
+        // customViewBlock
+        if let customViewBlockList = config.customViewBlockList {
+            buildCustomViewBlock(model: model, customViewConfigList: customViewBlockList)
+        }
+        
         model.alertCornerRadiusArray = [borderRadius, borderRadius, borderRadius, borderRadius]
         
         model.changeBtnIsHidden = config.changeBtnIsHidden ?? true

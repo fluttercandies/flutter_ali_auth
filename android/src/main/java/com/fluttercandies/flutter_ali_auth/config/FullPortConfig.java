@@ -38,7 +38,6 @@ public class FullPortConfig extends BaseUIConfig {
 
         int navColor = mActivity.getResources().getColor(R.color.white);
 
-
         String logoPath = null;
 
         boolean logoIsHidden = authUIModel.logoIsHidden != null ? authUIModel.logoIsHidden : true;

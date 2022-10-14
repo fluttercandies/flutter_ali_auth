@@ -172,8 +172,6 @@ struct CustomViewBlock: Codable {
     var offsetY: Double?
     var width: Double?
     var height: Double?
+    var enableTap: Bool?
 }
 
-/*
- Optional(ali_auth.AuthUIConfig(navIsHidden: nil, navTitle: nil, navTitleColor: nil, navTitleSize: nil, navFrameOffsetX: nil, navFrameOffsetY: nil, navColor: Optional("#ff4081"), navBackImage: nil, navBackButtonOffsetX: nil, navBackButtonOffsetY: nil, alertBarIsHidden: nil, alertCloseItemIsHidden: nil, alertTitleBarColor: nil, alertTitleText: nil, alertTitleTextColor: nil, alertTittleTextSize: nil, logoIsHidden: nil, logoImage: Optional("images/app_icon"), logoWidth: nil, logoHeight: nil, logoFrameOffsetX: nil, logoFrameOffsetY: nil, logoTopOffsetY: nil, sloganText: nil, sloganTextColor: nil, sloganTextSize: nil, sloganFrameOffsetX: nil, sloganFrameOffsetY: nil, sloganTopOffsetY: nil, numberColor: nil, numberFontSize: nil, numberFrameOffsetX: nil, numberFrameOffsetY: nil, numberTopOffsetY: nil, numberOffsetX: nil, loginBtnText: nil, loginBtnTextColor: nil, loginBtnTextSize: nil, loginBtnNormalImage: nil, loginBtnNormalUnable: nil, loginBtnNormalPressed: nil, loginBtnFrameOffsetX: nil, loginBtnFrameOffsetY: nil, loginBtnTopOffsetY: nil, loginBtnHeight: nil, loginBtnLRPadding: nil, changeBtnTitle: nil, changeBtnTextColor: nil, changeBtnTextSize: nil, changeBtnFrameOffsetX: nil, changeBtnFrameOffsetY: nil, changeBtnTopOffsetY: nil, checkBoxIsHidden: nil, checkBoxWidth: nil, checkBoxHeight: nil, checkedImage: nil, uncheckImage: nil, privacyOneName: nil, privacyOneUrl: nil, privacyTwoName: nil, privacyTwoUrl: nil, privacyThreeName: nil, privacyThreeUrl: nil, privacyFontSize: nil, privacyFontColor: nil, privacyFrameOffsetX: nil, privacyFrameOffsetY: nil, privacyBottomOffsetY: nil, privacyLRPadding: nil, privacyConnectTexts: nil, privacyPreText: nil, privacySufText: nil, privacyOperatorPreText: nil, privacyOperatorSufText: nil, privacyOperatorIndex: nil))
- */

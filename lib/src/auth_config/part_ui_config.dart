@@ -257,6 +257,7 @@ class CustomViewBlock {
     required this.offsetY,
     required this.width,
     required this.height,
+    required this.enableTap,
     this.text,
     this.textColor,
     this.textSize,
@@ -275,6 +276,7 @@ class CustomViewBlock {
   final double offsetY;
   final double width;
   final double height;
+  final bool enableTap;
 
   Map<String, dynamic> toJson() => _$CustomViewBlockToJson(this);
 }

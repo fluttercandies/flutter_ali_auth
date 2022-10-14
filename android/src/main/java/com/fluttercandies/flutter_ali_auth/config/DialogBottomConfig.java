@@ -28,11 +28,11 @@ import io.flutter.plugin.common.EventChannel;
 public class DialogBottomConfig extends BaseUIConfig {
 
     public DialogBottomConfig(Activity activity, PhoneNumberAuthHelper authHelper, EventChannel.EventSink eventSink, FlutterPlugin.FlutterAssets flutterAssets) {
-        super(activity, authHelper, eventSink,flutterAssets);
+        super(activity, authHelper, eventSink, flutterAssets);
     }
 
     @Override
-    public void configAuthPage( AuthUIModel authUIModel) {
+    public void configAuthPage(AuthUIModel authUIModel) {
 
         int authPageOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT;
 
@@ -98,6 +98,16 @@ public class DialogBottomConfig extends BaseUIConfig {
 
         String unCheckImage = authUIModel.uncheckImage == null ? "icon_uncheck" : authUIModel.uncheckImage;
 
+        String backgroundImagePath = null;
+        if (authUIModel.backgroundImage != null) {
+            try {
+                backgroundImagePath = mFlutterAssets.getAssetFilePathByName(authUIModel.backgroundImage);
+                System.out.println(backgroundImagePath);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         ///自定义控件
         if (authUIModel.customViewBlockList != null) {
             buildCustomView(authUIModel.customViewBlockList);
@@ -152,7 +162,8 @@ public class DialogBottomConfig extends BaseUIConfig {
                 .setLogBtnHeight(((int) loginBtnHeight))
                 .setLogBtnBackgroundPath(loginBtnImage)
 
-                .setSwitchAccHidden(true)
+                .setSwitchAccHidden(changeBtnIsHidden)
+                .setSwitchOffsetY(((int) changeBtnFrameOffsetY))
 
                 .setAppPrivacyOne(authUIModel.privacyOneName, authUIModel.privacyOneUrl)
                 .setAppPrivacyTwo(authUIModel.privacyTwoName, authUIModel.privacyTwoUrl)

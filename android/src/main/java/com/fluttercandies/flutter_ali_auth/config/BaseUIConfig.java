@@ -21,6 +21,7 @@ import com.fluttercandies.flutter_ali_auth.model.AuthUIModel;
 import com.fluttercandies.flutter_ali_auth.model.CustomViewBlock;
 import com.fluttercandies.flutter_ali_auth.utils.AppUtils;
 import com.mobile.auth.gatewayauth.AuthRegisterViewConfig;
+import com.mobile.auth.gatewayauth.CustomInterface;
 import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper;
 import static com.fluttercandies.flutter_ali_auth.utils.AppUtils.dp2px;
 
@@ -143,17 +144,19 @@ public abstract class BaseUIConfig {
             int offsetY = dp2px(mContext, customViewBlock.offsetY == null ? 0 : customViewBlock.offsetY.floatValue());
             layoutParams.setMargins(offsetX,  offsetY, 0, 0);
             imageView.setLayoutParams(layoutParams);
+            CustomInterface customInterface = null;
+            if (customViewBlock.enableTap != null && customViewBlock.enableTap){
+                customInterface = context -> {
+                    AuthResponseModel authResponseModel = AuthResponseModel.onCustomViewBlocTap(customViewBlock.viewId);
+                    mEventSink.success(authResponseModel.toJson());
+                    mAuthHelper.quitLoginPage();
+                    AuthClient.getInstance().clearCached();
+                };
+            }
             mAuthHelper.addAuthRegistViewConfig(customViewBlock.viewId.toString(), new AuthRegisterViewConfig.Builder()
                     .setView(imageView)
                     .setRootViewId(AuthRegisterViewConfig.RootViewId.ROOT_VIEW_ID_BODY)
-                    .setCustomInterface(context -> {
-
-                        AuthResponseModel authResponseModel = AuthResponseModel.onCustomViewBlocTap(customViewBlock.viewId);
-                        mEventSink.success(authResponseModel.toJson());
-                        mAuthHelper.quitLoginPage();
-                        AuthClient.getInstance().clearCached();
-
-                    }).build()
+                    .setCustomInterface(customInterface).build()
             );
         }
     }

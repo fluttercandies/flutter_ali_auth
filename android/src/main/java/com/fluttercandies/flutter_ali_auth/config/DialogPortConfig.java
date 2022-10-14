@@ -100,6 +100,21 @@ public class DialogPortConfig extends BaseUIConfig {
 
         String unCheckImage = authUIModel.uncheckImage == null ? "icon_uncheck" : authUIModel.uncheckImage;
 
+        String backgroundImagePath;
+        if (authUIModel.backgroundImage != null) {
+            try {
+                backgroundImagePath = mFlutterAssets.getAssetFilePathByName(authUIModel.backgroundImage);
+                System.out.println(backgroundImagePath);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        ///自定义控件
+        if (authUIModel.customViewBlockList != null) {
+            buildCustomView(authUIModel.customViewBlockList);
+        }
+
         mAuthHelper.addAuthRegisterXmlConfig(new AuthRegisterXmlConfig.Builder()
                 .setLayout(R.layout.dialog_action_bar, new AbstractPnsViewDelegate() {
                     @Override

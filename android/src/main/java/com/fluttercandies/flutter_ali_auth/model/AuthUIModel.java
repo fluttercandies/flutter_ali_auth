@@ -8,22 +8,14 @@ import androidx.annotation.NonNull;
 import java.util.List;
 
 public class AuthUIModel {
-    // gloabal config both fullscreen and alert
-
+    // global config both fullscreen and alert
     public String backgroundColor;  // 十六进制的颜色
-
     public String backgroundImage;
-
     public String alertContentViewColor;  // 十六进制的颜色
-
     public String alertBlurViewColor;  // 底部蒙层背景颜色，默认黑色
-
     public Double alertBlurViewAlpha;  // 底部蒙层背景透明度，默认0.5
-
     public Double alertBorderRadius;  // 四个角的圆角，默认为10
-
     public Double alertWindowWidth;
-
     public Double alertWindowHeight;
 
     // status bar
@@ -64,9 +56,7 @@ public class AuthUIModel {
     public String logoImage;
     public Double logoWidth;
     public Double logoHeight;
-
     public Double logoFrameOffsetX;
-
     public Double logoFrameOffsetY;
 
     // slogan
@@ -90,17 +80,13 @@ public class AuthUIModel {
     public String loginBtnText = "一键登录";
     public String loginBtnTextColor;
     public Integer loginBtnTextSize;
-
     public String loginBtnNormalImage;
     public String loginBtnUnableImage;
     public String loginBtnPressedImage;
-
     public Double loginBtnFrameOffsetX;
     public Double loginBtnFrameOffsetY;
-
     public Double loginBtnWidth;
     public Double loginBtnHeight;
-
     public Double loginBtnLRPadding;
 
     // change button
@@ -116,7 +102,6 @@ public class AuthUIModel {
     public Boolean checkBoxIsChecked = false;
     public Boolean checkBoxIsHidden;
     public Double checkBoxWH = 18.0;
-
     public String checkedImage;
     public String uncheckImage;
 
@@ -130,27 +115,17 @@ public class AuthUIModel {
 
     public Integer privacyFontSize = Font_12;
     public String privacyFontColor = "#2196F3";
-
     public Double privacyFrameOffsetX;
-
     public Double privacyFrameOffsetY;
-
     public String privacyConnectTexts = "和";
-
     public String privacyPreText;
-
     public String privacySufText;
-
     public String privacyOperatorPreText = "《";
-
     public String privacyOperatorSufText  = "》";
-
     public Integer privacyOperatorIndex;
-
     public List<CustomViewBlock> customViewBlockList;
 
     @NonNull
-
     @Override
     public String toString() {
         return "AuthUIModel{" +

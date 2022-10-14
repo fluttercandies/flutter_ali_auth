@@ -1000,6 +1000,7 @@ Map<String, dynamic> _$CustomViewBlockToJson(CustomViewBlock instance) {
   writeNotNull('offsetY', instance.offsetY);
   writeNotNull('width', instance.width);
   writeNotNull('height', instance.height);
+  writeNotNull('enableTap', instance.enableTap)
   return val;
 }
 

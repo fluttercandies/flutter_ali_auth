@@ -227,6 +227,7 @@ class _DebugPageState extends State<DebugPage> {
           offsetX: 20,
           offsetY: Platform.isAndroid ? 0 : kToolbarHeight,
           image: "images/icon_close_gray.png",
+          enableTap: true,
         ),
         //其他登录方式
         CustomViewBlock(
@@ -236,6 +237,7 @@ class _DebugPageState extends State<DebugPage> {
           offsetX: iconOffsetX1,
           offsetY: iconOffsetY,
           image: "images/wx.png",
+          enableTap: true,
         ),
         CustomViewBlock(
           viewId: 3,
@@ -244,6 +246,7 @@ class _DebugPageState extends State<DebugPage> {
           offsetX: iconOffsetX1 + iconSize + iconPadding,
           offsetY: iconOffsetY,
           image: "images/tb.png",
+          enableTap: true,
         ),
         CustomViewBlock(
           viewId: 4,
@@ -252,6 +255,7 @@ class _DebugPageState extends State<DebugPage> {
           offsetX: iconOffsetX1 + iconSize * 2 + iconPadding * 2,
           offsetY: iconOffsetY,
           image: "images/wb.png",
+          enableTap: true,
         ),
       ],
     );
