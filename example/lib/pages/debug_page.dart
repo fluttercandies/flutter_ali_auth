@@ -35,7 +35,6 @@ class _DebugPageState extends State<DebugPage> {
   /// 登录成功处理
   void _onEvent(dynamic event) async {
     final responseModel = AuthResponseModel.fromJson(Map.from(event));
-    print(responseModel);
     if (responseModel.resultCode == AuthResultCode.success.code &&
         responseModel.token != null) {
       // login success
