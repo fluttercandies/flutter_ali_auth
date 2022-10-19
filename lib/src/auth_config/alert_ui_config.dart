@@ -46,9 +46,8 @@ class AlertUIConfig extends AuthUIConfig {
       'alertBorderRadius': alertBorderRadius,
       'alertWindowWidth': alertWindowWidth,
       'alertWindowHeight': alertWindowHeight,
-      'customViewBlockList': customViewBlockList
-          ?.map((e) => e.toJson())
-          .toList(growable: false),
+      'customViewBlockList':
+          customViewBlockList?.map((e) => e.toJson()).toList(growable: false),
       ...?alertTitleBarConfig?.toJson(),
       ...?logoConfig?.toJson(),
       ...?sloganConfig?.toJson(),

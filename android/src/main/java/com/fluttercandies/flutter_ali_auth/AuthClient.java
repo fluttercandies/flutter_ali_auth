@@ -87,11 +87,12 @@ public class AuthClient {
                 TokenRet tokenRet;
                 try {
                     tokenRet = TokenRet.fromJson(s);
-                    if (ResultCode.CODE_ERROR_ENV_CHECK_SUCCESS.equals(tokenRet.getCode())) {
-                        //终端支持认证 当前环境可以进行一键登录
-                        AuthResponseModel authResponseModel = AuthResponseModel.fromTokenRect(tokenRet);
-                        eventSink.success(authResponseModel.toJson());
+                     if(ResultCode.CODE_ERROR_ENV_CHECK_SUCCESS.equals(tokenRet.getCode())){
+                         //终端支持认证 当前环境可以进行一键登录 并且加速拉起授权页面
+                         accelerateLoginPage();
                     }
+                    AuthResponseModel authResponseModel = AuthResponseModel.fromTokenRect(tokenRet);
+                    eventSink.success(authResponseModel.toJson());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -104,6 +105,7 @@ public class AuthClient {
                 try {
                     tokenRet = TokenRet.fromJson(s);
                     AuthResponseModel authResponseModel = AuthResponseModel.fromTokenRect(tokenRet);
+
                     eventSink.success(authResponseModel.toJson());
                 } catch (Exception e) {
                     AuthResponseModel authResponseModel = AuthResponseModel.tokenDecodeFailed();
@@ -124,11 +126,6 @@ public class AuthClient {
      * 检查环境是否可用
      */
     public void checkEnv() {
-        if (Objects.isNull(mAuthHelper) || !sdkAvailable) {
-            AuthResponseModel authResponseModel = AuthResponseModel.initFailed(initFailedMsg);
-            eventSink.success(authResponseModel.toJson());
-            return;
-        }
         mAuthHelper.checkEnvAvailable(PhoneNumberAuthHelper.SERVICE_TYPE_AUTH);
     }
 

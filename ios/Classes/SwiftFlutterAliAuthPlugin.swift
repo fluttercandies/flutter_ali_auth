@@ -95,9 +95,7 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
 
     public func initSdk(arguments: Any?) {
         var responseMoedel: ResponseModel
-
-       
-
+        
         guard let params = arguments as? [String: Any] else {
             // 参数有问题
             responseMoedel = ResponseModel(code: PNSCodeFailed, msg: "初始化失败，AuthConfig不能为空")

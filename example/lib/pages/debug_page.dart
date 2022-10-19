@@ -44,6 +44,9 @@ class _DebugPageState extends State<DebugPage> {
           });
         }
         break;
+      case AuthResultCode.envCheckSuccess:
+        SmartDialog.showToast("当前网络环境支持一键登录");
+        break;
       case AuthResultCode.envCheckFail:
         SmartDialog.showToast("当前网络环境不支持一键登录，请稍后重试");
         break;

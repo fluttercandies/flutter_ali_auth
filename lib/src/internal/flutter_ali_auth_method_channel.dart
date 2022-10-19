@@ -11,7 +11,8 @@ class MethodChannelFlutterAliAuth extends FlutterAliAuthPlatform {
 
   @override
   Future<String?> getPlatformVersion() async {
-    final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
+    final version =
+        await methodChannel.invokeMethod<String>('getPlatformVersion');
     return version;
   }
 }

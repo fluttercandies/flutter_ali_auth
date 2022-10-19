@@ -45,7 +45,6 @@ android {
         release {
             debuggable false
             // minifyEnabled true
-            proguardFile file('proguard-rules.pro')
             zipAlignEnabled false
             multiDexEnabled true
 

@@ -97,7 +97,6 @@ public class AuthResponseModel {
 
         JSONObject carrierFailedResultData = JSON.parseObject(tokenRet.getCarrierFailedResultData());
 
-        System.out.println(carrierFailedResultData);
         if (Objects.nonNull(carrierFailedResultData)) {
             if (Objects.nonNull(carrierFailedResultData.get("innerCode"))) {
                 authResponseModel.setInnerCode((String) carrierFailedResultData.get("innerCode"));

@@ -34,9 +34,8 @@ class FullScreenUIConfig extends AuthUIConfig {
       'backgroundColor': backgroundColor,
       'backgroundImage': backgroundImage,
       'prefersStatusBarHidden': prefersStatusBarHidden,
-      'customViewBlockList': customViewBlockList
-          ?.map((e) => e.toJson())
-          .toList(growable: false),
+      'customViewBlockList':
+          customViewBlockList?.map((e) => e.toJson()).toList(growable: false),
       ...?navConfig?.toJson(),
       ...?logoConfig?.toJson(),
       ...?sloganConfig?.toJson(),
