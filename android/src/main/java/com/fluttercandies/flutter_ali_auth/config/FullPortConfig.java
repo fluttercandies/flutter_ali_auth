@@ -41,7 +41,6 @@ public class FullPortConfig extends BaseUIConfig {
         String logoPath = null;
 
         boolean logoIsHidden = authUIModel.logoIsHidden != null ? authUIModel.logoIsHidden : true;
-
         if (!logoIsHidden) {
             try {
                 logoPath = mFlutterAssets.getAssetFilePathByName(authUIModel.logoImage);
@@ -50,31 +49,22 @@ public class FullPortConfig extends BaseUIConfig {
                 logoPath = "mytel_app_launcher";
             }
         }
-
         double logoSize = authUIModel.logoWidth == null ? kLogoSize : authUIModel.logoWidth;
-
         double logoOffsetY = authUIModel.logoFrameOffsetY == null ? kLogoOffset : authUIModel.logoFrameOffsetY;
 
         boolean sloganIsHidden = authUIModel.sloganIsHidden == null || authUIModel.sloganIsHidden;
-
         int sloganColor = authUIModel.sloganTextColor == null ? mActivity.getResources().getColor(R.color.deepGrey) : Color.parseColor(authUIModel.sloganTextColor);
-
         String sloganText = authUIModel.sloganText == null ? "欢迎登录" + appName : authUIModel.sloganText;
-
-        double sloganFrameOffsetY = authUIModel.sloganFrameOffsetY == null ? (kLogoOffset + kLogoSize + kPadding) : authUIModel.sloganFrameOffsetY;
+        double sloganFrameOffsetY = authUIModel.sloganFrameOffsetY == null ? (logoOffsetY + logoSize + kPadding) : authUIModel.sloganFrameOffsetY;
+        double sloganTextSize = authUIModel.sloganTextSize == null ? Font_24 : authUIModel.sloganTextSize;
 
         int numberFontSize = authUIModel.numberFontSize == null ? Font_20 : authUIModel.numberFontSize;
-
         int numberFontColor = authUIModel.numberColor == null ? Color.parseColor("#FF4081") : Color.parseColor(authUIModel.numberColor);
-
         double numberFrameOffsetY = authUIModel.numberFrameOffsetY == null ? (sloganFrameOffsetY + Font_24 + kPadding) : authUIModel.numberFrameOffsetY;
 
         double loginBtnOffsetY = authUIModel.loginBtnFrameOffsetY == null ? mScreenHeightDp * .5 : authUIModel.loginBtnFrameOffsetY;
-
         double loginBtnWidth = authUIModel.loginBtnWidth == null ? mScreenWidthDp * 0.85 : authUIModel.loginBtnWidth;
-
         double loginBtnHeight = authUIModel.loginBtnHeight == null ? 48 : authUIModel.loginBtnHeight;
-
         String loginBtnImage = null;
         if (authUIModel.loginBtnNormalImage != null) {
             try {
@@ -85,18 +75,13 @@ public class FullPortConfig extends BaseUIConfig {
             }
         }
 
-        boolean changeBtnIsHidden = authUIModel.changeBtnIsHidden == null || authUIModel.changeBtnIsHidden;
-
+        boolean changeBtnIsHidden = authUIModel.changeBtnIsHidden != null && authUIModel.changeBtnIsHidden;
         double changeBtnFrameOffsetY = authUIModel.changeBtnFrameOffsetY == null ? loginBtnOffsetY + loginBtnHeight + kPadding * 2 : authUIModel.changeBtnFrameOffsetY;
 
         double privacyFrameOffsetYFromBottom = authUIModel.privacyFrameOffsetY == null ? 32 : authUIModel.privacyFrameOffsetY;
-
         String privacyPreText = authUIModel.privacyPreText == null ? "已经阅读并同意" : authUIModel.privacyPreText;
-
         boolean checkBoxIsHidden = authUIModel.checkBoxIsHidden != null && authUIModel.checkBoxIsHidden;
-
         String checkedImage = authUIModel.checkedImage == null ? "icon_check" : authUIModel.checkedImage;
-
         String unCheckImage = authUIModel.uncheckImage == null ? "icon_uncheck" : authUIModel.uncheckImage;
 
         String backgroundImagePath = null;
@@ -138,7 +123,7 @@ public class FullPortConfig extends BaseUIConfig {
                 .setLogoImgPath(logoPath)
 
                 .setSloganHidden(sloganIsHidden)
-                .setSloganTextSizeDp(Font_24)
+                .setSloganTextSizeDp(((int) sloganTextSize))
                 .setSloganText(sloganText)
                 .setSloganTextColor(sloganColor)
                 .setSloganOffsetY(((int) sloganFrameOffsetY))

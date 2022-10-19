@@ -81,7 +81,6 @@ public class Constant {
     public static int Font_12 = 12;
 
     public static int kLogoOffset = 80;
-    public static int kAlertLogoOffset = 12;
     public static int kLogoSize = 100;
 
     public static int kPadding = 8;

@@ -3,7 +3,7 @@ package com.fluttercandies.flutter_ali_auth.config;
 import static com.fluttercandies.flutter_ali_auth.utils.Constant.Font_12;
 import static com.fluttercandies.flutter_ali_auth.utils.Constant.Font_16;
 import static com.fluttercandies.flutter_ali_auth.utils.Constant.Font_20;
-import static com.fluttercandies.flutter_ali_auth.utils.Constant.kAlertLogoOffset;
+import static com.fluttercandies.flutter_ali_auth.utils.Constant.getAppName;
 import static com.fluttercandies.flutter_ali_auth.utils.Constant.kLogoSize;
 import static com.fluttercandies.flutter_ali_auth.utils.Constant.kPadding;
 
@@ -22,6 +22,7 @@ import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper;
 import com.mobile.auth.gatewayauth.ui.AbstractPnsViewDelegate;
 import com.nirvana.tools.core.AppUtils;
 
+import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.EventChannel;
 
@@ -39,28 +40,19 @@ public class DialogPortConfig extends BaseUIConfig {
     @Override
     public void configAuthPage( AuthUIModel authUIModel){
         int authPageOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT;
-
         if (Build.VERSION.SDK_INT == 26) {
             authPageOrientation = ActivityInfo.SCREEN_ORIENTATION_BEHIND;
         }
-
         updateScreenSize(authPageOrientation);
-
         int dialogHeight = (int) (authUIModel.alertWindowWidth == null ? mScreenHeightDp * 0.55f : authUIModel.alertWindowWidth);
-
         int dialogWidth = (int) (authUIModel.alertWindowHeight == null ? mScreenWidthDp * 0.9f : authUIModel.alertWindowHeight);
-
         //sdk默认控件的区域是marginTop50dp
         int designHeight = dialogHeight - 50;
-
         int unit = designHeight / 10;
 
-        int logBtnHeight = (int) (unit * 1.2);
-
-        boolean logoIsHidden = authUIModel.logoIsHidden != null ? authUIModel.logoIsHidden : true;
-
+        String appName = getAppName(mContext);
         String logoPath = null;
-
+        boolean logoIsHidden = authUIModel.logoIsHidden != null ? authUIModel.logoIsHidden : true;
         if (!logoIsHidden) {
             try {
                 logoPath = mFlutterAssets.getAssetFilePathByName(authUIModel.logoImage);
@@ -69,46 +61,39 @@ public class DialogPortConfig extends BaseUIConfig {
                 logoPath = "mytel_app_launcher";
             }
         }
+        double logoSize = authUIModel.logoWidth == null ? kLogoSize : authUIModel.logoWidth;
+        double logoOffsetY = authUIModel.logoFrameOffsetY == null ? kPadding : authUIModel.logoFrameOffsetY;
 
-        int logoSize = (int) (kLogoSize * 0.85f);
+        boolean sloganIsHidden = authUIModel.sloganIsHidden == null || authUIModel.sloganIsHidden;
+        int sloganColor = authUIModel.sloganTextColor == null ? mActivity.getResources().getColor(R.color.md_grey_700) : Color.parseColor(authUIModel.sloganTextColor);
+        String sloganText = authUIModel.sloganText == null ? "欢迎登录" + appName : authUIModel.sloganText;
+        double sloganFrameOffsetY = authUIModel.sloganFrameOffsetY == null ? (logoOffsetY + logoSize) : authUIModel.sloganFrameOffsetY;
+        double sloganTextSize = authUIModel.sloganTextSize == null ? Font_16 : authUIModel.sloganTextSize;
 
-        int sloganColor = mActivity.getResources().getColor(R.color.md_grey_700);
+        int numberFontSize = authUIModel.numberFontSize == null ? Font_20 : authUIModel.numberFontSize;
+        int numberFontColor = authUIModel.numberColor == null ? Color.parseColor("#FF4081") : Color.parseColor(authUIModel.numberColor);
+        double numberFrameOffsetY = authUIModel.numberFrameOffsetY == null ? (sloganFrameOffsetY + sloganTextSize + kPadding) : authUIModel.numberFrameOffsetY;
 
-        double sloganFrameOffsetY = authUIModel.sloganFrameOffsetY == null ? (kAlertLogoOffset + logoSize + kPadding) : authUIModel.sloganFrameOffsetY;
-
-        double numberFrameOffsetY = authUIModel.numberFrameOffsetY == null ? (sloganFrameOffsetY + Font_20 + kPadding) : authUIModel.numberFrameOffsetY;
-
+        double loginBtnOffsetY = authUIModel.loginBtnFrameOffsetY == null ? dialogHeight * .5 : authUIModel.loginBtnFrameOffsetY;
         double loginBtnWidth = authUIModel.loginBtnWidth == null ? dialogWidth * 0.85 : authUIModel.loginBtnWidth;
-
         double loginBtnHeight = authUIModel.loginBtnHeight == null ? 48 : authUIModel.loginBtnHeight;
-
-        double loginBtnOffsetY = authUIModel.loginBtnFrameOffsetY == null ? (dialogHeight * 0.5f ) : authUIModel.loginBtnFrameOffsetY;
-
-        String loginBtnImage = authUIModel.loginBtnNormalImage == null ? "login_btn_bg" : authUIModel.loginBtnNormalImage;
-
-        boolean changeBtnIsHidden = authUIModel.changeBtnIsHidden == null || authUIModel.changeBtnIsHidden;
-
-        double changeBtnFrameOffsetY = authUIModel.changeBtnFrameOffsetY == null ? loginBtnOffsetY + loginBtnHeight + kPadding * 2 : authUIModel.changeBtnFrameOffsetY;
-
-        double privacyFrameOffsetYFromBottom = authUIModel.privacyFrameOffsetY == null ? 32 : authUIModel.privacyFrameOffsetY;
-
-        String privacyPreText = authUIModel.privacyPreText == null ? "点击一键登录表示您已经阅读并同意":authUIModel.privacyPreText;
-
-        boolean checkBoxIsHidden = authUIModel.checkBoxIsHidden == null || authUIModel.checkBoxIsHidden;
-
-        String checkedImage = authUIModel.checkedImage == null ? "icon_check" : authUIModel.checkedImage;
-
-        String unCheckImage = authUIModel.uncheckImage == null ? "icon_uncheck" : authUIModel.uncheckImage;
-
-        String backgroundImagePath;
-        if (authUIModel.backgroundImage != null) {
+        String loginBtnImage = null;
+        if (authUIModel.loginBtnNormalImage != null) {
             try {
-                backgroundImagePath = mFlutterAssets.getAssetFilePathByName(authUIModel.backgroundImage);
-                System.out.println(backgroundImagePath);
+                loginBtnImage = mFlutterAssets.getAssetFilePathByName(authUIModel.loginBtnNormalImage);
             } catch (Exception e) {
                 e.printStackTrace();
+                loginBtnImage = "login_btn_bg";
             }
         }
+
+        boolean changeBtnIsHidden = authUIModel.changeBtnIsHidden == null || authUIModel.changeBtnIsHidden;
+        double changeBtnFrameOffsetY = authUIModel.changeBtnFrameOffsetY == null ? loginBtnOffsetY + loginBtnHeight + kPadding * 2 : authUIModel.changeBtnFrameOffsetY;
+        double privacyFrameOffsetYFromBottom = authUIModel.privacyFrameOffsetY == null ? 32 : authUIModel.privacyFrameOffsetY;
+        String privacyPreText = authUIModel.privacyPreText == null ? "点击一键登录表示您已经阅读并同意" : authUIModel.privacyPreText;
+        boolean checkBoxIsHidden = authUIModel.checkBoxIsHidden == null || authUIModel.checkBoxIsHidden;
+        String checkedImage = authUIModel.checkedImage == null ? "icon_check" : authUIModel.checkedImage;
+        String unCheckImage = authUIModel.uncheckImage == null ? "icon_uncheck" : authUIModel.uncheckImage;
 
         ///自定义控件
         if (authUIModel.customViewBlockList != null) {
@@ -131,7 +116,6 @@ public class DialogPortConfig extends BaseUIConfig {
                 .build());
 
         mAuthHelper.setAuthUIConfig(new AuthUIConfig.Builder()
-
                 .setWebViewStatusBarColor(Color.GRAY)
                 .setWebNavColor(Color.WHITE)
                 .setWebNavTextColor(Color.DKGRAY)
@@ -144,9 +128,9 @@ public class DialogPortConfig extends BaseUIConfig {
                 .setCheckboxHidden(true)
 
                 .setLogoHidden(logoIsHidden)
-                .setLogoOffsetY(kAlertLogoOffset)
-                .setLogoWidth(logoSize)
-                .setLogoHeight(logoSize)
+                .setLogoOffsetY(((int) logoOffsetY))
+                .setLogoWidth(((int) logoSize))
+                .setLogoHeight(((int) logoSize))
                 .setLogoImgPath(logoPath)
 
                 .setSloganTextSizeDp(Font_16)
@@ -154,18 +138,27 @@ public class DialogPortConfig extends BaseUIConfig {
                 .setSloganTextColor(sloganColor)
                 .setSloganOffsetY(((int) sloganFrameOffsetY))
 
-                .setNumberSizeDp(Font_20)
-                .setNumberColor(Color.parseColor(authUIModel.numberColor))
-                .setNumFieldOffsetY((int) numberFrameOffsetY)
+                .setSloganHidden(sloganIsHidden)
+                .setSloganTextSizeDp(((int) sloganTextSize))
+                .setSloganText(sloganText)
+                .setSloganTextColor(sloganColor)
+                .setSloganOffsetY(((int) sloganFrameOffsetY))
+
+                .setNumberSizeDp(numberFontSize)
+                .setNumberColor(numberFontColor)
+                .setNumFieldOffsetY(((int) numberFrameOffsetY))
 
                 .setLogBtnText(authUIModel.loginBtnText)
                 .setLogBtnOffsetY((int) loginBtnOffsetY)
-                .setLogBtnOffsetX(0)
                 .setLogBtnWidth(((int) loginBtnWidth))
                 .setLogBtnHeight(((int) loginBtnHeight))
                 .setLogBtnBackgroundPath(loginBtnImage)
 
-                .setSwitchAccHidden(true)
+                .setSwitchAccHidden(changeBtnIsHidden)
+                .setSwitchAccText(authUIModel.changeBtnTitle)
+                .setSwitchAccTextSizeDp(authUIModel.changeBtnTextSize)
+                .setSwitchAccTextColor(Color.parseColor(authUIModel.changeBtnTextColor))
+                .setSwitchOffsetY((int) changeBtnFrameOffsetY)
 
                 .setAppPrivacyOne(authUIModel.privacyOneName, authUIModel.privacyOneUrl)
                 .setAppPrivacyTwo(authUIModel.privacyTwoName, authUIModel.privacyTwoUrl)
@@ -190,8 +183,6 @@ public class DialogPortConfig extends BaseUIConfig {
                 .setDialogHeight(dialogHeight)
                 .setDialogWidth(dialogWidth)
                 .setDialogOffsetY(0)
-
-                //.setDialogBottom(true)
 
                 .setAuthPageActIn(String.valueOf(R.anim.zoom_in), String.valueOf(R.anim.zoom_out))
                 .setAuthPageActOut(String.valueOf(R.anim.zoom_in), String.valueOf(R.anim.zoom_out))

@@ -193,9 +193,24 @@ class _DebugPageState extends State<DebugPage> {
                       label: '底部弹窗',
                     ),
                     onPressed: () async {
-                      await AliAuthClient.loginWithConfig(_authConfig.copyWith(
-                        authUIStyle: AuthUIStyle.bottomSheet,
-                      ));
+                      await AliAuthClient.loginWithConfig(
+                        _authConfig.copyWith(
+                          authUIStyle: AuthUIStyle.bottomSheet,
+                          authUIConfig: AlertUIConfig(
+                            logoConfig: const LogoConfig(
+                              logoIsHidden: false,
+                              logoImage: "images/flutter_candies_logo.png",
+                            ),
+                            sloganConfig: SloganConfig(
+                              sloganIsHidden: false,
+                              sloganText: '欢迎登录',
+                            ),
+                            changeButtonConfig: ChangeButtonConfig(
+                              changeBtnIsHidden: true,
+                            ),
+                          ),
+                        ),
+                      );
                     },
                   ),
                   OutlinedButton(

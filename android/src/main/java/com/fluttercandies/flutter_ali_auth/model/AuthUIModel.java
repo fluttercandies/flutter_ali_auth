@@ -90,7 +90,7 @@ public class AuthUIModel {
     public Double loginBtnLRPadding;
 
     // change button
-    public Boolean changeBtnIsHidden = false;
+    public Boolean changeBtnIsHidden;
     public String changeBtnTitle = "切换其他登录方式";
     public String changeBtnTextColor = "#666666";
     public Integer changeBtnTextSize = Font_14;
