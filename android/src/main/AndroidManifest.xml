@@ -15,7 +15,6 @@
         android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="m"
         android:theme="@style/AppTheme"
-        android:name="${applicationName}"
         >
         <!--重点关注！！！！！！！-->
         <!--如果不需要使用窗口模式，不要使用authsdk_activity_dialog主题，会出现异常动画-->

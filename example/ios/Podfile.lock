@@ -29,7 +29,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  flutter_ali_auth: f7fab5560c1d8fa58dd158373b8fb6f7cefd3692
+  flutter_ali_auth: e56ff2cf266380791c1be5e231f23acb86d49ffd
   MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
   MJExtension: 21c5f6f8c4d5d8844b7ae8fbae08fed0b501f961
   SDWebImage: e5cc87bf736e60f49592f307bdf9e157189298a3

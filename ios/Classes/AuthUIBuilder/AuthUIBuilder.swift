@@ -39,8 +39,6 @@ class AuthUIBuilder {
             return self.buildAlertModel(config: authUIConfig)
         }
     }
-    
-    
 
     // MARK: - 获取Flutter的image
 
@@ -51,6 +49,7 @@ class AuthUIBuilder {
         guard let path = getFlutterAssetsPath(key: key!) else {
             return nil
         }
+
         return UIImage(contentsOfFile: path)
     }
 
@@ -70,8 +69,8 @@ class AuthUIBuilder {
         }
         return nil
     }
-    
-    //MARK: - 获取插件资源
+
+    // MARK: - 获取插件资源
 
     var PluginBundle: Bundle? {
         if let path = Bundle(for: SwiftFlutterAliAuthPlugin.self).path(forResource: "ATAuthSDK", ofType: "bundle") {
@@ -80,9 +79,9 @@ class AuthUIBuilder {
         }
         return nil
     }
-    
-    //MARK: -构建自定义控件
-    
+
+    // MARK: - 构建自定义控件
+
     func buildCustomViewBlock(model: TXCustomModel, customViewConfigList: [CustomViewBlock]) {
         var customViewList: [UIView] = []
 
@@ -112,15 +111,15 @@ class AuthUIBuilder {
                     customView.imageView?.contentMode = .scaleAspectFill
                 }
             }
-            
+
             if customViewConfig.enableTap ?? false {
                 // 添加点击事件
                 if let viewId = customViewConfig.viewId {
                     customView.tag = viewId
-                    customView.addTarget(self, action: #selector(customBtnOnTap), for: UIControl.Event.touchUpInside)
+                    customView.addTarget(self, action: #selector(self.customBtnOnTap), for: UIControl.Event.touchUpInside)
                 }
             }
-            
+
             customViewList.append(customView)
         }
 
@@ -145,8 +144,8 @@ class AuthUIBuilder {
             }
         }
     }
-    
-    //MARK: - 自定义控件的点击事件
+
+    // MARK: - 自定义控件的点击事件
 
     @objc func customBtnOnTap(sender: UIButton) {
         // 回调自定义控件的点击事件，并且把viewId传递到flutter

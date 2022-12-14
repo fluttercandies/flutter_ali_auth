@@ -22,6 +22,7 @@ import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper;
 import com.mobile.auth.gatewayauth.ui.AbstractPnsViewDelegate;
 import com.fluttercandies.flutter_ali_auth.R;
 
+import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.EventChannel;
 
@@ -81,6 +82,7 @@ public class DialogBottomConfig extends BaseUIConfig {
                 e.printStackTrace();
                 loginBtnImage = "login_btn_bg";
             }
+
         }
 
         boolean changeBtnIsHidden = authUIModel.changeBtnIsHidden == null || authUIModel.changeBtnIsHidden;

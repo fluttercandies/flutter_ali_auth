@@ -200,7 +200,7 @@ await AliAuthClient.checkVerifyEnable();
 await AliAuthClient.accelerateLoginPage();
 ```
 
-## 注意事项 ⚠️
+## 插件须知 ⚠️
 ### 关于权限
 1. 安卓权限，本插件已经添加必要的权限支持：
 ```xml

@@ -69,6 +69,7 @@ extension AuthUIBuilder {
         model.logoIsHidden = false
 
         if let logoImage = config.logoImage {
+       
             if let logoImageAssets = FlutterAssetImage(logoImage) {
                 model.logoImage = logoImageAssets
             }
