@@ -58,4 +58,9 @@ class AlertUIConfig extends AuthUIConfig {
       ...?privacyConfig?.toJson(),
     }..removeWhere((key, value) => value == null);
   }
+
+  @override
+  String toString() {
+    return 'AlertUIConfig${toJson()}';
+  }
 }

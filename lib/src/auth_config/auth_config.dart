@@ -27,4 +27,9 @@ class AuthConfig {
       ...?authUIConfig?.toJson(),
     }..removeWhere((key, value) => value == null);
   }
+
+  @override
+  String toString() {
+    return 'AuthConfig{iosSdk: $iosSdk, androidSdk: $androidSdk, authUIStyle: $authUIStyle, authUIConfig: $authUIConfig, enableLog: $enableLog}';
+  }
 }

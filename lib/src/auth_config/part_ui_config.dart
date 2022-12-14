@@ -80,6 +80,11 @@ class LogoConfig {
   final double? logoFrameOffsetY;
 
   Map<String, dynamic> toJson() => _$LogoConfigToJson(this);
+
+  @override
+  String toString() {
+    return 'LogoConfig{logoIsHidden: $logoIsHidden, logoImage: $logoImage, logoWidth: $logoWidth, logoHeight: $logoHeight, logoFrameOffsetX: $logoFrameOffsetX, logoFrameOffsetY: $logoFrameOffsetY}';
+  }
 }
 
 /// slogan设置
@@ -101,6 +106,11 @@ class SloganConfig {
   final double? sloganFrameOffsetY;
 
   Map<String, dynamic> toJson() => _$SloganConfigToJson(this);
+
+  @override
+  String toString() {
+    return 'SloganConfig{sloganIsHidden: $sloganIsHidden, sloganText: $sloganText, sloganTextColor: $sloganTextColor, sloganTextSize: $sloganTextSize, sloganFrameOffsetX: $sloganFrameOffsetX, sloganFrameOffsetY: $sloganFrameOffsetY}';
+  }
 }
 
 /// phone number设置
@@ -118,6 +128,11 @@ class PhoneNumberConfig {
   final double? numberFrameOffsetY;
 
   Map<String, dynamic> toJson() => _$PhoneNumberConfigToJson(this);
+
+  @override
+  String toString() {
+    return 'PhoneNumberConfig{numberColor: $numberColor, numberFontSize: $numberFontSize, numberFrameOffsetX: $numberFrameOffsetX, numberFrameOffsetY: $numberFrameOffsetY}';
+  }
 }
 
 /// login button设置
@@ -157,6 +172,11 @@ class LoginButtonConfig {
   final double? loginBtnHeight;
 
   Map<String, dynamic> toJson() => _$LoginButtonConfigToJson(this);
+
+  @override
+  String toString() {
+    return 'LoginButtonConfig{loginBtnText: $loginBtnText, loginBtnTextColor: $loginBtnTextColor, loginBtnTextSize: $loginBtnTextSize, loginBtnNormalImage: $loginBtnNormalImage, loginBtnUnableImage: $loginBtnUnableImage, loginBtnPressedImage: $loginBtnPressedImage, loginBtnFrameOffsetX: $loginBtnFrameOffsetX, loginBtnFrameOffsetY: $loginBtnFrameOffsetY, loginBtnWidth: $loginBtnWidth, loginBtnHeight: $loginBtnHeight}';
+  }
 }
 
 /// change button 设置
@@ -178,6 +198,11 @@ class ChangeButtonConfig {
   final double? changeBtnFrameOffsetY;
 
   Map<String, dynamic> toJson() => _$ChangeButtonConfigToJson(this);
+
+  @override
+  String toString() {
+    return 'ChangeButtonConfig{changeBtnIsHidden: $changeBtnIsHidden, changeBtnTitle: $changeBtnTitle, changeBtnTextColor: $changeBtnTextColor, changeBtnTextSize: $changeBtnTextSize, changeBtnFrameOffsetX: $changeBtnFrameOffsetX, changeBtnFrameOffsetY: $changeBtnFrameOffsetY}';
+  }
 }
 
 /// check box 设置
@@ -197,6 +222,11 @@ class CheckBoxConfig {
   final double? checkBoxWH;
 
   Map<String, dynamic> toJson() => _$CheckBoxConfigToJson(this);
+
+  @override
+  String toString() {
+    return 'CheckBoxConfig{checkBoxIsChecked: $checkBoxIsChecked, checkBoxIsHidden: $checkBoxIsHidden, checkedImage: $checkedImage, uncheckImage: $uncheckImage, checkBoxWH: $checkBoxWH}';
+  }
 }
 
 class PrivacyConfig {
@@ -248,6 +278,11 @@ class PrivacyConfig {
   final int? privacyOperatorIndex;
 
   Map<String, dynamic> toJson() => _$PrivacyConfigToJson(this);
+
+  @override
+  String toString() {
+    return 'PrivacyConfig{privacyOneName: $privacyOneName, privacyOneUrl: $privacyOneUrl, privacyTwoName: $privacyTwoName, privacyTwoUrl: $privacyTwoUrl, privacyThreeName: $privacyThreeName, privacyThreeUrl: $privacyThreeUrl, privacyFontSize: $privacyFontSize, privacyFontColor: $privacyFontColor, privacyFrameOffsetX: $privacyFrameOffsetX, privacyFrameOffsetY: $privacyFrameOffsetY, privacyConnectTexts: $privacyConnectTexts, privacyPreText: $privacyPreText, privacySufText: $privacySufText, privacyOperatorPreText: $privacyOperatorPreText, privacyOperatorSufText: $privacyOperatorSufText, privacyOperatorIndex: $privacyOperatorIndex}';
+  }
 }
 
 class CustomViewBlock {
@@ -279,4 +314,9 @@ class CustomViewBlock {
   final bool enableTap;
 
   Map<String, dynamic> toJson() => _$CustomViewBlockToJson(this);
+
+  @override
+  String toString() {
+    return 'CustomViewBlock{viewId: $viewId, text: $text, textColor: $textColor, textSize: $textSize, backgroundColor: $backgroundColor, image: $image, offsetX: $offsetX, offsetY: $offsetY, width: $width, height: $height, enableTap: $enableTap}';
+  }
 }

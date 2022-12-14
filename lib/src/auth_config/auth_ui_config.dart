@@ -22,4 +22,9 @@ abstract class AuthUIConfig {
   final List<CustomViewBlock>? customViewBlockList;
 
   Map<String, dynamic> toJson();
+
+  @override
+  String toString() {
+    return 'AuthUIConfig{logoConfig: $logoConfig, sloganConfig: $sloganConfig, phoneNumberConfig: $phoneNumberConfig, loginButtonConfig: $loginButtonConfig, changeButtonConfig: $changeButtonConfig, checkBoxConfig: $checkBoxConfig, privacyConfig: $privacyConfig, customViewBlockList: $customViewBlockList}';
+  }
 }
