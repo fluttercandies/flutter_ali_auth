@@ -309,6 +309,11 @@ public class AuthClient {
         this.eventSink = eventSink;
     }
 
+    public void disposeEventSink(){
+        this.eventSink.endOfStream();
+        this.eventSink = null;
+    }
+
     public EventChannel.EventSink getEventSink() {
         return eventSink;
     }

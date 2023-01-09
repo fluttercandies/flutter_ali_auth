@@ -23,6 +23,7 @@ extension SwiftFlutterAliAuthPlugin: FlutterStreamHandler {
      * @return 如果设置失败，则返回 FlutterError 实例。
      */
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+     
         if _eventSink == nil {
             _eventSink = events
         }
@@ -44,6 +45,7 @@ extension SwiftFlutterAliAuthPlugin: FlutterStreamHandler {
      */
     public func onCancel(withArguments arguments: Any?) -> FlutterError? {
         _eventSink = nil
+      
         return nil
     }
 

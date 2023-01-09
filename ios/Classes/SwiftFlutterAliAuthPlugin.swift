@@ -54,6 +54,8 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
             accelerateLoginPage()
         case "loginWithConfig":
             login(arguments: call.arguments)
+        case "cancelStream":
+            onCancel(withArguments: nil)
         default:
             result(FlutterMethodNotImplemented)
         }

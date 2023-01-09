@@ -87,6 +87,8 @@ public class FlutterAliAuthPlugin implements FlutterPlugin,
       case "loginWithConfig":
         authClient.getLoginToken(call.arguments);
         break;
+      case "cancelStream":
+        authClient.disposeEventSink();
       default:
         result.notImplemented();
         break;
@@ -129,6 +131,7 @@ public class FlutterAliAuthPlugin implements FlutterPlugin,
     if(Objects.isNull(authClient.getEventSink())){
       authClient.setEventSink(events);
     }
+
   }
 
   @Override

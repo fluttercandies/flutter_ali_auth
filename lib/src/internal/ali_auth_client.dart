@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 
 import '../auth_config/auth_config.dart';
@@ -39,6 +41,7 @@ class AliAuthClient {
   }
 
   static Stream<dynamic>? _pluginStream;
+  static StreamSubscription<dynamic>? _streamSubscription;
 
   static Future<void> onListen(
     ValueChanged onData, {
@@ -50,12 +53,19 @@ class AliAuthClient {
       return;
     }
     _pluginStream = _loginEventChannel.receiveBroadcastStream();
-    _pluginStream!.listen(
+    _streamSubscription = _pluginStream!.listen(
       onData,
       onError: onError,
       onDone: onDone,
       cancelOnError: cancelOnError,
     );
+  }
+
+  static void removeListener() {
+    _streamSubscription?.cancel();
+    _streamSubscription = null;
+    _methodChannel.invokeMethod('cancelStream');
+    _pluginStream = null;
   }
 
   /// 判断网络是否支持，一般不需要主动调用

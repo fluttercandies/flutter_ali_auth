@@ -32,38 +32,43 @@ class _DebugPageState extends State<DebugPage> {
     ),
   );
 
-  /// 登录成功处理
+  @override
+  void dispose() {
+    AliAuthClient.removeListener();
+    super.dispose();
+  }
+
+  /// 登录页面点击事件回调处理
   void _onEvent(dynamic event) async {
     final responseModel = AuthResponseModel.fromJson(Map.from(event));
-    final resultCode = AuthResultCode.fromCode(responseModel.resultCode!);
-    switch (resultCode) {
+    final AuthResultCode code =
+        AuthResultCode.fromCode(responseModel.resultCode!);
+    switch (code) {
       case AuthResultCode.success:
-        if (responseModel.token != null) {
-          setState(() {
-            _token = responseModel.token;
-          });
+        if (responseModel.token != null && responseModel.token!.isNotEmpty) {
+          //验证成功，获取到token
+          // await onToken(token: responseModel.token!);
         }
         break;
-      case AuthResultCode.envCheckSuccess:
-        SmartDialog.showToast("当前网络环境支持一键登录");
-        break;
       case AuthResultCode.envCheckFail:
-        SmartDialog.showToast("当前网络环境不支持一键登录，请稍后重试");
+        SmartDialog.showToast("当前网络环境不支持一键登录，请稍后重试(${code.code})");
         break;
       case AuthResultCode.noCellularNetwork:
-        SmartDialog.showToast('移动数据网络未开启,请切换为移动网络后再尝试');
+        SmartDialog.showToast('移动数据网络未开启,请切换为移动网络后再尝试(${code.code})');
         break;
       case AuthResultCode.loginControllerClickChangeBtn:
         //点击切换按钮，切换到其他方式
+        // showSignDialog();
         break;
       case AuthResultCode.noSIMCard:
-        SmartDialog.showToast("当前设备不支持一键登录");
+        SmartDialog.showToast("当前设备不支持一键登录(${code.code})");
         break;
       case AuthResultCode.unknownError:
       case AuthResultCode.getTokenFailed:
       case AuthResultCode.interfaceTimeout:
       case AuthResultCode.loginControllerPresentFailed:
-        SmartDialog.showToast('登录失败，请稍后重试');
+      case AuthResultCode.decodeAppInfoFailed:
+        SmartDialog.showToast('暂时无法一键登录，请使用其他登录方式(${code.code})');
         break;
       case AuthResultCode.codeSDKInfoInvalid:
         SmartDialog.showToast('SDK设置错误');
@@ -72,36 +77,36 @@ class _DebugPageState extends State<DebugPage> {
       case AuthResultCode.interfaceLimited:
       case AuthResultCode.featureInvalid:
       case AuthResultCode.outOfService:
-        SmartDialog.showToast('暂时无法一键登录，请使用其他登录方式');
+        SmartDialog.showToast('暂时无法一键登录，请使用其他登录方式(${code.code})');
         break;
       case AuthResultCode.failed:
       case AuthResultCode.errorNetwork:
       case AuthResultCode.errorClientTimestamp:
       case AuthResultCode.statusBusy:
-        SmartDialog.showToast('请求遇到问题，请稍后重试');
-        break;
-      case AuthResultCode.decodeAppInfoFailed:
-        SmartDialog.showToast(responseModel.msg ?? 'SDK密钥错误');
-        break;
-      case AuthResultCode.onCustomViewTap:
-        SmartDialog.showToast("点击自定义控件：${responseModel.msg}");
+        SmartDialog.showToast('请求遇到问题，请稍后重试(${code.code})');
         break;
       case AuthResultCode.getMaskPhoneFailed:
       case AuthResultCode.getMaskPhoneSuccess:
       case AuthResultCode.carrierChanged:
-      case AuthResultCode.loginControllerPresentSuccess:
       case AuthResultCode.callPreLoginInAuthPage:
-      case AuthResultCode.loginControllerClickCancel:
+
+      case AuthResultCode.liftBodyVerifyReadyStating:
+      case AuthResultCode.onCustomViewTap:
+      case AuthResultCode.envCheckSuccess:
+      case AuthResultCode.getOperatorInfoFailed:
+      case AuthResultCode.unknownOperator:
+        SmartDialog.showToast('一键登录暂时不可用，请稍后再试(${code.code})');
+        break;
+      case AuthResultCode.loginControllerPresentSuccess:
       case AuthResultCode.loginControllerClickLoginBtn:
+      case AuthResultCode.errorUserCancel:
+      case AuthResultCode.loginControllerClickCancel:
       case AuthResultCode.loginControllerClickCheckBoxBtn:
       case AuthResultCode.loginControllerClickProtocol:
       case AuthResultCode.loginClickPrivacyAlertView:
       case AuthResultCode.loginPrivacyAlertViewClose:
       case AuthResultCode.loginPrivacyAlertViewClickContinue:
       case AuthResultCode.loginPrivacyAlertViewPrivacyContentClick:
-      case AuthResultCode.liftBodyVerifyReadyStating:
-      case AuthResultCode.errorUserCancel:
-      default:
         break;
     }
   }
@@ -200,13 +205,13 @@ class _DebugPageState extends State<DebugPage> {
                         ),
                         sloganConfig: SloganConfig(
                           sloganIsHidden: false,
-                          sloganText: '欢迎登录',
+                          sloganText: '哈哈哈哈',
                         ),
                         changeButtonConfig: ChangeButtonConfig(
                           changeBtnIsHidden: true,
                         ),
                         loginButtonConfig: LoginButtonConfig(
-                          loginBtnHeight: 100,
+                          loginBtnHeight: kMinInteractiveDimension,
                         ),
                       );
 
