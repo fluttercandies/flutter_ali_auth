@@ -34,6 +34,17 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
         } else if call.method == "getAliAuthVersion" {
             getVersion(result: result)
             return
+        } else if call.method == "cancelStream" {
+            if let eventSink = _eventSink{
+                eventSink(FlutterEndOfEventStream)
+            }
+            result(nil)
+        } else if call.method == "hideLoginLoading"{
+            TXCommonHandler.sharedInstance().hideLoginLoading();
+            result(nil)
+        }else if call.method == "quitLoginPage"{
+            TXCommonHandler.sharedInstance().cancelLoginVC(animated: true);
+            result(nil)
         }
 
         if _eventSink == nil {
@@ -54,10 +65,8 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
             accelerateLoginPage()
         case "loginWithConfig":
             login(arguments: call.arguments)
-        case "cancelStream":
-            if let eventSink = _eventSink{
-                eventSink(FlutterEndOfEventStream)
-            }
+
+            
         default:
             result(FlutterMethodNotImplemented)
         }

@@ -107,6 +107,7 @@ class _DebugPageState extends State<DebugPage> {
       case AuthResultCode.loginPrivacyAlertViewClose:
       case AuthResultCode.loginPrivacyAlertViewClickContinue:
       case AuthResultCode.loginPrivacyAlertViewPrivacyContentClick:
+        AliAuthClient.quitLoginPage();
         break;
     }
   }
@@ -133,6 +134,7 @@ class _DebugPageState extends State<DebugPage> {
                     _onEvent,
                     onError: _onError,
                     onDone: () {
+                      ///remove listener will trigger onDone
                       print('$runtimeType onDone');
                     },
                   );

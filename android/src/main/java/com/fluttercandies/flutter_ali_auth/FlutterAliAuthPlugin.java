@@ -61,17 +61,22 @@ public class FlutterAliAuthPlugin implements FlutterPlugin,
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
-        Log.i(FlutterAliAuthPlugin.TAG,call.method);
         if (call.method.equals("getPlatformVersion")) {
             result.success("Android " + android.os.Build.VERSION.RELEASE);
             return;
         } else if (call.method.equals("getAliAuthVersion")) {
             getAliAuthVersion(result);
             return;
-        } else if (call.method.equals("cancelStream")){
-            if (authClient.getEventSink() != null){
+        } else if (call.method.equals("cancelStream")) {
+            if (authClient.getEventSink() != null) {
                 authClient.getEventSink().endOfStream();
             }
+            result.success(null);
+        } else if (call.method.equals("hideLoginLoading")) {
+            authClient.hideLoginLoading();
+            result.success(null);
+        } else if (call.method.equals("quitLoginPage")) {
+            authClient.quitLoginPage();
             result.success(null);
         }
         if (Objects.isNull(authClient.getEventSink())) {
@@ -79,8 +84,7 @@ public class FlutterAliAuthPlugin implements FlutterPlugin,
             result.success(authResponseModel.toJson());
             return;
         }
-        Log.i(FlutterAliAuthPlugin.TAG,call.method);
-
+        ///初始化相关
         switch (call.method) {
             case "init":
                 authClient.initSdk(call.arguments);
@@ -98,8 +102,6 @@ public class FlutterAliAuthPlugin implements FlutterPlugin,
             case "loginWithConfig":
                 authClient.getLoginToken(call.arguments);
                 break;
-            case "cancelStream":
-
             default:
                 result.notImplemented();
                 break;

@@ -90,4 +90,18 @@ class AliAuthClient {
   static Future<dynamic> get version {
     return _methodChannel.invokeMethod('getAliAuthVersion');
   }
+
+  /// 关闭授权页loading
+  /// 安卓 SDK完成回调之后不会关闭loading，需要开发者主动调用hideLoginLoading关闭loading
+  /// IOS 手动隐藏一键登录获取登录Token之后的等待动画，默认为自动隐藏
+  static Future<void> hideLoginLoading() async {
+    return _methodChannel.invokeMethod("hideLoginLoading");
+  }
+
+  /// 退出授权认证页,IOS一般不用主动调用，除非个人需要，安卓看情况
+  /// 安卓 SDK完成回调之后不会关闭授权页，需要开发者主动调⽤quitLoginPage退出授权页
+  /// IOS 注销授权页，建议用此方法，对于移动卡授权页的消失会清空一些数据
+  static Future<void> quitLoginPage() async {
+    return _methodChannel.invokeMethod("quitLoginPage");
+  }
 }

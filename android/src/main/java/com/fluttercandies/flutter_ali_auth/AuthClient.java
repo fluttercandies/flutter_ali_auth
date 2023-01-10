@@ -296,6 +296,22 @@ public class AuthClient {
         activity.startActivity(intent);
     }
 
+    /**
+     * 关闭授权页loading
+     * SDK完成回调之后不会关闭loading，需要开发者主动调用hideLoginLoading关闭loading
+     */
+    public void hideLoginLoading(){
+        mAuthHelper.hideLoginLoading();
+    }
+
+    /**
+     * 退出授权认证页
+     * SDK完成回调之后不会关闭授权页，需要开发者主动调⽤quitLoginPage退出授权页
+     */
+    public void quitLoginPage(){
+        mAuthHelper.quitLoginPage();
+    }
+
     public void clearCached() {
         mAuthHelper.removeAuthRegisterXmlConfig();
         mAuthHelper.removeAuthRegisterViewConfig();
