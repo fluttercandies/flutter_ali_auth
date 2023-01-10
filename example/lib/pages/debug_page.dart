@@ -129,7 +129,13 @@ class _DebugPageState extends State<DebugPage> {
               child: const Text('注册监听'),
               onPressed: () async {
                 try {
-                  await AliAuthClient.onListen(_onEvent, onError: _onError);
+                  await AliAuthClient.onListen(
+                    _onEvent,
+                    onError: _onError,
+                    onDone: () {
+                      print('$runtimeType onDone');
+                    },
+                  );
                   SmartDialog.showToast('注册监听成功');
                 } catch (e) {
                   SmartDialog.showToast('注册监听失败');
@@ -164,6 +170,21 @@ class _DebugPageState extends State<DebugPage> {
               onPressed: () async {
                 try {
                   await AliAuthClient.accelerateLoginPage();
+                } catch (e) {
+                  SmartDialog.dismiss(status: SmartStatus.loading);
+                }
+              },
+            ),
+            ElevatedButton(
+              child: const Text('取消登录事件监听'),
+              onPressed: () async {
+                try {
+                  final success = await AliAuthClient.removeListener();
+                  if (!success) {
+                    SmartDialog.showToast("你还没对登录事件进行监听");
+                  } else {
+                    SmartDialog.showToast("取消监听成功");
+                  }
                 } catch (e) {
                   SmartDialog.dismiss(status: SmartStatus.loading);
                 }

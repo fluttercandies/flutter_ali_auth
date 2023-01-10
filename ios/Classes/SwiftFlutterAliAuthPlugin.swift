@@ -55,7 +55,9 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
         case "loginWithConfig":
             login(arguments: call.arguments)
         case "cancelStream":
-            onCancel(withArguments: nil)
+            if let eventSink = _eventSink{
+                eventSink(FlutterEndOfEventStream)
+            }
         default:
             result(FlutterMethodNotImplemented)
         }

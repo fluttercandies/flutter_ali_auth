@@ -61,11 +61,16 @@ class AliAuthClient {
     );
   }
 
-  static void removeListener() {
-    _streamSubscription?.cancel();
+  static FutureOr<bool> removeListener() async {
+    if (_streamSubscription == null) {
+      return false;
+    }
+    //call this method will trigger native side: [EventChannel.EventSink]#endOfStream,flutter side:[Stream]#onDone
+    await _methodChannel.invokeMethod('cancelStream');
+    _streamSubscription!.cancel();
     _streamSubscription = null;
-    _methodChannel.invokeMethod('cancelStream');
     _pluginStream = null;
+    return true;
   }
 
   /// 判断网络是否支持，一般不需要主动调用
