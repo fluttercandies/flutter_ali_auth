@@ -200,6 +200,26 @@ await AliAuthClient.checkVerifyEnable();
 await AliAuthClient.accelerateLoginPage();
 ```
 
+### 5.一键登录预取号 **(removeListener)**
+
+移除授权页的事件监听
+
+```dart
+await AliAuthClient.removeListener();
+```
+
+### 6.其他方法**
+
+下面的方法与官网接入文档一致，可以根据个人开发情况进行使用
+
+```dart
+/// 关闭授权页loading
+await AliAuthClient.hideLoginLoading();
+
+/// 退出授权认证页
+await AliAuthClient.quitLoginPage();
+```
+
 ## 插件须知 ⚠️
 ### 关于权限
 1. 安卓权限，本插件已经添加必要的权限支持：
@@ -231,6 +251,9 @@ await AliAuthClient.accelerateLoginPage();
 - 开发工具建议使用Xcode 11及以上。
 
 - 支持iOS 10及以上系统。
+
+## 最后，有用请🌟
+
 
 
 
