@@ -61,6 +61,7 @@ public class FlutterAliAuthPlugin implements FlutterPlugin,
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
+        Log.i(TAG,call.method);
         if (call.method.equals("getPlatformVersion")) {
             result.success("Android " + android.os.Build.VERSION.RELEASE);
             return;
@@ -72,12 +73,15 @@ public class FlutterAliAuthPlugin implements FlutterPlugin,
                 authClient.getEventSink().endOfStream();
             }
             result.success(null);
+            return;
         } else if (call.method.equals("hideLoginLoading")) {
             authClient.hideLoginLoading();
             result.success(null);
+            return;
         } else if (call.method.equals("quitLoginPage")) {
             authClient.quitLoginPage();
             result.success(null);
+            return;
         }
         if (Objects.isNull(authClient.getEventSink())) {
             AuthResponseModel authResponseModel = AuthResponseModel.initFailed(failedListeningMsg);

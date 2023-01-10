@@ -13,7 +13,8 @@ class DebugPage extends StatefulWidget {
 }
 
 class _DebugPageState extends State<DebugPage> {
-  String? _token;
+  final ScrollController _scrollController = ScrollController();
+  final List<String> _logs = <String>[];
 
   final AuthConfig _authConfig = AuthConfig(
     iosSdk:
@@ -35,40 +36,49 @@ class _DebugPageState extends State<DebugPage> {
   @override
   void dispose() {
     AliAuthClient.removeListener();
+    _scrollController.dispose();
     super.dispose();
   }
 
   /// 登录页面点击事件回调处理
   void _onEvent(dynamic event) async {
     final responseModel = AuthResponseModel.fromJson(Map.from(event));
-    final AuthResultCode code =
+    final AuthResultCode resultCode =
         AuthResultCode.fromCode(responseModel.resultCode!);
-    switch (code) {
+    _addLog('[${resultCode.code}] ${resultCode.message}');
+    switch (resultCode) {
       case AuthResultCode.success:
         if (responseModel.token != null && responseModel.token!.isNotEmpty) {
           //验证成功，获取到token
           // await onToken(token: responseModel.token!);
+          _addLog('验证成功! token: ${responseModel.token!}');
         }
         break;
       case AuthResultCode.envCheckFail:
-        SmartDialog.showToast("当前网络环境不支持一键登录，请稍后重试(${code.code})");
+        SmartDialog.showToast("当前网络环境不支持一键登录，请稍后重试(${resultCode.code})");
         break;
       case AuthResultCode.noCellularNetwork:
-        SmartDialog.showToast('移动数据网络未开启,请切换为移动网络后再尝试(${code.code})');
+        SmartDialog.showToast('移动数据网络未开启,请切换为移动网络后再尝试(${resultCode.code})');
         break;
       case AuthResultCode.loginControllerClickChangeBtn:
         //点击切换按钮，切换到其他方式
         // showSignDialog();
         break;
       case AuthResultCode.noSIMCard:
-        SmartDialog.showToast("当前设备不支持一键登录(${code.code})");
+        SmartDialog.showToast("当前设备不支持一键登录(${resultCode.code})");
+        break;
+      case AuthResultCode.getMaskPhoneSuccess:
+        SmartDialog.showToast('预先取号成功');
+        break;
+      case AuthResultCode.envCheckSuccess:
+        SmartDialog.showToast('当前环境支持一键登录');
         break;
       case AuthResultCode.unknownError:
       case AuthResultCode.getTokenFailed:
       case AuthResultCode.interfaceTimeout:
       case AuthResultCode.loginControllerPresentFailed:
       case AuthResultCode.decodeAppInfoFailed:
-        SmartDialog.showToast('暂时无法一键登录，请使用其他登录方式(${code.code})');
+        SmartDialog.showToast('暂时无法一键登录，请使用其他登录方式(${resultCode.code})');
         break;
       case AuthResultCode.codeSDKInfoInvalid:
         SmartDialog.showToast('SDK设置错误');
@@ -77,29 +87,28 @@ class _DebugPageState extends State<DebugPage> {
       case AuthResultCode.interfaceLimited:
       case AuthResultCode.featureInvalid:
       case AuthResultCode.outOfService:
-        SmartDialog.showToast('暂时无法一键登录，请使用其他登录方式(${code.code})');
+        SmartDialog.showToast('暂时无法一键登录，请使用其他登录方式(${resultCode.code})');
         break;
       case AuthResultCode.failed:
       case AuthResultCode.errorNetwork:
       case AuthResultCode.errorClientTimestamp:
       case AuthResultCode.statusBusy:
-        SmartDialog.showToast('请求遇到问题，请稍后重试(${code.code})');
+        SmartDialog.showToast('请求遇到问题，请稍后重试(${resultCode.code})');
+        break;
+      case AuthResultCode.onCustomViewTap:
         break;
       case AuthResultCode.getMaskPhoneFailed:
-      case AuthResultCode.getMaskPhoneSuccess:
       case AuthResultCode.carrierChanged:
       case AuthResultCode.callPreLoginInAuthPage:
-
       case AuthResultCode.liftBodyVerifyReadyStating:
-      case AuthResultCode.onCustomViewTap:
-      case AuthResultCode.envCheckSuccess:
       case AuthResultCode.getOperatorInfoFailed:
       case AuthResultCode.unknownOperator:
-        SmartDialog.showToast('一键登录暂时不可用，请稍后再试(${code.code})');
+        SmartDialog.showToast('一键登录暂时不可用，请稍后再试(${resultCode.code})');
         break;
       case AuthResultCode.loginControllerPresentSuccess:
+        SmartDialog.showToast('唤起授权页成功');
+        break;
       case AuthResultCode.loginControllerClickLoginBtn:
-      case AuthResultCode.errorUserCancel:
       case AuthResultCode.loginControllerClickCancel:
       case AuthResultCode.loginControllerClickCheckBoxBtn:
       case AuthResultCode.loginControllerClickProtocol:
@@ -107,7 +116,9 @@ class _DebugPageState extends State<DebugPage> {
       case AuthResultCode.loginPrivacyAlertViewClose:
       case AuthResultCode.loginPrivacyAlertViewClickContinue:
       case AuthResultCode.loginPrivacyAlertViewPrivacyContentClick:
-        AliAuthClient.quitLoginPage();
+        debugPrint(responseModel.toString());
+        //SmartDialog.showToast('一键登录暂时不可用，请稍后再试(${resultCode.code})');
+        //AliAuthClient.quitLoginPage();
         break;
     }
   }
@@ -118,152 +129,213 @@ class _DebugPageState extends State<DebugPage> {
     debugPrint("error:$error");
   }
 
+  void _addLog(String log) {
+    if (mounted) {
+      setState(() {
+        _logs.insert(0, log);
+      });
+      debugPrint(log);
+      _scrollController.animateTo(
+        0.0,
+        curve: Curves.easeOut,
+        duration: const Duration(milliseconds: 200),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _divider('初始化操作'),
-            ElevatedButton(
-              child: const Text('注册监听'),
-              onPressed: () async {
-                try {
-                  await AliAuthClient.onListen(
-                    _onEvent,
-                    onError: _onError,
-                    onDone: () {
-                      ///remove listener will trigger onDone
-                      debugPrint('$runtimeType onDone');
-                    },
+    return Flex(
+      direction: Axis.vertical,
+      children: [
+        _divider('初始化操作'),
+        Flexible(
+          flex: 2,
+          child: FittedBox(
+            fit: BoxFit.fitHeight,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ElevatedButton(
+                  child: const Text('注册监听'),
+                  onPressed: () async {
+                    try {
+                      await AliAuthClient.onListen(
+                        _onEvent,
+                        onError: _onError,
+                        onDone: () {
+                          ///remove listener will trigger onDone
+                          debugPrint('$runtimeType onDone');
+                        },
+                      );
+                      SmartDialog.showToast('注册监听成功');
+                      _addLog('注册监听成功');
+                    } catch (e) {
+                      SmartDialog.showToast('注册监听失败');
+                      _addLog('注册监听失败');
+                    }
+                  },
+                ),
+                ElevatedButton(
+                  child: const Text('初始化SDK'),
+                  onPressed: () async {
+                    try {
+                      SmartDialog.showToast("正在初始化...");
+                      await AliAuthClient.initSdk(
+                        authConfig: _authConfig,
+                      );
+                    } catch (e) {
+                      SmartDialog.dismiss(status: SmartStatus.loading);
+                    }
+                  },
+                ),
+                ElevatedButton(
+                  child: const Text('检查环境是否支持认证'),
+                  onPressed: () async {
+                    try {
+                      await AliAuthClient.checkVerifyEnable();
+                    } catch (e) {
+                      SmartDialog.dismiss(status: SmartStatus.loading);
+                    }
+                  },
+                ),
+                ElevatedButton(
+                  child: const Text('加速一键登录授权页弹起'),
+                  onPressed: () async {
+                    try {
+                      await AliAuthClient.accelerateLoginPage();
+                    } catch (e) {
+                      SmartDialog.dismiss(status: SmartStatus.loading);
+                    }
+                  },
+                ),
+                ElevatedButton(
+                  child: const Text('取消登录事件监听'),
+                  onPressed: () async {
+                    try {
+                      final success = await AliAuthClient.removeListener();
+                      if (!success) {
+                        SmartDialog.showToast("你还没对登录事件进行监听");
+                        _addLog('你还没对登录事件进行监听');
+                      } else {
+                        SmartDialog.showToast("取消监听成功");
+                        _addLog('取消监听成功');
+                      }
+                    } catch (e) {
+                      SmartDialog.dismiss(status: SmartStatus.loading);
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+        _divider('授权页面操作'),
+        Flexible(
+          flex: 1,
+          fit: FlexFit.tight,
+          child: GridView.count(
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 3,
+            crossAxisSpacing: 15,
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            children: [
+              OutlinedButton(
+                child: _iconWithLabel(
+                  icon: Icons.phone_android,
+                  label: '全屏',
+                ),
+                onPressed: () async {
+                  _authConfig.authUIStyle = AuthUIStyle.fullScreen;
+                  _authConfig.authUIConfig = _extraUIBuilder(context);
+                  await AliAuthClient.loginWithConfig(_authConfig);
+                },
+              ),
+              OutlinedButton(
+                child: _iconWithLabel(
+                  icon: Icons.call_to_action_outlined,
+                  label: '底部弹窗',
+                ),
+                onPressed: () async {
+                  const alertConfig = AlertUIConfig(
+                    logoConfig: LogoConfig(
+                      logoIsHidden: false,
+                      logoImage: "images/flutter_candies_logo.png",
+                    ),
+                    sloganConfig: SloganConfig(
+                      sloganIsHidden: false,
+                      sloganText: '哈哈哈哈',
+                    ),
+                    changeButtonConfig: ChangeButtonConfig(
+                      changeBtnIsHidden: true,
+                    ),
+                    loginButtonConfig: LoginButtonConfig(
+                      loginBtnHeight: kMinInteractiveDimension,
+                    ),
                   );
-                  SmartDialog.showToast('注册监听成功');
-                } catch (e) {
-                  SmartDialog.showToast('注册监听失败');
-                }
-              },
-            ),
-            ElevatedButton(
-              child: const Text('初始化SDK'),
-              onPressed: () async {
-                try {
-                  SmartDialog.showToast("正在初始化...");
-                  await AliAuthClient.initSdk(
-                    authConfig: _authConfig,
+                  _authConfig.authUIStyle = AuthUIStyle.bottomSheet;
+                  _authConfig.authUIConfig = alertConfig;
+                  await AliAuthClient.loginWithConfig(_authConfig);
+                },
+              ),
+              OutlinedButton(
+                child: _iconWithLabel(
+                  icon: Icons.video_label,
+                  label: '弹窗',
+                ),
+                onPressed: () async {
+                  _authConfig.authUIStyle = AuthUIStyle.alert;
+                  _authConfig.authUIConfig = const AlertUIConfig(
+                    logoConfig: LogoConfig(
+                      logoIsHidden: false,
+                      logoImage: "images/flutter_candies_logo.png",
+                    ),
+                    sloganConfig: SloganConfig(
+                      sloganIsHidden: false,
+                      sloganText: '666',
+                    ),
                   );
-                } catch (e) {
-                  SmartDialog.dismiss(status: SmartStatus.loading);
-                }
-              },
+                  await AliAuthClient.loginWithConfig(_authConfig);
+                },
+              ),
+            ],
+          ),
+        ),
+        _divider("操作日志"),
+        Flexible(
+          fit: FlexFit.tight,
+          child: Container(
+            margin: const EdgeInsets.only(
+              left: 15,
+              right: 15,
+              bottom: 8.0,
             ),
-            ElevatedButton(
-              child: const Text('检查环境是否支持认证'),
-              onPressed: () async {
-                try {
-                  await AliAuthClient.checkVerifyEnable();
-                } catch (e) {
-                  SmartDialog.dismiss(status: SmartStatus.loading);
-                }
-              },
-            ),
-            ElevatedButton(
-              child: const Text('加速一键登录授权页弹起'),
-              onPressed: () async {
-                try {
-                  await AliAuthClient.accelerateLoginPage();
-                } catch (e) {
-                  SmartDialog.dismiss(status: SmartStatus.loading);
-                }
-              },
-            ),
-            ElevatedButton(
-              child: const Text('取消登录事件监听'),
-              onPressed: () async {
-                try {
-                  final success = await AliAuthClient.removeListener();
-                  if (!success) {
-                    SmartDialog.showToast("你还没对登录事件进行监听");
-                  } else {
-                    SmartDialog.showToast("取消监听成功");
-                  }
-                } catch (e) {
-                  SmartDialog.dismiss(status: SmartStatus.loading);
-                }
-              },
-            ),
-            _divider('授权页面操作'),
-            Container(
-              height: 120,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: GridView.count(
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 3,
-                crossAxisSpacing: 20,
-                children: [
-                  OutlinedButton(
-                    child: _iconWithLabel(
-                      icon: Icons.phone_android,
-                      label: '全屏',
-                    ),
-                    onPressed: () async {
-                      final extraUIConfig = _extraUIBuilder(context);
-                      await AliAuthClient.loginWithConfig(
-                        _authConfig.copyWith(
-                          authUIConfig: extraUIConfig,
-                        ),
-                      );
-                    },
-                  ),
-                  OutlinedButton(
-                    child: _iconWithLabel(
-                      icon: Icons.call_to_action_outlined,
-                      label: '底部弹窗',
-                    ),
-                    onPressed: () async {
-                      const alertConfig = AlertUIConfig(
-                        logoConfig: LogoConfig(
-                          logoIsHidden: false,
-                          logoImage: "images/flutter_candies_logo.png",
-                        ),
-                        sloganConfig: SloganConfig(
-                          sloganIsHidden: false,
-                          sloganText: '哈哈哈哈',
-                        ),
-                        changeButtonConfig: ChangeButtonConfig(
-                          changeBtnIsHidden: true,
-                        ),
-                        loginButtonConfig: LoginButtonConfig(
-                          loginBtnHeight: kMinInteractiveDimension,
-                        ),
-                      );
-
-                      await AliAuthClient.loginWithConfig(
-                        _authConfig.copyWith(
-                          authUIStyle: AuthUIStyle.bottomSheet,
-                          authUIConfig: alertConfig,
-                        ),
-                      );
-                    },
-                  ),
-                  OutlinedButton(
-                    child: _iconWithLabel(
-                      icon: Icons.video_label,
-                      label: '弹窗',
-                    ),
-                    onPressed: () async {
-                      await AliAuthClient.loginWithConfig(_authConfig.copyWith(
-                        authUIStyle: AuthUIStyle.alert,
-                      ));
-                    },
-                  ),
-                ],
+            decoration: ShapeDecoration(
+              color: Colors.grey.shade200,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8.0),
+                ),
               ),
             ),
-            if (_token != null) _tokenWidget()
-          ],
+            child: ListView(
+              reverse: true,
+              controller: _scrollController,
+              padding: const EdgeInsets.all(8.0),
+              children: List.generate(_logs.length, (index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 3.0),
+                  child: SelectableText(
+                    _logs.elementAt(index),
+                  ),
+                );
+              }),
+            ),
+          ),
         ),
-      ),
+
+        //if (_token != null) _tokenWidget()
+      ],
     );
   }
 
@@ -363,7 +435,7 @@ class _DebugPageState extends State<DebugPage> {
   Widget _divider(String text) {
     const dividerGap = Flexible(flex: 2, child: Divider());
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Flex(
         direction: Axis.horizontal,
         mainAxisSize: MainAxisSize.min,
@@ -382,10 +454,6 @@ class _DebugPageState extends State<DebugPage> {
         ],
       ),
     );
-  }
-
-  Widget _tokenWidget() {
-    return Column(children: [_divider("Token"), Text(_token!)]);
   }
 
   Widget _iconWithLabel({required IconData icon, required String label}) {

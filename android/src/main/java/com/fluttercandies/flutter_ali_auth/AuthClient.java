@@ -57,10 +57,10 @@ public class AuthClient {
 
     }
 
-    public static AuthClient getInstance(){
-        if (instance == null){
-            synchronized (AuthClient.class){
-                if (instance  == null){
+    public static AuthClient getInstance() {
+        if (instance == null) {
+            synchronized (AuthClient.class) {
+                if (instance == null) {
                     instance = new AuthClient();
                 }
             }
@@ -81,15 +81,17 @@ public class AuthClient {
             eventSink.success(authResponseModel.toJson());
             return;
         }
+
         tokenResultListener = new TokenResultListener() {
             @Override
             public void onTokenSuccess(String s) {
                 TokenRet tokenRet;
                 try {
                     tokenRet = TokenRet.fromJson(s);
-                     if(ResultCode.CODE_ERROR_ENV_CHECK_SUCCESS.equals(tokenRet.getCode())){
-                         //终端支持认证 当前环境可以进行一键登录 并且加速拉起授权页面
-                         accelerateLoginPage();
+
+                    if (ResultCode.CODE_ERROR_ENV_CHECK_SUCCESS.equals(tokenRet.getCode())) {
+                        //终端支持认证 当前环境可以进行一键登录 并且加速拉起授权页面
+                        accelerateLoginPage();
                     }
                     AuthResponseModel authResponseModel = AuthResponseModel.fromTokenRect(tokenRet);
                     eventSink.success(authResponseModel.toJson());
@@ -118,6 +120,7 @@ public class AuthClient {
         Context context = mActivity.get().getBaseContext();
         mAuthHelper = PhoneNumberAuthHelper.getInstance(context, tokenResultListener);
         mAuthHelper.getReporter().setLoggerEnable(authModel.getEnableLog());
+        ///开始初始化
         mAuthHelper.setAuthSDKInfo(authModel.getAndroidSdk());
         checkEnv();
     }
@@ -133,7 +136,6 @@ public class AuthClient {
      * 在不是一进app就需要登录的场景 建议调用此接口 加速拉起一键登录页面
      * 等到用户点击登录的时候 授权页可以秒拉
      * 预取号的成功与否不影响一键登录功能，所以不需要等待预取号的返回。
-     *
      */
     public void accelerateLoginPage() {
         if (Objects.isNull(mAuthHelper) || !sdkAvailable) {
@@ -180,7 +182,7 @@ public class AuthClient {
         }
         Activity activity = mActivity.get();
         Context context = activity.getBaseContext();
-        baseUIConfig = BaseUIConfig.init(authModel.getAuthUIStyle(), activity, mAuthHelper, eventSink,flutterPluginBinding.getFlutterAssets());
+        baseUIConfig = BaseUIConfig.init(authModel.getAuthUIStyle(), activity, mAuthHelper, eventSink, flutterPluginBinding.getFlutterAssets());
         assert baseUIConfig != null;
         clearCached();
         baseUIConfig.configAuthPage(authModel.getAuthUIModel());
@@ -228,6 +230,7 @@ public class AuthClient {
         Intent intent = new Intent(context, DecoyMaskActivity.class);
         activity.startActivity(intent);
     }
+
     public void getLoginToken(Object arguments) {
         if (Objects.isNull(mAuthHelper) || !sdkAvailable) {
             AuthResponseModel authResponseModel = AuthResponseModel.initFailed(initFailedMsg);
@@ -238,11 +241,12 @@ public class AuthClient {
         Context context = activity.getBaseContext();
         try {
             authModel = AuthModel.Builder(arguments);
+            Log.i(TAG, authModel.toString());
         } catch (Exception e) {
             AuthResponseModel authResponseModel = AuthResponseModel.initFailed(errorArgumentsMsg);
             eventSink.success(authResponseModel.toJson());
         }
-        baseUIConfig = BaseUIConfig.init(authModel.getAuthUIStyle(), activity, mAuthHelper, eventSink,flutterPluginBinding.getFlutterAssets());
+        baseUIConfig = BaseUIConfig.init(authModel.getAuthUIStyle(), activity, mAuthHelper, eventSink, flutterPluginBinding.getFlutterAssets());
         assert baseUIConfig != null;
         clearCached();
         baseUIConfig.configAuthPage(authModel.getAuthUIModel());
@@ -300,7 +304,7 @@ public class AuthClient {
      * 关闭授权页loading
      * SDK完成回调之后不会关闭loading，需要开发者主动调用hideLoginLoading关闭loading
      */
-    public void hideLoginLoading(){
+    public void hideLoginLoading() {
         mAuthHelper.hideLoginLoading();
     }
 
@@ -308,7 +312,7 @@ public class AuthClient {
      * 退出授权认证页
      * SDK完成回调之后不会关闭授权页，需要开发者主动调⽤quitLoginPage退出授权页
      */
-    public void quitLoginPage(){
+    public void quitLoginPage() {
         mAuthHelper.quitLoginPage();
     }
 

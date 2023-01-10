@@ -1,10 +1,10 @@
 import 'auth_ui_config.dart';
 import 'part_ui_config.dart';
 
-part 'auth_config.g.dart';
+//part 'auth_config.g.dart';
 
 class AuthConfig {
-  const AuthConfig({
+  AuthConfig({
     required this.iosSdk,
     required this.androidSdk,
     required this.enableLog,
@@ -14,8 +14,8 @@ class AuthConfig {
 
   final String iosSdk;
   final String androidSdk;
-  final AuthUIStyle authUIStyle;
-  final AuthUIConfig? authUIConfig;
+  AuthUIStyle authUIStyle;
+  AuthUIConfig? authUIConfig;
   final bool enableLog;
 
   Map<String, dynamic> toJson() {
