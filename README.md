@@ -200,7 +200,7 @@ await AliAuthClient.checkVerifyEnable();
 await AliAuthClient.accelerateLoginPage();
 ```
 
-### 5.一键登录预取号 **(removeListener)**
+### 6.移除登录事件 **(removeListener)**
 
 移除授权页的事件监听
 
@@ -208,7 +208,7 @@ await AliAuthClient.accelerateLoginPage();
 await AliAuthClient.removeListener();
 ```
 
-### 6.其他方法**
+### 7.其他方法**
 
 下面的方法与官网接入文档一致，可以根据个人开发情况进行使用
 
@@ -252,7 +252,7 @@ await AliAuthClient.quitLoginPage();
 
 - 支持iOS 10及以上系统。
 
-## 最后，有用请🌟
+## 最后，有用请🌟~
 
 
 
