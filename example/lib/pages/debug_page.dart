@@ -135,7 +135,7 @@ class _DebugPageState extends State<DebugPage> {
                     onError: _onError,
                     onDone: () {
                       ///remove listener will trigger onDone
-                      print('$runtimeType onDone');
+                      debugPrint('$runtimeType onDone');
                     },
                   );
                   SmartDialog.showToast('注册监听成功');
