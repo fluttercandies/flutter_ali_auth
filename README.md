@@ -208,7 +208,7 @@ await AliAuthClient.accelerateLoginPage();
 await AliAuthClient.removeListener();
 ```
 
-### 7.其他方法**
+### 7.其他方法
 
 下面的方法与官网接入文档一致，可以根据个人开发情况进行使用
 
