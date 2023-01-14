@@ -16,11 +16,19 @@ class _DebugPageState extends State<DebugPage> {
   final ScrollController _scrollController = ScrollController();
   final List<String> _logs = <String>[];
 
-  final AuthConfig _authConfig = AuthConfig(
-    iosSdk:
-        "HoeXxTF5epZEkjl3bqTgjPmnpIoufj10VOnSGoZAHE0S2wvv95eWAzV18vTllsaDXAdjoDOsCe4curE7IblQqHGP9cBQiCsjSQcAQJGbKkSa27/zbgENswdjiVF91SDMtHiVT0lok13kyI1fCg0bHWxvPQXG9zYszxUy9svAGL8hfHuoQGoatuK6xe6Zwb18MrtfpCAabeU7K0gtMJxf0sPAVUvwLupuq98uWPcTgqq5swkRp13kOq7Kv/YAADfK65XqGv0RDCMSSpN08lJDbd+L/stVtooIhJwyy4MXE4A=",
-    androidSdk:
-        "cDayqs3OUxdTERwuS4cCSEHuTqqsEvva7nkfdxKqfxAOIq46rES8NiSGFzU7xyk1qD02WkPsLAwfs82Oi1xpn+cOv3lr4nUzcsjdIgzgphoLlky9JKcMkGZW9i6ZM6WX8o9htuufxJV90bEtHYH/im5ZLxVDB1hbAi1Bg4zZ9sHeG160cAt0lLmAh3btrKvPqglD++Zel5L0N/Y4bVm2hvgRqusRvHW8Uqng9MzHOc9FgW9oXoA1AwvyQWXRXR98Hh2gBiF2VJGL1fwgkC2xFUvzIM2sMw5JMJ8KxRspWmKyLIp1EOOgUd6bY4TctbzX2DGgiTPtdrVF3ZZ8q6BCQQ==",
+  String get iosSdk {
+    // TODO: provide your own iosSdkKey
+    throw UnimplementedError();
+  }
+
+  String get androidSdk {
+    // TODO: provide your own iosSdkKey
+    throw UnimplementedError();
+  }
+
+  late final AuthConfig _authConfig = AuthConfig(
+    iosSdk: iosSdk,
+    androidSdk: androidSdk,
     enableLog: false,
     authUIStyle: AuthUIStyle.fullScreen,
     authUIConfig: FullScreenUIConfig(
