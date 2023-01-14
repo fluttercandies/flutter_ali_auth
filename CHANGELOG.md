@@ -4,6 +4,11 @@ that can be found in the LICENSE file. -->
 
 # Changelog
 
+## 0.3.0
+### 🤖️Enhance android format
+
+* 🧸 use new json format
+
 ## 0.2.0
 ### 🔮Improve code
 
