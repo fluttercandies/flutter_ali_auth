@@ -2,12 +2,13 @@ package com.fluttercandies.flutter_ali_auth.model;
 
 import androidx.annotation.NonNull;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
-import com.alibaba.fastjson2.JSONReader;
-import com.mobile.auth.gatewayauth.AuthUIConfig;
+import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Map;
+
 
 public class AuthModel {
     private String androidSdk;
@@ -15,18 +16,19 @@ public class AuthModel {
     private Integer authUIStyle;
     private AuthUIModel authUIModel;
 
-    @NonNull
-    static public AuthModel Builder(Object params) {
-        JSONObject json = (JSONObject) JSON.toJSON(params);
-        AuthUIModel authUIModel = JSON.to(AuthUIModel.class, json);
-        AuthModel authModel = new AuthModel();
-        Integer authUIStyle = (Integer) json.get("authUIStyle");
-        authModel.setAndroidSdk(json.getString("androidSdk"));
-        authModel.setEnableLog(Boolean.valueOf(json.getString("enableLog")));
-        authModel.setAuthUIStyle(authUIStyle);
-        authModel.setAuthUIModel(authUIModel);
-        return authModel;
-    }
+//    @NonNull
+//    static public AuthModel Builder(Object params) {
+//        AuthModel authModel = new Gson().fromJson(params.toString(), AuthModel.class);
+//
+//        AuthUIModel authUIModel = JSON.to(AuthUIModel.class, json);
+//        //Integer authUIStyle = (Integer) json.get("authUIStyle");
+//        Integer authUIStyle = authModel.authUIStyle;
+//        authModel.setAndroidSdk(json.getString("androidSdk"));
+//        authModel.setEnableLog(Boolean.valueOf(json.getString("enableLog")));
+//        authModel.setAuthUIStyle(authUIStyle);
+//        authModel.setAuthUIModel(authUIModel);
+//        return authModel;
+//    }
 
 
     public void setAndroidSdk(String androidSdk) {
@@ -60,4 +62,5 @@ public class AuthModel {
     public AuthUIModel getAuthUIModel() {
         return authUIModel;
     }
+
 }

@@ -3,13 +3,13 @@ package com.fluttercandies.flutter_ali_auth.model;
 
 import android.text.TextUtils;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import com.mobile.auth.gatewayauth.ResultCode;
 import com.mobile.auth.gatewayauth.model.TokenRet;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +26,7 @@ public class AuthResponseModel {
     public static String initFailedMsg = "初始化失败或未初始化";
     public static String nullSdkErrorMsg = "初始化失败，sdk为空";
     public static String failedListeningMsg = "请先对插件进行监听";
-    public static String errorArgumentsMsg = "初始化失败,AuthModel类型不正确";
+    public static String errorArgumentsMsg = "初始化失败,AuthModel解析失败";
     public static String tokenDecodeFailedMsg = "回调信息解析失败";
     public static String MSG_GET_MASK_SUCCESS = "600016";
     public static String preLoginSuccessMsg = "预取号成功";
@@ -44,7 +44,7 @@ public class AuthResponseModel {
         String now = Long.toString(System.currentTimeMillis());
         assert msg != null;
         AuthResponseModel authResponseModel = new AuthResponseModel();
-        authResponseModel.setResultCode(ResultCode.CODE_ERROR_ANALYZE_SDK_INFO);
+        authResponseModel.setResultCode(ResultCode.CODE_ERROR_INVALID_PARAM);
         authResponseModel.setMsg(msg);
         authResponseModel.setRequestId(now);
         return authResponseModel;
@@ -77,7 +77,7 @@ public class AuthResponseModel {
         return authResponseModel;
     }
 
-    public static AuthResponseModel fromTokenRect(TokenRet tokenRet) {
+    public static AuthResponseModel fromTokenRect(TokenRet tokenRet) throws JSONException {
 
         //TokenRet{vendorName='ct_sjl', code='600024', msg='终端支持认证', carrierFailedResultData=', requestId=8147329b-1618-4b9f-98ce-02e468d237ba', requestCode=0, token='null'}
 
@@ -94,9 +94,7 @@ public class AuthResponseModel {
         if (Objects.nonNull(token) && !TextUtils.isEmpty(token) && !String.valueOf(token).equals("null")) {
             authResponseModel.setToken(token);
         }
-
-        JSONObject carrierFailedResultData = JSON.parseObject(tokenRet.getCarrierFailedResultData());
-
+        JSONObject carrierFailedResultData = new JSONObject(tokenRet.getCarrierFailedResultData());
         if (Objects.nonNull(carrierFailedResultData)) {
             if (Objects.nonNull(carrierFailedResultData.get("innerCode"))) {
                 authResponseModel.setInnerCode((String) carrierFailedResultData.get("innerCode"));

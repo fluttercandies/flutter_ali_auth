@@ -19,6 +19,9 @@ class AliAuthClient {
   static Future<AuthResponseModel> initSdk({
     required AuthConfig authConfig,
   }) async {
+    if (_streamSubscription == null) {
+      throw StateError('请先对插件进行监听');
+    }
     final res = await _methodChannel.invokeMethod('init', authConfig.toJson());
     return AuthResponseModel.fromJson(Map<String, dynamic>.from(res));
   }

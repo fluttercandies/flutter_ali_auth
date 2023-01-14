@@ -126,7 +126,7 @@ class _DebugPageState extends State<DebugPage> {
   /// 登录错误处理
   void _onError(Object error) {
     //print("-------------失败分割线------------");
-    debugPrint("error:$error");
+    _addLog("error:$error");
   }
 
   void _addLog(String log) {
@@ -185,7 +185,8 @@ class _DebugPageState extends State<DebugPage> {
                         authConfig: _authConfig,
                       );
                     } catch (e) {
-                      SmartDialog.dismiss(status: SmartStatus.loading);
+                      SmartDialog.showToast(e.toString());
+                      _addLog("初始化SDK出现错误:$e");
                     }
                   },
                 ),

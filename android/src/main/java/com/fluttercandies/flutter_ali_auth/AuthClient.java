@@ -15,7 +15,10 @@ import com.fluttercandies.flutter_ali_auth.config.BaseUIConfig;
 import com.fluttercandies.flutter_ali_auth.mask.DecoyMaskActivity;
 import com.fluttercandies.flutter_ali_auth.model.AuthModel;
 import com.fluttercandies.flutter_ali_auth.model.AuthResponseModel;
+import com.fluttercandies.flutter_ali_auth.model.AuthUIModel;
 import com.fluttercandies.flutter_ali_auth.utils.Constant;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper;
 import com.mobile.auth.gatewayauth.PreLoginResultListener;
 import com.mobile.auth.gatewayauth.ResultCode;
@@ -70,13 +73,25 @@ public class AuthClient {
 
     public void initSdk(Object arguments) {
         try {
-            authModel = AuthModel.Builder(arguments);
-        } catch (Exception e) {
-            AuthResponseModel authResponseModel = AuthResponseModel.initFailed(errorArgumentsMsg);
+            String jsonBean = new Gson().toJson(arguments);
+            authModel = new Gson().fromJson(jsonBean, AuthModel.class);
+            AuthUIModel authUIModel = new Gson().fromJson(jsonBean, AuthUIModel.class);
+            authModel.setAuthUIModel(authUIModel);
+        } catch (JsonSyntaxException e) {
+            Log.e(TAG, errorArgumentsMsg + ": " + e);
+            AuthResponseModel authResponseModel = AuthResponseModel.initFailed(errorArgumentsMsg + ": " + e.getMessage());
             eventSink.success(authResponseModel.toJson());
+            return;
+        } catch (Exception e) {
+            Log.e(TAG, "解析AuthModel遇到错误：" + e);
+            AuthResponseModel authResponseModel = AuthResponseModel.initFailed("解析AuthModel遇到错误：" + e.getMessage());
+            eventSink.success(authResponseModel.toJson());
+            return;
         }
 
-        if (Objects.isNull(authModel.getAndroidSdk()) || TextUtils.isEmpty(authModel.getAndroidSdk())) {
+        if (Objects.isNull(authModel) ||
+                Objects.isNull(authModel.getAndroidSdk()) ||
+                TextUtils.isEmpty(authModel.getAndroidSdk())) {
             AuthResponseModel authResponseModel = AuthResponseModel.nullSdkError();
             eventSink.success(authResponseModel.toJson());
             return;
@@ -240,11 +255,21 @@ public class AuthClient {
         Activity activity = mActivity.get();
         Context context = activity.getBaseContext();
         try {
-            authModel = AuthModel.Builder(arguments);
-            Log.i(TAG, authModel.toString());
-        } catch (Exception e) {
-            AuthResponseModel authResponseModel = AuthResponseModel.initFailed(errorArgumentsMsg);
+
+            String jsonBean = new Gson().toJson(arguments);
+            authModel = new Gson().fromJson(jsonBean, AuthModel.class);
+            AuthUIModel authUIModel = new Gson().fromJson(jsonBean, AuthUIModel.class);
+            authModel.setAuthUIModel(authUIModel);
+        } catch (JsonSyntaxException e) {
+            Log.e(TAG, errorArgumentsMsg + ": " + e);
+            AuthResponseModel authResponseModel = AuthResponseModel.initFailed(errorArgumentsMsg + ": " + e.getMessage());
             eventSink.success(authResponseModel.toJson());
+            return;
+        } catch (Exception e) {
+            Log.e(TAG, "解析AuthModel遇到错误：" + e);
+            AuthResponseModel authResponseModel = AuthResponseModel.initFailed("解析AuthModel遇到错误：" + e.getMessage());
+            eventSink.success(authResponseModel.toJson());
+            return;
         }
         baseUIConfig = BaseUIConfig.init(authModel.getAuthUIStyle(), activity, mAuthHelper, eventSink, flutterPluginBinding.getFlutterAssets());
         assert baseUIConfig != null;

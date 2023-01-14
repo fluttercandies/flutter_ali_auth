@@ -62,26 +62,27 @@ public class FlutterAliAuthPlugin implements FlutterPlugin,
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         Log.i(TAG,call.method);
-        if (call.method.equals("getPlatformVersion")) {
-            result.success("Android " + android.os.Build.VERSION.RELEASE);
-            return;
-        } else if (call.method.equals("getAliAuthVersion")) {
-            getAliAuthVersion(result);
-            return;
-        } else if (call.method.equals("cancelStream")) {
-            if (authClient.getEventSink() != null) {
-                authClient.getEventSink().endOfStream();
-            }
-            result.success(null);
-            return;
-        } else if (call.method.equals("hideLoginLoading")) {
-            authClient.hideLoginLoading();
-            result.success(null);
-            return;
-        } else if (call.method.equals("quitLoginPage")) {
-            authClient.quitLoginPage();
-            result.success(null);
-            return;
+        switch (call.method) {
+            case "getPlatformVersion":
+                result.success("Android " + android.os.Build.VERSION.RELEASE);
+                return;
+            case "getAliAuthVersion":
+                getAliAuthVersion(result);
+                return;
+            case "cancelStream":
+                if (authClient.getEventSink() != null) {
+                    authClient.getEventSink().endOfStream();
+                }
+                result.success(null);
+                return;
+            case "hideLoginLoading":
+                authClient.hideLoginLoading();
+                result.success(null);
+                return;
+            case "quitLoginPage":
+                authClient.quitLoginPage();
+                result.success(null);
+                return;
         }
         if (Objects.isNull(authClient.getEventSink())) {
             AuthResponseModel authResponseModel = AuthResponseModel.initFailed(failedListeningMsg);
@@ -145,10 +146,11 @@ public class FlutterAliAuthPlugin implements FlutterPlugin,
 
     @Override
     public void onListen(Object arguments, EventChannel.EventSink events) {
-        if (Objects.isNull(authClient.getEventSink())) {
-            authClient.setEventSink(events);
+        if (authClient.getEventSink() != null) {
+            authClient.getEventSink().endOfStream();
+            authClient.setEventSink(null);
         }
-
+        authClient.setEventSink(events);
     }
 
     @Override

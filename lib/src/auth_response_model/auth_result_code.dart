@@ -19,7 +19,8 @@ enum AuthResultCode {
   decodeAppInfoFailed('600017', '接口超时'),
   carrierChanged('600021', '运营商已切换'),
   envCheckSuccess('600024', '终端支持认证'),
-  envCheckFail('600025', '终端环境检测失败（终端不支持认证 / 终端检测参数错误）'),
+  //envCheckFail('600025', '终端环境检测失败（终端不支持认证或者终端检测参数错误）'),
+  envCheckFail('600025', '参数错误'),
 
   ///  号码认证授权页相关返回码 START
   loginControllerPresentSuccess('600001', '唤起授权页成功'),

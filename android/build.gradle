@@ -63,8 +63,10 @@ dependencies{
 
     implementation "androidx.constraintlayout:constraintlayout:2.1.0"
 
-    // https://mvnrepository.com/artifact/com.alibaba.fastjson2/fastjson2
-    implementation 'com.alibaba.fastjson2:fastjson2:2.0.14.android'
+    // implementation 'com.alibaba.fastjson2:fastjson2:2.0.14.android'
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
+    implementation 'com.google.code.gson:gson:2.9.0'
+
 
     implementation(name:'auth_number_product-2.12.9-log-online-standard-release', ext:'aar')
     implementation(name:'crashshield-2.1.4-release', ext:'aar')

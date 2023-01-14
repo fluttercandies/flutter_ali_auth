@@ -23,6 +23,33 @@ class _ReleasePageState extends State<ReleasePage> {
     ),
   );
 
+  @override
+  void initState() {
+    super.initState();
+    //uncomment this line to initialize();
+  }
+
+  @override
+  void dispose() {
+    AliAuthClient.removeListener();
+    super.dispose();
+  }
+
+  void initialize() {
+    try {
+      AliAuthClient.onListen(
+        _onEvent,
+        onError: _onError,
+        onDone: () {
+          ///remove listener will trigger onDone
+          debugPrint('$runtimeType onDone');
+        },
+      );
+    } catch (e) {
+      //SmartDialog.showToast('注册监听失败');
+    }
+  }
+
   /// 登录成功处理
   void _onEvent(dynamic event) async {
     //print(event);
