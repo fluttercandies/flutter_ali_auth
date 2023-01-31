@@ -20,9 +20,7 @@ import com.mobile.auth.gatewayauth.AuthRegisterXmlConfig;
 import com.mobile.auth.gatewayauth.AuthUIConfig;
 import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper;
 import com.mobile.auth.gatewayauth.ui.AbstractPnsViewDelegate;
-import com.nirvana.tools.core.AppUtils;
 
-import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.EventChannel;
 
@@ -30,11 +28,11 @@ public class DialogPortConfig extends BaseUIConfig {
     /**
      * 应用包名
      */
-    private String mPackageName;
+//    private String mPackageName;
 
     public DialogPortConfig(Activity activity, PhoneNumberAuthHelper authHelper, EventChannel.EventSink eventSink, FlutterPlugin.FlutterAssets flutterAssets) {
         super(activity, authHelper,eventSink,flutterAssets);
-        mPackageName = AppUtils.getPackageName(activity);
+//        mPackageName = AppUtils.getPackageName(activity);
     }
 
     @Override
