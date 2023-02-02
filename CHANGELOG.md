@@ -5,9 +5,9 @@ that can be found in the LICENSE file. -->
 # Changelog
 
 ## 0.3.1
-### 🤖️Enhance android format
+### 🤖️fixed android token handle
 
-* 🧸 update android token handle
+* 🧸 ️fixed android token handle
 
 ## 0.3.0
 ### 🤖️Enhance android format
