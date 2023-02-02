@@ -207,13 +207,15 @@ public class AuthClient {
                 activity.runOnUiThread(() -> {
                     TokenRet tokenRet;
                     try {
-                        tokenRet = TokenRet.fromJson(s);
-                        AuthResponseModel authResponseModel = AuthResponseModel.fromTokenRect(tokenRet);
-                        eventSink.success(authResponseModel.toJson());
-                        if (ResultCode.CODE_SUCCESS.equals(tokenRet.getCode())) {
-                            mAuthHelper.quitLoginPage();
-                            mAuthHelper.setAuthListener(null);
-                            clearCached();
+                        if(s!=null && !s.equals("")){
+                            tokenRet = TokenRet.fromJson(s);
+                            AuthResponseModel authResponseModel = AuthResponseModel.fromTokenRect(tokenRet);
+                            eventSink.success(authResponseModel.toJson());
+                            if (ResultCode.CODE_SUCCESS.equals(tokenRet.getCode())) {
+                                mAuthHelper.quitLoginPage();
+                                mAuthHelper.setAuthListener(null);
+                                clearCached();
+                            }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
