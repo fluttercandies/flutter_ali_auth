@@ -2,15 +2,19 @@ package com.fluttercandies.flutter_ali_auth.model;
 
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mobile.auth.gatewayauth.ResultCode;
 import com.mobile.auth.gatewayauth.model.TokenRet;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -68,7 +72,7 @@ public class AuthResponseModel {
         return authResponseModel;
     }
 
-    public static AuthResponseModel onCustomViewBlocTap(Integer viewId){
+    public static AuthResponseModel onCustomViewBlocTap(Integer viewId) {
         String now = Long.toString(System.currentTimeMillis());
         AuthResponseModel authResponseModel = new AuthResponseModel();
         authResponseModel.setResultCode("700010");
@@ -94,8 +98,15 @@ public class AuthResponseModel {
         if (Objects.nonNull(token) && !TextUtils.isEmpty(token) && !String.valueOf(token).equals("null")) {
             authResponseModel.setToken(token);
         }
-        JSONObject carrierFailedResultData = new JSONObject(tokenRet.getCarrierFailedResultData());
+        Map<String, Object> carrierFailedResultData = null;
+        if(Objects.nonNull(tokenRet.getCarrierFailedResultData()) && !TextUtils.isEmpty(tokenRet.getCarrierFailedResultData()) && !String.valueOf(tokenRet.getCarrierFailedResultData()).equals("null") ){
+            Gson gson = new Gson();
+            String failedJsonString = gson.toJson(tokenRet.getCarrierFailedResultData());
+             carrierFailedResultData = gson.fromJson(failedJsonString, new TypeToken<Map<String, Object>>() { }.getType()); //反序列化
+            Log.d(AuthResponseModel.class.getSimpleName(), "获取Token失败，此为运营商消息，carrierFailedResultData: " + carrierFailedResultData);
+        }
         if (Objects.nonNull(carrierFailedResultData)) {
+            assert carrierFailedResultData != null;
             if (Objects.nonNull(carrierFailedResultData.get("innerCode"))) {
                 authResponseModel.setInnerCode((String) carrierFailedResultData.get("innerCode"));
             }
