@@ -216,6 +216,7 @@ public class AuthClient {
                             AuthResponseModel authResponseModel = AuthResponseModel.fromTokenRect(tokenRet);
                             eventSink.success(authResponseModel.toJson());
                             if (ResultCode.CODE_SUCCESS.equals(tokenRet.getCode())) {
+                                mAuthHelper.hideLoginLoading();
                                 mAuthHelper.quitLoginPage();
                                 mAuthHelper.setAuthListener(null);
                                 clearCached();
@@ -295,6 +296,7 @@ public class AuthClient {
 
                             eventSink.success(authResponseModel.toJson());
                             if (ResultCode.CODE_SUCCESS.equals(tokenRet.getCode())) {
+                                mAuthHelper.hideLoginLoading();
                                 mAuthHelper.quitLoginPage();
                                 mAuthHelper.setAuthListener(null);
                                 clearCached();
