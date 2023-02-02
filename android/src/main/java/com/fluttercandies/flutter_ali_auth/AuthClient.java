@@ -102,14 +102,16 @@ public class AuthClient {
             public void onTokenSuccess(String s) {
                 TokenRet tokenRet;
                 try {
-                    tokenRet = TokenRet.fromJson(s);
+                    if (s != null && !s.equals("")) {
+                        tokenRet = TokenRet.fromJson(s);
 
-                    if (ResultCode.CODE_ERROR_ENV_CHECK_SUCCESS.equals(tokenRet.getCode())) {
-                        //终端支持认证 当前环境可以进行一键登录 并且加速拉起授权页面
-                        accelerateLoginPage();
+                        if (ResultCode.CODE_ERROR_ENV_CHECK_SUCCESS.equals(tokenRet.getCode())) {
+                            //终端支持认证 当前环境可以进行一键登录 并且加速拉起授权页面
+                            accelerateLoginPage();
+                        }
+                        AuthResponseModel authResponseModel = AuthResponseModel.fromTokenRect(tokenRet);
+                        eventSink.success(authResponseModel.toJson());
                     }
-                    AuthResponseModel authResponseModel = AuthResponseModel.fromTokenRect(tokenRet);
-                    eventSink.success(authResponseModel.toJson());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -162,10 +164,12 @@ public class AuthClient {
             @Override
             public void onTokenSuccess(String s) {
                 try {
-                    AuthResponseModel authResponseModel = AuthResponseModel.customModel(
-                            MSG_GET_MASK_SUCCESS, preLoginSuccessMsg
-                    );
-                    eventSink.success(authResponseModel.toJson());
+                    if (s != null && !s.equals("")) {
+                        AuthResponseModel authResponseModel = AuthResponseModel.customModel(
+                                MSG_GET_MASK_SUCCESS, preLoginSuccessMsg
+                        );
+                        eventSink.success(authResponseModel.toJson());
+                    }
                 } catch (Exception e) {
                     AuthResponseModel authResponseModel = AuthResponseModel.tokenDecodeFailed();
                     eventSink.success(authResponseModel.toJson());
@@ -284,17 +288,19 @@ public class AuthClient {
                 activity.runOnUiThread(() -> {
                     TokenRet tokenRet;
                     try {
-                        tokenRet = TokenRet.fromJson(s);
+                        if (s != null && !s.equals("")) {
+                            tokenRet = TokenRet.fromJson(s);
 
-                        AuthResponseModel authResponseModel = AuthResponseModel.fromTokenRect(tokenRet);
+                            AuthResponseModel authResponseModel = AuthResponseModel.fromTokenRect(tokenRet);
 
-                        eventSink.success(authResponseModel.toJson());
-                        if (ResultCode.CODE_SUCCESS.equals(tokenRet.getCode())) {
-                            mAuthHelper.quitLoginPage();
-                            mAuthHelper.setAuthListener(null);
-                            clearCached();
+                            eventSink.success(authResponseModel.toJson());
+                            if (ResultCode.CODE_SUCCESS.equals(tokenRet.getCode())) {
+                                mAuthHelper.quitLoginPage();
+                                mAuthHelper.setAuthListener(null);
+                                clearCached();
+                            }
+                            Log.i(TAG, "tokenRet:" + tokenRet);
                         }
-                        Log.i(TAG, "tokenRet:" + tokenRet);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
