@@ -15,6 +15,8 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
     static var DART_CALL_METHOD_ON_INIT: String = "onEvent"
 
     var sdkAvailable: Bool = true
+    
+    var initSdkSuccess: Bool = false;
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "flutter_ali_auth", binaryMessenger: registrar.messenger())
@@ -146,37 +148,43 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
 
         // 设置参数
         _authConfig = AuthConfig(params: params)
-        // 设置打印
-        TXCommonHandler.sharedInstance().getReporter().setConsolePrintLoggerEnable(_authConfig!.enableLog)
 
-        TXCommonHandler.sharedInstance().setAuthSDKInfo(sdk) { resultDict in
+        if(!initSdkSuccess){
+            // 设置打印
+            TXCommonHandler.sharedInstance().getReporter().setConsolePrintLoggerEnable(_authConfig!.enableLog)
+            TXCommonHandler.sharedInstance().setAuthSDKInfo(sdk) { resultDict in
 
-            var _responseMoedel: ResponseModel
+                var _responseMoedel: ResponseModel
 
-            guard let dict = resultDict as? [String: Any] else {
-                self.sdkAvailable = false
+                guard let dict = resultDict as? [String: Any] else {
+                    self.sdkAvailable = false
 
-                _responseMoedel = ResponseModel(resultDict)
+                    _responseMoedel = ResponseModel(resultDict)
+
+                    self.methodChannel?.invokeMethod(SwiftFlutterAliAuthPlugin.DART_CALL_METHOD_ON_INIT, arguments: _responseMoedel.json)
+
+                    return
+                }
+                _responseMoedel = ResponseModel(dict)
+                guard let code = dict["resultCode"] as? String else {
+                    self.sdkAvailable = false
+                    /// resultCode 未空 无法判断，直接返回
+                    self.methodChannel?.invokeMethod(SwiftFlutterAliAuthPlugin.DART_CALL_METHOD_ON_INIT, arguments: _responseMoedel.json)
+                    return
+                }
 
                 self.methodChannel?.invokeMethod(SwiftFlutterAliAuthPlugin.DART_CALL_METHOD_ON_INIT, arguments: _responseMoedel.json)
 
-                return
+                if code == PNSCodeSuccess {
+                    // 初始化成功：{msg: AppID、Appkey解析成功, resultCode: 600000, requestId: 481a2c9b50264cf3}
+                    self.initSdkSuccess = true
+                    self.checkEnvAvailable()
+                }
             }
-            _responseMoedel = ResponseModel(dict)
-            guard let code = dict["resultCode"] as? String else {
-                self.sdkAvailable = false
-                /// resultCode 未空 无法判断，直接返回
-                self.methodChannel?.invokeMethod(SwiftFlutterAliAuthPlugin.DART_CALL_METHOD_ON_INIT, arguments: _responseMoedel.json)
-                return
-            }
-
-            self.methodChannel?.invokeMethod(SwiftFlutterAliAuthPlugin.DART_CALL_METHOD_ON_INIT, arguments: _responseMoedel.json)
-
-            if code == PNSCodeSuccess {
-                // 初始化成功：{msg: AppID、Appkey解析成功, resultCode: 600000, requestId: 481a2c9b50264cf3}
-                self.checkEnvAvailable()
-            }
+        }else{
+            checkEnvAvailable();
         }
+        
     }
 
     // MARK: - 检查认证环境（checkEnvAvailableWithComplete）

@@ -81,6 +81,15 @@ public class AuthResponseModel {
         return authResponseModel;
     }
 
+    public static AuthResponseModel accelerateLoginPageSuccess() {
+        String now = Long.toString(System.currentTimeMillis());
+        AuthResponseModel authResponseModel = new AuthResponseModel();
+        authResponseModel.setResultCode(MSG_GET_MASK_SUCCESS);
+        authResponseModel.setMsg("加速拉起授权页面成功");
+        authResponseModel.setRequestId(now);
+        return authResponseModel;
+    }
+
     public static AuthResponseModel fromTokenRect(TokenRet tokenRet) throws JSONException {
 
         //TokenRet{vendorName='ct_sjl', code='600024', msg='终端支持认证', carrierFailedResultData=', requestId=8147329b-1618-4b9f-98ce-02e468d237ba', requestCode=0, token='null'}

@@ -20,8 +20,12 @@ public class DecoyMaskActivity extends Activity {
 
     public static String TAG = DecoyMaskActivity.class.getSimpleName();
 
+    public static boolean isRunning = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        isRunning = true;
+
         Log.i(TAG,"onCreate");
 
         AuthClient authClient = AuthClient.getInstance();
@@ -39,6 +43,7 @@ public class DecoyMaskActivity extends Activity {
 
         super.onCreate(savedInstanceState);
 
+
         //setContentView(R.layout.activity_calculator);
     }
 
@@ -52,7 +57,6 @@ public class DecoyMaskActivity extends Activity {
 
     @Override
     protected void onResume() {
-        Log.i(TAG,"onResume");
         if (isPause){
             //TopActivityBack
             Runnable runnable = new Runnable(){
@@ -71,5 +75,11 @@ public class DecoyMaskActivity extends Activity {
     @Override
     public void finish() {
         super.finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isRunning = false;
     }
 }

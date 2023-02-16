@@ -8,6 +8,7 @@ import static com.fluttercandies.flutter_ali_auth.model.AuthResponseModel.preLog
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -28,6 +29,8 @@ import com.mobile.auth.gatewayauth.TokenResultListener;
 import com.mobile.auth.gatewayauth.model.TokenRet;
 
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -58,6 +61,8 @@ public class AuthClient {
 
     private boolean sdkAvailable = true;
 
+    private boolean initSdkSuccess = false;
+
     private int mLoginTimeout = 5;
 
 //    private MethodChannel mChannel;
@@ -81,10 +86,9 @@ public class AuthClient {
     }
 
     public void initSdk(Object arguments, @NonNull MethodChannel.Result result, MethodChannel channel) {
-        if(!sdkAvailable){
+        if (!sdkAvailable) {
             sdkAvailable = true;
         }
-
         try {
             Gson gson = new Gson();
             String jsonBean = gson.toJson(arguments);
@@ -114,13 +118,19 @@ public class AuthClient {
                 try {
                     if (!TextUtils.isEmpty(s)) {
                         tokenRet = TokenRet.fromJson(s);
+                        Log.d(TAG, "onTokenSuccess: " + tokenRet);
                         AuthResponseModel responseModel = AuthResponseModel.fromTokenRect(tokenRet);
                         //消息回调到flutter
                         channel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
-                        if (ResultCode.CODE_ERROR_ENV_CHECK_SUCCESS.equals(tokenRet.getCode())) {
+                        if (ResultCode.CODE_SUCCESS.equals(tokenRet.getCode())) {
+                            if (!initSdkSuccess) {
+                                initSdkSuccess = true;
+                            }
+                        } else if (ResultCode.CODE_ERROR_ENV_CHECK_SUCCESS.equals(tokenRet.getCode())) {
                             //终端支持认证 当前环境可以进行一键登录 并且加速拉起授权页面
                             accelerateLoginPage(channel);
                         }
+
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -154,13 +164,15 @@ public class AuthClient {
             result.error(ResultCode.MSG_ERROR_UNKNOWN_FAIL, "当前无法获取Flutter Activity,请重启再试", null);
             return;
         }
-        Context context = activity.getBaseContext();
-        mAuthHelper = PhoneNumberAuthHelper.getInstance(context, tokenResultListener);
-        mAuthHelper.getReporter().setLoggerEnable(authModel.getEnableLog());
-        ///开始初始化
-        mAuthHelper.setAuthSDKInfo(authModel.getAndroidSdk());
-        ///检查环境
-        mAuthHelper.checkEnvAvailable(PhoneNumberAuthHelper.SERVICE_TYPE_LOGIN);
+        if (!initSdkSuccess) {
+            mAuthHelper = PhoneNumberAuthHelper.getInstance(activity, tokenResultListener);
+            mAuthHelper.getReporter().setLoggerEnable(authModel.getEnableLog());
+            ///开始初始化
+            mAuthHelper.setAuthSDKInfo(authModel.getAndroidSdk());
+        } else {
+            ///检查环境
+            mAuthHelper.checkEnvAvailable(PhoneNumberAuthHelper.SERVICE_TYPE_LOGIN);
+        }
         result.success(true);
     }
 
@@ -187,12 +199,19 @@ public class AuthClient {
             @Override
             public void onTokenSuccess(String s) {
                 try {
+                    TokenRet tokenRet;
                     if (s != null && !s.equals("")) {
-                        AuthResponseModel responseModel = AuthResponseModel.customModel(
-                                MSG_GET_MASK_SUCCESS, preLoginSuccessMsg
-                        );
-//                        eventSink.success(responseModel.toJson());
-                        channel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
+
+                        tokenRet = TokenRet.fromJson(s);
+                        if (ResultCode.CODE_SUCCESS.equals(tokenRet.getCode())) {
+                            AuthResponseModel responseModel = AuthResponseModel.customModel(
+                                    MSG_GET_MASK_SUCCESS, preLoginSuccessMsg
+                            );
+                            channel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
+                        } else {
+                            AuthResponseModel responseModel = AuthResponseModel.fromTokenRect(tokenRet);
+                            channel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
+                        }
                     }
                 } catch (Exception e) {
                     AuthResponseModel responseModel = AuthResponseModel.tokenDecodeFailed();
@@ -224,7 +243,7 @@ public class AuthClient {
     /**
      * 拉起登录授权页面并获取Token
      */
-    public void getLoginToken(Object arguments,@NonNull MethodChannel.Result result, @NonNull MethodChannel channel) {
+    public void getLoginToken(Object arguments, @NonNull MethodChannel.Result result, @NonNull MethodChannel channel) {
         if (Objects.isNull(mAuthHelper) || !sdkAvailable) {
             AuthResponseModel responseModel = AuthResponseModel.initFailed(initFailedMsg);
 //            eventSink.success(responseModel.toJson());
@@ -243,6 +262,13 @@ public class AuthClient {
         assert baseUIConfig != null;
         clearCached();
         baseUIConfig.configAuthPage(authModel.getAuthUIModel());
+
+        // override the decoy activity open enter animation
+        if (authModel.getAuthUIStyle().equals(Constant.DIALOG_PORT)) {
+            activity.overridePendingTransition(R.anim.zoom_in, 0);
+        } else {
+            activity.overridePendingTransition(R.anim.slide_up, 0);
+        }
         tokenResultListener = new TokenResultListener() {
             @Override
             public void onTokenSuccess(String s) {
@@ -259,7 +285,14 @@ public class AuthClient {
                                 mAuthHelper.quitLoginPage();
                                 mAuthHelper.setAuthListener(null);
                                 clearCached();
+                            } else if (ResultCode.CODE_ERROR_FUNCTION_TIME_OUT.equals(tokenRet.getCode())
+                                    || ResultCode.MSG_ERROR_START_AUTHPAGE_FAIL.equals(tokenRet.getCode())) {
+                                if (DecoyMaskActivity.isRunning) {
+                                    DecoyMaskActivity.isRunning = false;
+                                    activity.finish();
+                                }
                             }
+                            Log.d(TAG, "onTokenSuccess: " + tokenRet);
                         }
                     } catch (Exception e) {
                         AuthResponseModel responseModel = AuthResponseModel.tokenDecodeFailed();
@@ -286,12 +319,6 @@ public class AuthClient {
             }
         };
         mAuthHelper.setAuthListener(tokenResultListener);
-        // override the decoy activity open enter animation
-        if (authModel.getAuthUIStyle().equals(Constant.DIALOG_PORT)) {
-            activity.overridePendingTransition(R.anim.zoom_in, 0);
-        } else {
-            activity.overridePendingTransition(R.anim.slide_up, 0);
-        }
         Intent intent = new Intent(context, DecoyMaskActivity.class);
         activity.startActivity(intent);
         result.success(null);
@@ -352,6 +379,7 @@ public class AuthClient {
                                 mAuthHelper.setAuthListener(null);
                                 clearCached();
                             }
+
                             Log.i(TAG, "tokenRet:" + tokenRet);
                         }
                     } catch (Exception e) {

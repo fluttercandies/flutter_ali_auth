@@ -83,11 +83,12 @@ class _DebugPageState extends State<DebugPage> {
       case AuthResultCode.noSIMCard:
         SmartDialog.showToast("当前设备不支持一键登录(${resultCode.code})");
         break;
-      case AuthResultCode.getMaskPhoneSuccess:
-        SmartDialog.showToast('预先取号成功');
-        break;
+
       case AuthResultCode.envCheckSuccess:
         SmartDialog.showToast('当前环境支持一键登录');
+        break;
+      case AuthResultCode.getMaskPhoneSuccess:
+        SmartDialog.showToast('预先取号成功');
         break;
       case AuthResultCode.unknownError:
       case AuthResultCode.getTokenFailed:

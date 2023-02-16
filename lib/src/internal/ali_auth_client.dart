@@ -52,7 +52,7 @@ class AliAuthClient {
 
   /// 一键登陆 需要用try-catch[PlatformException]捕获插件返回的异常
   /// 无返回内容,调用之后，会在[handleEvent]的[onEvent]返回回调
-  static Future<void> login({double timeout = 5.0}) {
+  static Future<void> login({int timeout = 5}) {
     return _methodChannel.invokeMethod('login', timeout);
   }
 

@@ -46,7 +46,7 @@
 
         <!-- for override the enter animation-->
         <activity android:name=".mask.DecoyMaskActivity"
-            android:theme="@style/TransparentTheme"
+            android:theme="@style/AppTheme.Normal"
             />
     </application>
 
