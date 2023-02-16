@@ -4,6 +4,11 @@ that can be found in the LICENSE file. -->
 
 # Changelog
 
+## 0.4.0+1
+### 🔨 Fix unexpected bugs on Android.
+
+* 🤖 Fix unexpected bugs on Android.
+
 ## 0.4.0
 ### 💥 Break Change
 
