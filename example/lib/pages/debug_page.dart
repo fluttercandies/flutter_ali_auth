@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_ali_auth/flutter_ali_auth.dart';
 import 'package:flutter_ali_auth_example/main.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
@@ -18,18 +19,18 @@ class _DebugPageState extends State<DebugPage> {
 
   String get iosSdk {
     // TODO: provide your own iosSdkKey
-    throw UnimplementedError();
+    throw UnimplementedError("provide your own iosSdkKey");
   }
 
   String get androidSdk {
-    // TODO: provide your own iosSdkKey
-    throw UnimplementedError();
+    // TODO: provide your own androidSdk
+    throw UnimplementedError("provide your own androidSdk");
   }
 
   late final AuthConfig _authConfig = AuthConfig(
     iosSdk: iosSdk,
     androidSdk: androidSdk,
-    enableLog: false,
+    enableLog: true,
     authUIStyle: AuthUIStyle.fullScreen,
     authUIConfig: FullScreenUIConfig(
       navConfig: NavConfig(navColor: Colors.cyan.toHex()),
@@ -42,17 +43,24 @@ class _DebugPageState extends State<DebugPage> {
   );
 
   @override
+  void initState() {
+    super.initState();
+    AliAuthClient.handleEvent(onEvent: _onEvent);
+  }
+
+  @override
   void dispose() {
-    AliAuthClient.removeListener();
     _scrollController.dispose();
     super.dispose();
   }
 
   /// 登录页面点击事件回调处理
-  void _onEvent(dynamic event) async {
-    final responseModel = AuthResponseModel.fromJson(Map.from(event));
-    final AuthResultCode resultCode =
-        AuthResultCode.fromCode(responseModel.resultCode!);
+  void _onEvent(AuthResponseModel responseModel) async {
+    // final responseModel = AuthResponseModel.fromJson(Map.from(event));
+    print('responseModel:$responseModel');
+    final AuthResultCode resultCode = AuthResultCode.fromCode(
+      responseModel.resultCode!,
+    );
     _addLog('[${resultCode.code}] ${resultCode.message}');
     switch (resultCode) {
       case AuthResultCode.success:
@@ -164,26 +172,26 @@ class _DebugPageState extends State<DebugPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                ElevatedButton(
-                  child: const Text('注册监听'),
-                  onPressed: () async {
-                    try {
-                      await AliAuthClient.onListen(
-                        _onEvent,
-                        onError: _onError,
-                        onDone: () {
-                          ///remove listener will trigger onDone
-                          debugPrint('$runtimeType onDone');
-                        },
-                      );
-                      SmartDialog.showToast('注册监听成功');
-                      _addLog('注册监听成功');
-                    } catch (e) {
-                      SmartDialog.showToast('注册监听失败');
-                      _addLog('注册监听失败');
-                    }
-                  },
-                ),
+                // ElevatedButton(
+                //   child: const Text('注册监听'),
+                //   onPressed: () async {
+                //     try {
+                //       await AliAuthClient.onListen(
+                //         _onEvent,
+                //         onError: _onError,
+                //         onDone: () {
+                //           ///remove listener will trigger onDone
+                //           debugPrint('$runtimeType onDone');
+                //         },
+                //       );
+                //       SmartDialog.showToast('注册监听成功');
+                //       _addLog('注册监听成功');
+                //     } catch (e) {
+                //       SmartDialog.showToast('注册监听失败');
+                //       _addLog('注册监听失败');
+                //     }
+                //   },
+                // ),
                 ElevatedButton(
                   child: const Text('初始化SDK'),
                   onPressed: () async {
@@ -192,49 +200,52 @@ class _DebugPageState extends State<DebugPage> {
                       await AliAuthClient.initSdk(
                         authConfig: _authConfig,
                       );
-                    } catch (e) {
-                      SmartDialog.showToast(e.toString());
+                    } on PlatformException catch (e) {
+                      final AuthResultCode resultCode = AuthResultCode.fromCode(
+                        e.code,
+                      );
+                      SmartDialog.showToast(resultCode.message);
                       _addLog("初始化SDK出现错误:$e");
                     }
                   },
                 ),
-                ElevatedButton(
-                  child: const Text('检查环境是否支持认证'),
-                  onPressed: () async {
-                    try {
-                      await AliAuthClient.checkVerifyEnable();
-                    } catch (e) {
-                      SmartDialog.dismiss(status: SmartStatus.loading);
-                    }
-                  },
-                ),
-                ElevatedButton(
-                  child: const Text('加速一键登录授权页弹起'),
-                  onPressed: () async {
-                    try {
-                      await AliAuthClient.accelerateLoginPage();
-                    } catch (e) {
-                      SmartDialog.dismiss(status: SmartStatus.loading);
-                    }
-                  },
-                ),
-                ElevatedButton(
-                  child: const Text('取消登录事件监听'),
-                  onPressed: () async {
-                    try {
-                      final success = await AliAuthClient.removeListener();
-                      if (!success) {
-                        SmartDialog.showToast("你还没对登录事件进行监听");
-                        _addLog('你还没对登录事件进行监听');
-                      } else {
-                        SmartDialog.showToast("取消监听成功");
-                        _addLog('取消监听成功');
-                      }
-                    } catch (e) {
-                      SmartDialog.dismiss(status: SmartStatus.loading);
-                    }
-                  },
-                ),
+                // ElevatedButton(
+                //   child: const Text('检查环境是否支持认证'),
+                //   onPressed: () async {
+                //     try {
+                //       await AliAuthClient.checkVerifyEnable();
+                //     } catch (e) {
+                //       SmartDialog.dismiss(status: SmartStatus.loading);
+                //     }
+                //   },
+                // ),
+                // ElevatedButton(
+                //   child: const Text('加速一键登录授权页弹起'),
+                //   onPressed: () async {
+                //     try {
+                //       await AliAuthClient.accelerateLoginPage();
+                //     } catch (e) {
+                //       SmartDialog.dismiss(status: SmartStatus.loading);
+                //     }
+                //   },
+                // ),
+                // ElevatedButton(
+                //   child: const Text('取消登录事件监听'),
+                //   onPressed: () async {
+                //     try {
+                //       final success = await AliAuthClient.removeListener();
+                //       if (!success) {
+                //         SmartDialog.showToast("你还没对登录事件进行监听");
+                //         _addLog('你还没对登录事件进行监听');
+                //       } else {
+                //         SmartDialog.showToast("取消监听成功");
+                //         _addLog('取消监听成功');
+                //       }
+                //     } catch (e) {
+                //       SmartDialog.dismiss(status: SmartStatus.loading);
+                //     }
+                //   },
+                // ),
               ],
             ),
           ),
@@ -255,9 +266,17 @@ class _DebugPageState extends State<DebugPage> {
                   label: '全屏',
                 ),
                 onPressed: () async {
-                  _authConfig.authUIStyle = AuthUIStyle.fullScreen;
-                  _authConfig.authUIConfig = _extraUIBuilder(context);
-                  await AliAuthClient.loginWithConfig(_authConfig);
+                  try {
+                    _authConfig.authUIStyle = AuthUIStyle.fullScreen;
+                    _authConfig.authUIConfig = _extraUIBuilder(context);
+                    await AliAuthClient.loginWithConfig(_authConfig);
+                  } on PlatformException catch (e) {
+                    final AuthResultCode resultCode = AuthResultCode.fromCode(
+                      e.code,
+                    );
+                    SmartDialog.showToast(resultCode.message);
+                    _addLog("初始化SDK出现错误:$e");
+                  }
                 },
               ),
               OutlinedButton(
@@ -266,25 +285,43 @@ class _DebugPageState extends State<DebugPage> {
                   label: '底部弹窗',
                 ),
                 onPressed: () async {
-                  const alertConfig = AlertUIConfig(
-                    logoConfig: LogoConfig(
-                      logoIsHidden: false,
-                      logoImage: "images/flutter_candies_logo.png",
-                    ),
-                    sloganConfig: SloganConfig(
-                      sloganIsHidden: false,
-                      sloganText: '哈哈哈哈',
-                    ),
-                    changeButtonConfig: ChangeButtonConfig(
-                      changeBtnIsHidden: true,
-                    ),
-                    loginButtonConfig: LoginButtonConfig(
-                      loginBtnHeight: kMinInteractiveDimension,
-                    ),
-                  );
-                  _authConfig.authUIStyle = AuthUIStyle.bottomSheet;
-                  _authConfig.authUIConfig = alertConfig;
-                  await AliAuthClient.loginWithConfig(_authConfig);
+                  try {
+                    ThemeData theme = Theme.of(context);
+                    final alertConfig = AlertUIConfig(
+                      alertContentViewColor: theme.canvasColor.toHex(),
+                      alertBorderColor: theme.dividerColor.toHex(),
+                      alertBorderWidth: 2.0,
+                      alertBorderRadius: 20,
+                      logoConfig: const LogoConfig(
+                        logoIsHidden: false,
+                        logoImage: "images/flutter_candies_logo.png",
+                      ),
+                      sloganConfig:  SloganConfig(
+                        sloganIsHidden: false,
+                        sloganText: '欢迎登录FlutterCandies',
+                        sloganTextColor: theme.colorScheme.onBackground.toHex(),
+                      ),
+                      changeButtonConfig: ChangeButtonConfig(
+                        changeBtnIsHidden: false,
+                        changeBtnTitle: '切换其他登录方式',
+                        changeBtnTextSize: 12,
+                        changeBtnTextColor: theme.colorScheme.onSurface.toHex(),
+                      ),
+                      loginButtonConfig: const LoginButtonConfig(
+                        loginBtnHeight: kMinInteractiveDimension,
+                      ),
+                    );
+                    _authConfig.authUIStyle = AuthUIStyle.bottomSheet;
+                    _authConfig.authUIConfig = alertConfig;
+
+                    await AliAuthClient.loginWithConfig(_authConfig);
+                  } on PlatformException catch (e) {
+                    final AuthResultCode resultCode = AuthResultCode.fromCode(
+                      e.code,
+                    );
+                    SmartDialog.showToast(resultCode.message);
+                    _addLog("初始化SDK出现错误:$e");
+                  }
                 },
               ),
               OutlinedButton(
@@ -293,18 +330,38 @@ class _DebugPageState extends State<DebugPage> {
                   label: '弹窗',
                 ),
                 onPressed: () async {
-                  _authConfig.authUIStyle = AuthUIStyle.alert;
-                  _authConfig.authUIConfig = const AlertUIConfig(
-                    logoConfig: LogoConfig(
-                      logoIsHidden: false,
-                      logoImage: "images/flutter_candies_logo.png",
-                    ),
-                    sloganConfig: SloganConfig(
-                      sloganIsHidden: false,
-                      sloganText: '666',
-                    ),
-                  );
-                  await AliAuthClient.loginWithConfig(_authConfig);
+                  try {
+                    ThemeData theme = Theme.of(context);
+                    _authConfig.authUIStyle = AuthUIStyle.alert;
+                    _authConfig.authUIConfig =  AlertUIConfig(
+                      alertContentViewColor: theme.canvasColor.toHex(),
+                      alertBorderColor: theme.dividerColor.toHex(),
+                      alertBorderWidth: 2.0,
+                      alertBorderRadius: 20,
+                      logoConfig: const LogoConfig(
+                        logoIsHidden: false,
+                        logoImage: "images/flutter_candies_logo.png",
+                      ),
+                      sloganConfig:  SloganConfig(
+                        sloganIsHidden: false,
+                        sloganText: 'Slogan text，请自行替换',
+                        sloganTextColor: theme.colorScheme.onBackground.toHex(),
+                      ),
+                      changeButtonConfig: ChangeButtonConfig(
+                        changeBtnIsHidden: false,
+                        changeBtnTitle: '切换其他登录方式',
+                        changeBtnTextSize: 12,
+                        changeBtnTextColor: theme.colorScheme.onSurface.toHex(),
+                      ),
+                    );
+                    await AliAuthClient.loginWithConfig(_authConfig);
+                  } on PlatformException catch (e) {
+                    final AuthResultCode resultCode = AuthResultCode.fromCode(
+                      e.code,
+                    );
+                    SmartDialog.showToast(resultCode.message);
+                    _addLog("初始化SDK出现错误:$e");
+                  }
                 },
               ),
             ],
@@ -320,7 +377,7 @@ class _DebugPageState extends State<DebugPage> {
               bottom: 8.0,
             ),
             decoration: ShapeDecoration(
-              color: Colors.grey.shade200,
+              color: Theme.of(context).secondaryHeaderColor,
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
                   Radius.circular(8.0),
@@ -368,7 +425,7 @@ class _DebugPageState extends State<DebugPage> {
       navConfig: const NavConfig(
         navIsHidden: true,
       ),
-      backgroundImage: "images/app_bg.png",
+      // backgroundImage: "images/app_bg.png",
       logoConfig: LogoConfig(
         logoIsHidden: false,
         logoImage: "images/flutter_candies_logo.png",

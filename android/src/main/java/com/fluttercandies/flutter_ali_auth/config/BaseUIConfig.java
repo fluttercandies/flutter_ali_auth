@@ -34,6 +34,7 @@ import java.util.List;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.EventChannel;
+import io.flutter.plugin.common.MethodChannel;
 
 
 public abstract class BaseUIConfig {
@@ -42,26 +43,27 @@ public abstract class BaseUIConfig {
     public PhoneNumberAuthHelper mAuthHelper;
     public int mScreenWidthDp;
     public int mScreenHeightDp;
-    public EventChannel.EventSink mEventSink;
+//    public EventChannel.EventSink mEventSink;
+    public MethodChannel mChannel;
     public FlutterPlugin.FlutterAssets mFlutterAssets;
 
-    public BaseUIConfig(Activity activity, PhoneNumberAuthHelper authHelper,EventChannel.EventSink eventSink, FlutterPlugin.FlutterAssets flutterAssets) {
+    public BaseUIConfig(Activity activity, PhoneNumberAuthHelper authHelper,MethodChannel methodChannel, FlutterPlugin.FlutterAssets flutterAssets) {
         mActivity = activity;
         mContext = activity.getApplicationContext();
         mAuthHelper = authHelper;
-        mEventSink = eventSink;
+        mChannel = methodChannel;
         mFlutterAssets = flutterAssets;
     }
 
 
-    public static BaseUIConfig init(int type, Activity activity, PhoneNumberAuthHelper authHelper, EventChannel.EventSink eventSink,FlutterPlugin.FlutterAssets flutterAssets) {
+    public static BaseUIConfig init(int type, Activity activity, PhoneNumberAuthHelper authHelper, MethodChannel methodChannel,FlutterPlugin.FlutterAssets flutterAssets) {
         switch (type) {
             case Constant.FULL_PORT:
-                return new FullPortConfig(activity, authHelper,eventSink,flutterAssets);
+                return new FullPortConfig(activity, authHelper,methodChannel,flutterAssets);
             case Constant.DIALOG_BOTTOM:
-                return new DialogBottomConfig(activity, authHelper,eventSink,flutterAssets);
+                return new DialogBottomConfig(activity, authHelper,methodChannel,flutterAssets);
             case Constant.DIALOG_PORT:
-                return new DialogPortConfig(activity, authHelper,eventSink,flutterAssets);
+                return new DialogPortConfig(activity, authHelper,methodChannel,flutterAssets);
             default:
                 return null;
         }
@@ -126,29 +128,36 @@ public abstract class BaseUIConfig {
 
     public void buildCustomView( @NonNull List<CustomViewBlock> customViewConfigList) {
         for (CustomViewBlock customViewBlock : customViewConfigList) {
-            ImageView imageView = new ImageView(mContext);
-            String flutterAssetFilePath = mFlutterAssets.getAssetFilePathByName(customViewBlock.image);
-            AssetManager assets = mContext.getAssets();
-            try {
-                InputStream open = assets.open(flutterAssetFilePath);
-                Bitmap bitmap = BitmapFactory.decodeStream(open);
-                imageView.setImageBitmap(bitmap);
-            }catch (Exception e){
-                e.printStackTrace();
+            ImageView imageView = null;
+            if (customViewBlock.image != null){
+                 imageView = new ImageView(mContext);
+                String flutterAssetFilePath = mFlutterAssets.getAssetFilePathByName(customViewBlock.image);
+                AssetManager assets = mContext.getAssets();
+                try {
+                    InputStream open = assets.open(flutterAssetFilePath);
+                    Bitmap bitmap = BitmapFactory.decodeStream(open);
+                    imageView.setImageBitmap(bitmap);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             }
-            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
             int width = dp2px(mContext, customViewBlock.width == null ? 30 : customViewBlock.width.floatValue());
             int height = dp2px(mContext, customViewBlock.height == null ? 30 : customViewBlock.height.floatValue());
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
             int offsetX = dp2px(mContext, customViewBlock.offsetX == null ? 0 : customViewBlock.offsetX.floatValue());
             int offsetY = dp2px(mContext, customViewBlock.offsetY == null ? 0 : customViewBlock.offsetY.floatValue());
             layoutParams.setMargins(offsetX,  offsetY, 0, 0);
-            imageView.setLayoutParams(layoutParams);
+            if(imageView != null){
+                imageView.setLayoutParams(layoutParams);
+            }
             CustomInterface customInterface = null;
             if (customViewBlock.enableTap != null && customViewBlock.enableTap){
                 customInterface = context -> {
-                    AuthResponseModel authResponseModel = AuthResponseModel.onCustomViewBlocTap(customViewBlock.viewId);
-                    mEventSink.success(authResponseModel.toJson());
+                    AuthResponseModel responseModel = AuthResponseModel.onCustomViewBlocTap(customViewBlock.viewId);
+//                    mEventSink.success(authResponseModel.toJson());
+                    mChannel.invokeMethod(AuthClient.DART_CALL_METHOD_ON_INIT,responseModel.toJson());
                     mAuthHelper.quitLoginPage();
                     AuthClient.getInstance().clearCached();
                 };

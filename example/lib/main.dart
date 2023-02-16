@@ -22,6 +22,10 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String _aliAuthVersion = '获取阿里云插件版本中';
 
+  ThemeMode themeMode = ThemeMode.system;
+
+  Brightness? brightness;
+
   @override
   void initState() {
     super.initState();
@@ -30,6 +34,7 @@ class _MyAppState extends State<MyApp> {
       alignment: Alignment.center,
       animationType: SmartAnimationType.fade,
     );
+    brightness = MediaQueryData.fromWindow(WidgetsBinding.instance.window).platformBrightness;
   }
 
   Future<void> initPlatformState() async {
@@ -50,9 +55,43 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+
+      themeMode: themeMode,
+      theme: ThemeData.light(
+        useMaterial3: true,
+      ),
+      darkTheme: ThemeData.dark(
+        useMaterial3: true,
+      ),
       home: Scaffold(
         appBar: AppBar(
           title: Text(_aliAuthVersion),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(48),
+            child: Center(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('暗黑模式：'),
+                  Switch.adaptive(
+                    value: brightness == Brightness.dark,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        if (value ?? true) {
+                          themeMode = ThemeMode.dark;
+                          brightness = Brightness.dark;
+                        } else {
+                          themeMode = ThemeMode.light;
+                          brightness = Brightness.light;
+                        }
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+
         ),
         body: IndexedStack(
           index: _currentIndex,

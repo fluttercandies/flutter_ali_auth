@@ -16,6 +16,7 @@ import android.widget.ImageView;
 
 import com.fluttercandies.flutter_ali_auth.R;
 import com.fluttercandies.flutter_ali_auth.model.AuthUIModel;
+import com.fluttercandies.flutter_ali_auth.utils.AppUtils;
 import com.mobile.auth.gatewayauth.AuthRegisterXmlConfig;
 import com.mobile.auth.gatewayauth.AuthUIConfig;
 import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper;
@@ -23,23 +24,42 @@ import com.mobile.auth.gatewayauth.ui.AbstractPnsViewDelegate;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.EventChannel;
+import io.flutter.plugin.common.MethodChannel;
 
 public class DialogPortConfig extends BaseUIConfig {
     /**
      * 应用包名
      */
 //    private String mPackageName;
-
-    public DialogPortConfig(Activity activity, PhoneNumberAuthHelper authHelper, EventChannel.EventSink eventSink, FlutterPlugin.FlutterAssets flutterAssets) {
-        super(activity, authHelper,eventSink,flutterAssets);
+    public DialogPortConfig(Activity activity, PhoneNumberAuthHelper authHelper, MethodChannel methodChannel, FlutterPlugin.FlutterAssets flutterAssets) {
+        super(activity, authHelper, methodChannel, flutterAssets);
 //        mPackageName = AppUtils.getPackageName(activity);
     }
 
     @Override
-    public void configAuthPage( AuthUIModel authUIModel){
+    public void configAuthPage(AuthUIModel authUIModel) {
         int authPageOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT;
         if (Build.VERSION.SDK_INT == 26) {
             authPageOrientation = ActivityInfo.SCREEN_ORIENTATION_BEHIND;
+        }
+        DialogBackgroundDrawable backgroundDrawable = null;
+        if (authUIModel.alertContentViewColor != null) {
+            float alertBorderRadius = 10;
+            if (authUIModel.alertBorderRadius != null) {
+                alertBorderRadius = AppUtils.dp2px(mContext, authUIModel.alertBorderRadius.floatValue());
+            }
+            Float alertBorderWidth = null;
+            if (authUIModel.alertBorderWidth != null) {
+                alertBorderWidth = authUIModel.alertBorderWidth.floatValue();
+            }
+            Integer alertBorderColor = null;
+            if (authUIModel.alertBorderColor != null) {
+                alertBorderColor = Color.parseColor(authUIModel.alertBorderColor);
+            }
+            backgroundDrawable = new DialogBackgroundDrawable(
+                    alertBorderRadius,
+                    Color.parseColor(authUIModel.alertContentViewColor),
+                    alertBorderWidth, alertBorderColor);
         }
         updateScreenSize(authPageOrientation);
         int dialogHeight = (int) (authUIModel.alertWindowWidth == null ? mScreenHeightDp * 0.55f : authUIModel.alertWindowWidth);
@@ -181,7 +201,8 @@ public class DialogPortConfig extends BaseUIConfig {
                 .setDialogHeight(dialogHeight)
                 .setDialogWidth(dialogWidth)
                 .setDialogOffsetY(0)
-
+                .setPageBackgroundDrawable(backgroundDrawable)
+//                .setPageBackgroundPath("dialog_page_background")
                 .setAuthPageActIn(String.valueOf(R.anim.zoom_in), String.valueOf(R.anim.zoom_out))
                 .setAuthPageActOut(String.valueOf(R.anim.zoom_in), String.valueOf(R.anim.zoom_out))
                 .create());

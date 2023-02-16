@@ -4,9 +4,14 @@ Language: 中文
 
 基于阿里云一键登录的 **Flutter集成的SDK插件**
 
-阿里云一键登录安卓接入文档: [Android_V2.12-1.9](https://help.aliyun.com/document_detail/144231.html)
+阿里云一键登录安卓接入文档: [Android_V2.12.11](https://help.aliyun.com/document_detail/144231.html)
 
-阿里云一键登录IOS接入文档: [iOS_V2.12.9](https://help.aliyun.com/document_detail/144186.html)
+阿里云一键登录IOS接入文档: [iOS_V2.12.11](https://help.aliyun.com/document_detail/144186.html)
+
+## 更新历史 🌄
+
+- 现已更新到与官方同步的SDK [V2.12.11](https://help.aliyun.com/document_detail/121113.html) 版本;
+- 授权页适配夜间/暗色模式(仅全屏，弹窗模式需自定以);
 
 ## 目录
 * [效果图](#效果图-)
@@ -21,6 +26,9 @@ Language: 中文
     * [预取号](#4检查认证环境-checkverifyenable)
     * [调起授权页面，获取Token](#5一键登录预取号-accelerateloginpage)
 * [注意事项](#注意事项-%EF%B8%8F)
+
+
+
 
 
 ## 效果图 📷
@@ -77,24 +85,13 @@ mAlicomAuthHelper.getLoginToken(context, 5000);
 
 ### 1. 添加监听
 ```dart
-/// 传入回调函数 onEvent,onError(可选),onDone(可选)
-AliAuthClient.onListen(_onEvent, onError: _onError);
+/// 传入回调函数 onEvent
+AliAuthClient.handleEvent(onEvent: _onEvent);
 ```
 在`onEvent`中监听回调并且自行进行判断
 ```dart
-void _onEvent(dynamic event) async {
-    final responseModel = AuthResponseModel.fromJson(Map.from(event));
-    if (responseModel.resultCode == PNSCodeSuccess &&
-        responseModel.token != null) {
-      setState(() {
-        _token = responseModel.token;
-      });
-    } else if (responseModel.resultCode == PNSCodeDecodeAppInfoFailed) {
-      print(responseModel.msg)
-    } else {
-      print(responseModel.msg)
-      print('code:${responseModel.resultCode}');
-    }
+void _onEvent(AuthResponseModel event) async {
+  //print(event);
 }
 
 ``` 
@@ -149,22 +146,24 @@ authConfig: const AuthConfig(),
 
 `AlertUIConfig` 成员如下
 
-| 参数名 | 类型 | 描述 |
-| --- | --- | --- |
+| 参数名 | 类型                  | 描述 |
+| --- |---------------------| --- |
 | alertTitleBarConfig | AlertTitleBarConfig | 弹窗ActionBar的UI配置 |
-| alertContentViewColor | String | 十六进制背景颜色,eg: "#ffffff" |
-| alertBlurViewColor | String | 弹窗蒙层的颜色,安卓暂时不支持 |
-| alertBlurViewAlpha | double | 弹窗蒙层的透明度,安卓暂时不支持 |
-| alertBorderRadius | double | 弹窗圆角，安卓暂时不支持 |
-| alertWindowWidth | double | 弹窗宽度 |
-| alertWindowHeight | double | 弹窗高度 |
-| logoConfig | LogoConfig | LogoUI配置类 |
-| sloganConfig | SloganConfig | SloganConfig配置类 |
-| phoneNumberConfig | PhoneNumberConfig | PhoneNumberConfig配置类 |
-| loginButtonConfig | LoginButtonConfig | LoginButtonConfig配置类 |
-| changeButtonConfig | ChangeButtonConfig | ChangeButtonConfig配置类 |
-| checkBoxConfig | CheckBoxConfig | CheckBoxConfig配置类，弹窗默认隐藏checkbox |
-| privacyConfig | PrivacyConfig | PrivacyConfig配置，自定义协议（目前只支持三个） |
+| alertContentViewColor | String              | 十六进制背景颜色,eg: "#ffffff" |
+| alertBlurViewColor | String              | 弹窗蒙层的颜色 |
+| alertBlurViewAlpha | double              | 弹窗蒙层的透明度 |
+| alertBorderRadius | double              | 弹窗圆角 |
+| alertBorderWidth | double              | 边框宽度,仅Android生效 |
+| alertBorderColor | String              | 边框颜色,仅Android生效 |
+| alertWindowWidth | double              | 弹窗宽度 |
+| alertWindowHeight | double              | 弹窗高度 |
+| logoConfig | LogoConfig          | LogoUI配置类 |
+| sloganConfig | SloganConfig        | SloganConfig配置类 |
+| phoneNumberConfig | PhoneNumberConfig   | PhoneNumberConfig配置类 |
+| loginButtonConfig | LoginButtonConfig   | LoginButtonConfig配置类 |
+| changeButtonConfig | ChangeButtonConfig  | ChangeButtonConfig配置类 |
+| checkBoxConfig | CheckBoxConfig      | CheckBoxConfig配置类，弹窗默认隐藏checkbox |
+| privacyConfig | PrivacyConfig       | PrivacyConfig配置，自定义协议（目前只支持三个） |
 
 
 ### 3.一键登录获取Token **(login)**
@@ -173,42 +172,13 @@ authConfig: const AuthConfig(),
 
 调用此接口后会通过之前注册的监听中回调信息
 ```dart
-await AliAuthClient.login();
+/// 一键登陆 需要用try-catch[PlatformException]捕获插件返回的异常
+/// 无返回内容,调用之后，会在[handleEvent]的[onEvent]返回回调
+await AliAuthClient.login({double timeout = 5.0})
 ```
 
 
-### 4.检查认证环境 **(checkVerifyEnable)**
-
-一般不需要主动调用检查，因为插件本身在初始化成功后马上进行**检查环境（checkVerifyEnable）**和**加速一键登录授权页弹起（accelerateLoginPage**），防止等待弹起授权页时间过长，这个逻辑与原生SDK一样，建议此方法在debug或者自行判断使用
-
-调用此接口后会通过之前注册的监听中回调信息
-
-```dart
-await AliAuthClient.checkVerifyEnable();
-```
-
-
-### 5.一键登录预取号 **(accelerateLoginPage)**
-
-一般不需要主动调用检查，因为插件本身在初始化成功后马上进行检查环境（checkVerifyEnable）和加速一键登录授权页弹起（accelerateLoginPage），防止等待弹起授权页时间过长，这个逻辑与原生SDK一样，建议此方法在debug或者自行判断使用
-
-- 在不是一进app就需要登录的场景 建议调用此接口 加速拉起一键登录页面
-- 等到用户点击登录的时候 授权页可以秒拉
-- 预取号的成功与否不影响一键登录功能，所以不需要等待预取号的返回。
-
-```dart
-await AliAuthClient.accelerateLoginPage();
-```
-
-### 6.移除登录事件 **(removeListener)**
-
-移除授权页的事件监听
-
-```dart
-await AliAuthClient.removeListener();
-```
-
-### 7.其他方法
+### 4.其他方法
 
 下面的方法与官网接入文档一致，可以根据个人开发情况进行使用
 

@@ -2,92 +2,114 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
-import '../auth_config/auth_config.dart';
-import '../auth_response_model/auth_response_model.dart';
+import '../../flutter_ali_auth.dart';
 
 class AliAuthClient {
   const AliAuthClient._();
 
   static const MethodChannel _methodChannel = MethodChannel('flutter_ali_auth');
-  static const EventChannel _loginEventChannel = EventChannel('auth_event');
+  // static const EventChannel _loginEventChannel = EventChannel('auth_event');
 
   static Future<String?> getPlatformVersion() {
     return _methodChannel.invokeMethod('getPlatformVersion');
   }
 
   /// 初始化
-  static Future<AuthResponseModel> initSdk({
+  /// 如果初始化错误，会抛出异常,需要用try-catch[PlatformException]捕获插件返回的异常
+  /// 返回是否成功
+  static Future<bool?> initSdk({
     required AuthConfig authConfig,
   }) async {
-    if (_streamSubscription == null) {
-      throw StateError('请先对插件进行监听');
-    }
-    final res = await _methodChannel.invokeMethod('init', authConfig.toJson());
-    return AuthResponseModel.fromJson(Map<String, dynamic>.from(res));
+    return await _methodChannel.invokeMethod<bool>(
+      'init',
+      authConfig.toJson(),
+    );
   }
 
-  /// 一键登陆
-  static Future<AuthResponseModel> login({double timeout = 5.0}) async {
-    final res = await _methodChannel.invokeMethod('login', timeout);
-    return AuthResponseModel.fromJson(Map<String, dynamic>.from(res));
+  /// 初始化之后的SDK的异步回调
+  /// [onEvent] 初始化之后会进行环境检查和加速拉起授权页面，这些回调会在这里返回，
+  /// 值得注意的是，IOS初始化,检查环境,加速拉起授权页面 三个步骤返回的code均为[600000]，Android则会有不同的状态码，分别是[600000,600024,600016]
+  /// 可根据[AuthResponseModel.resultCode]和[AuthResponseModel.innerCode]的进行判断，
+  /// 详情可以参考[AuthResultCode]
+  ///
+  static void handleEvent({
+    required ValueChanged<AuthResponseModel> onEvent,
+    // required ValueChanged<AuthResponseModel> onLoginEvent,
+  }) {
+    _methodChannel.setMethodCallHandler((call) async {
+      switch (call.method) {
+        case "onEvent":
+          final AuthResponseModel responseModel = AuthResponseModel.fromJson(
+            Map.from(call.arguments),
+          );
+          onEvent.call(responseModel);
+          break;
+        default:
+          throw UnsupportedError('Unrecognized JSON message');
+      }
+    });
   }
 
-  /// 一键登陆，debug专用, 用新的配置去验证，耗时会比较久
-  static Future<AuthResponseModel> loginWithConfig(
+  /// 一键登陆 需要用try-catch[PlatformException]捕获插件返回的异常
+  /// 无返回内容,调用之后，会在[handleEvent]的[onEvent]返回回调
+  static Future<void> login({double timeout = 5.0}) {
+    return _methodChannel.invokeMethod('login', timeout);
+  }
+
+  /// 一键登陆，建议debug时使用, 用新的配置去拉起授权页 需要用try-catch[PlatformException]捕获插件返回的异常
+  /// 无返回内容,调用之后，会在[onHandle]的[onLogin]返回回调
+  static Future<void> loginWithConfig(
     AuthConfig authConfig,
-  ) async {
-    final res = await _methodChannel.invokeMethod(
+  ) {
+    return _methodChannel.invokeMethod(
       'loginWithConfig',
       authConfig.toJson(),
     );
-    return AuthResponseModel.fromJson(Map<String, dynamic>.from(res));
   }
 
-  static Stream<dynamic>? _pluginStream;
-  static StreamSubscription<dynamic>? _streamSubscription;
-
-  static Future<void> onListen(
-    ValueChanged onData, {
-    Function? onError,
-    VoidCallback? onDone,
-    bool? cancelOnError,
-  }) async {
-    if (_pluginStream != null) {
-      return;
-    }
-    _pluginStream = _loginEventChannel.receiveBroadcastStream();
-    _streamSubscription = _pluginStream!.listen(
-      onData,
-      onError: onError,
-      onDone: onDone,
-      cancelOnError: cancelOnError,
-    );
-  }
-
-  static FutureOr<bool> removeListener() async {
-    if (_streamSubscription == null) {
-      return false;
-    }
-    //call this method will trigger native side: [EventChannel.EventSink]#endOfStream,flutter side:[Stream]#onDone
-    await _methodChannel.invokeMethod('cancelStream');
-    _streamSubscription!.cancel();
-    _streamSubscription = null;
-    _pluginStream = null;
-    return true;
-  }
-
-  /// 判断网络是否支持，一般不需要主动调用
-  static Future<AuthResponseModel> checkVerifyEnable() async {
-    ///{msg: 无SIM卡, requestId: 941e9389efee47b9, resultCode: 600007}
-    final res = await _methodChannel.invokeMethod("checkEnv");
-    return AuthResponseModel.fromJson(Map<String, dynamic>.from(res));
-  }
-
-  /// 预取号，一般不需要主动调用
-  static Future<AuthResponseModel> accelerateLoginPage() async {
-    final res = await _methodChannel.invokeMethod('accelerateLoginPage');
-    return AuthResponseModel.fromJson(Map<String, dynamic>.from(res));
-  }
+  // static Stream<dynamic>? _pluginStream;
+  // static StreamSubscription<dynamic>? _streamSubscription;
+  //
+  // static Future<void> onListen(
+  //   ValueChanged onData, {
+  //   Function? onError,
+  //   VoidCallback? onDone,
+  //   bool? cancelOnError,
+  // }) async {
+  //   if (_pluginStream != null) {
+  //     return;
+  //   }
+  //   _pluginStream = _loginEventChannel.receiveBroadcastStream();
+  //   _streamSubscription = _pluginStream!.listen(
+  //     onData,
+  //     onError: onError,
+  //     onDone: onDone,
+  //     cancelOnError: cancelOnError,
+  //   );
+  // }
+  //
+  // static FutureOr<bool> removeListener() async {
+  //   if (_streamSubscription == null) {
+  //     return false;
+  //   }
+  //   //call this method will trigger native side: [EventChannel.EventSink]#endOfStream,flutter side:[Stream]#onDone
+  //   await _methodChannel.invokeMethod('cancelStream');
+  //   _streamSubscription!.cancel();
+  //   _streamSubscription = null;
+  //   _pluginStream = null;
+  //   return true;
+  // }
+  //
+  // /// 判断网络是否支持，一般不需要主动调用
+  // static Future<void> checkVerifyEnable() {
+  //   ///{msg: 无SIM卡, requestId: 941e9389efee47b9, resultCode: 600007}
+  //   return _methodChannel.invokeMethod("checkEnv");
+  // }
+  //
+  // /// 预取号，一般不需要主动调用
+  // static Future<void> accelerateLoginPage() {
+  //   return _methodChannel.invokeMethod('accelerateLoginPage');
+  // }
 
   /// 检查版本
   static Future<dynamic> get version {
@@ -97,14 +119,14 @@ class AliAuthClient {
   /// 关闭授权页loading
   /// 安卓 SDK完成回调之后不会关闭loading，需要开发者主动调用hideLoginLoading关闭loading
   /// IOS 手动隐藏一键登录获取登录Token之后的等待动画，默认为自动隐藏
-  static Future<void> hideLoginLoading() async {
+  static Future<void> hideLoginLoading() {
     return _methodChannel.invokeMethod("hideLoginLoading");
   }
 
   /// 退出授权认证页,IOS一般不用主动调用，除非个人需要，安卓看情况
   /// 安卓 SDK完成回调之后不会关闭授权页，需要开发者主动调⽤quitLoginPage退出授权页
   /// IOS 注销授权页，建议用此方法，对于移动卡授权页的消失会清空一些数据
-  static Future<void> quitLoginPage() async {
+  static Future<void> quitLoginPage() {
     return _methodChannel.invokeMethod("quitLoginPage");
   }
 }

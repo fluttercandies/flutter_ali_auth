@@ -1,6 +1,10 @@
 ///阿里云SDK返回回调Enum
 ///@author kangkang
 ///@date 2023-01-10
+///
+///新备注（2023-02-04）
+///#pragma mark - 该返回码为阿里云号码认证SDK⾃身的返回码，请注意600011及600012错误内均含有运营商返回码，（如果没有返回码请提ISSUE）
+///具体错误在碰到之后查阅 https://help.aliyun.com/document_detail/85351.html?spm=a2c4g.11186623.6.561.32a7360cxvWk6H
 enum AuthResultCode {
   success('600000', '接口返回成功'),
   getOperatorInfoFailed('600004', '获取运营商配置信息失败'),
@@ -16,11 +20,10 @@ enum AuthResultCode {
   interfaceLimited('600014', '运营商维护升级，该功能已达最大调用次数'),
   interfaceTimeout('600015', '接口超时'),
   getMaskPhoneSuccess('600016', '预取号成功'),
-  decodeAppInfoFailed('600017', '接口超时'),
+  decodeAppInfoFailed('600017', 'AppID Secret解析失败'),
   carrierChanged('600021', '运营商已切换'),
   envCheckSuccess('600024', '终端支持认证'),
-  //envCheckFail('600025', '终端环境检测失败（终端不支持认证或者终端检测参数错误）'),
-  envCheckFail('600025', '参数错误'),
+  envCheckFail('600025', '终端环境检测失败（1.终端不支持认证;2.终端检测参数错误;3.初始化未成功）'),
 
   ///  号码认证授权页相关返回码 START
   loginControllerPresentSuccess('600001', '唤起授权页成功'),

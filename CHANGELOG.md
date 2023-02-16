@@ -4,6 +4,13 @@ that can be found in the LICENSE file. -->
 
 # Changelog
 
+## 0.4.0
+### 💥 Break Change
+
+* ✂️ remove checkVerifyEnable,accelerateLoginPage
+* 🌓 enable dark mode support
+* 🧩 update Aliyun sdk Sync with official
+
 ## 0.3.1
 ### 🤖️fixed android token handle
 

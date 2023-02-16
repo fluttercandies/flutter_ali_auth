@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.fluttercandies.flutter_ali_auth.config.BaseUIConfig;
 import com.fluttercandies.flutter_ali_auth.mask.DecoyMaskActivity;
 import com.fluttercandies.flutter_ali_auth.model.AuthModel;
@@ -30,10 +32,15 @@ import java.util.Objects;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.EventChannel;
+import io.flutter.plugin.common.MethodChannel;
 
 public class AuthClient {
 
     private static final String TAG = AuthClient.class.getSimpleName();
+
+    public static final String DART_CALL_METHOD_ON_INIT = "onEvent";
+
+//    public static final String DART_CALL_METHOD_ON_LOGIN = "loginEvent";
 
     public PhoneNumberAuthHelper mAuthHelper;
 
@@ -43,7 +50,7 @@ public class AuthClient {
 
     private AuthModel authModel;
 
-    private EventChannel.EventSink eventSink;
+//    private EventChannel.EventSink eventSink;
 
     private BaseUIConfig baseUIConfig;
 
@@ -51,7 +58,9 @@ public class AuthClient {
 
     private boolean sdkAvailable = true;
 
-    private int mLoginTimeout;
+    private int mLoginTimeout = 5;
+
+//    private MethodChannel mChannel;
 
     private static volatile AuthClient instance;
 
@@ -71,21 +80,21 @@ public class AuthClient {
         return instance;
     }
 
-    public void initSdk(Object arguments) {
+    public void initSdk(Object arguments, @NonNull MethodChannel.Result result, MethodChannel channel) {
+        if(!sdkAvailable){
+            sdkAvailable = true;
+        }
+
         try {
-            String jsonBean = new Gson().toJson(arguments);
-            authModel = new Gson().fromJson(jsonBean, AuthModel.class);
-            AuthUIModel authUIModel = new Gson().fromJson(jsonBean, AuthUIModel.class);
+            Gson gson = new Gson();
+            String jsonBean = gson.toJson(arguments);
+            authModel = gson.fromJson(jsonBean, AuthModel.class);
+            AuthUIModel authUIModel = gson.fromJson(jsonBean, AuthUIModel.class);
             authModel.setAuthUIModel(authUIModel);
-        } catch (JsonSyntaxException e) {
-            Log.e(TAG, errorArgumentsMsg + ": " + e);
-            AuthResponseModel authResponseModel = AuthResponseModel.initFailed(errorArgumentsMsg + ": " + e.getMessage());
-            eventSink.success(authResponseModel.toJson());
-            return;
+            Log.d(TAG, "initSdk: " + jsonBean);
         } catch (Exception e) {
             Log.e(TAG, "解析AuthModel遇到错误：" + e);
-            AuthResponseModel authResponseModel = AuthResponseModel.initFailed("解析AuthModel遇到错误：" + e.getMessage());
-            eventSink.success(authResponseModel.toJson());
+            result.error(ResultCode.CODE_ERROR_INVALID_PARAM, errorArgumentsMsg + ": " + e.getMessage(), e.getStackTrace());
             return;
         }
 
@@ -93,7 +102,8 @@ public class AuthClient {
                 Objects.isNull(authModel.getAndroidSdk()) ||
                 TextUtils.isEmpty(authModel.getAndroidSdk())) {
             AuthResponseModel authResponseModel = AuthResponseModel.nullSdkError();
-            eventSink.success(authResponseModel.toJson());
+//            eventSink.success(authResponseModel.toJson());
+            result.error(authResponseModel.getResultCode(), authResponseModel.getMsg(), null);
             return;
         }
 
@@ -102,18 +112,21 @@ public class AuthClient {
             public void onTokenSuccess(String s) {
                 TokenRet tokenRet;
                 try {
-                    if (s != null && !s.equals("")) {
+                    if (!TextUtils.isEmpty(s)) {
                         tokenRet = TokenRet.fromJson(s);
-
+                        AuthResponseModel responseModel = AuthResponseModel.fromTokenRect(tokenRet);
+                        //消息回调到flutter
+                        channel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
                         if (ResultCode.CODE_ERROR_ENV_CHECK_SUCCESS.equals(tokenRet.getCode())) {
                             //终端支持认证 当前环境可以进行一键登录 并且加速拉起授权页面
-                            accelerateLoginPage();
+                            accelerateLoginPage(channel);
                         }
-                        AuthResponseModel authResponseModel = AuthResponseModel.fromTokenRect(tokenRet);
-                        eventSink.success(authResponseModel.toJson());
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    AuthResponseModel responseModel = AuthResponseModel.initFailed("初始化失败：" + e.getMessage());
+                    //消息回调到flutter
+                    channel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
                 }
             }
 
@@ -123,41 +136,51 @@ public class AuthClient {
                 TokenRet tokenRet;
                 try {
                     tokenRet = TokenRet.fromJson(s);
-                    AuthResponseModel authResponseModel = AuthResponseModel.fromTokenRect(tokenRet);
-
-                    eventSink.success(authResponseModel.toJson());
+                    AuthResponseModel responseModel = AuthResponseModel.fromTokenRect(tokenRet);
+                    //消息回调到flutter
+                    channel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
+//                    eventSink.success(authResponseModel.toJson());
                 } catch (Exception e) {
-                    AuthResponseModel authResponseModel = AuthResponseModel.tokenDecodeFailed();
-                    eventSink.success(authResponseModel.toJson());
+                    AuthResponseModel responseModel = AuthResponseModel.tokenDecodeFailed();
+                    //消息回调到flutter
+                    channel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
                     e.printStackTrace();
                 }
                 mAuthHelper.setAuthListener(null);
             }
         };
-        Context context = mActivity.get().getBaseContext();
+        Activity activity = mActivity.get();
+        if (activity == null) {
+            result.error(ResultCode.MSG_ERROR_UNKNOWN_FAIL, "当前无法获取Flutter Activity,请重启再试", null);
+            return;
+        }
+        Context context = activity.getBaseContext();
         mAuthHelper = PhoneNumberAuthHelper.getInstance(context, tokenResultListener);
         mAuthHelper.getReporter().setLoggerEnable(authModel.getEnableLog());
         ///开始初始化
         mAuthHelper.setAuthSDKInfo(authModel.getAndroidSdk());
-        checkEnv();
+        ///检查环境
+        mAuthHelper.checkEnvAvailable(PhoneNumberAuthHelper.SERVICE_TYPE_LOGIN);
+        result.success(true);
     }
 
     /**
      * 检查环境是否可用
      */
-    public void checkEnv() {
-        mAuthHelper.checkEnvAvailable(PhoneNumberAuthHelper.SERVICE_TYPE_AUTH);
-    }
+//    public void checkEnv() {
+//        mAuthHelper.checkEnvAvailable(PhoneNumberAuthHelper.SERVICE_TYPE_LOGIN);
+//    }
 
     /**
      * 在不是一进app就需要登录的场景 建议调用此接口 加速拉起一键登录页面
      * 等到用户点击登录的时候 授权页可以秒拉
      * 预取号的成功与否不影响一键登录功能，所以不需要等待预取号的返回。
      */
-    public void accelerateLoginPage() {
+    public void accelerateLoginPage(MethodChannel channel) {
         if (Objects.isNull(mAuthHelper) || !sdkAvailable) {
-            AuthResponseModel authResponseModel = AuthResponseModel.initFailed(initFailedMsg);
-            eventSink.success(authResponseModel.toJson());
+            AuthResponseModel responseModel = AuthResponseModel.initFailed(initFailedMsg);
+//            eventSink.success(responseModel.toJson());
+            channel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
             return;
         }
         mAuthHelper.accelerateLoginPage(mLoginTimeout, new PreLoginResultListener() {
@@ -165,14 +188,16 @@ public class AuthClient {
             public void onTokenSuccess(String s) {
                 try {
                     if (s != null && !s.equals("")) {
-                        AuthResponseModel authResponseModel = AuthResponseModel.customModel(
+                        AuthResponseModel responseModel = AuthResponseModel.customModel(
                                 MSG_GET_MASK_SUCCESS, preLoginSuccessMsg
                         );
-                        eventSink.success(authResponseModel.toJson());
+//                        eventSink.success(responseModel.toJson());
+                        channel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
                     }
                 } catch (Exception e) {
-                    AuthResponseModel authResponseModel = AuthResponseModel.tokenDecodeFailed();
-                    eventSink.success(authResponseModel.toJson());
+                    AuthResponseModel responseModel = AuthResponseModel.tokenDecodeFailed();
+//                    eventSink.success(responseModel.toJson());
+                    channel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
                     e.printStackTrace();
                 }
             }
@@ -180,28 +205,41 @@ public class AuthClient {
             @Override
             public void onTokenFailed(String s, String s1) {
                 try {
-                    AuthResponseModel authResponseModel = AuthResponseModel.customModel(
+
+                    AuthResponseModel responseModel = AuthResponseModel.customModel(
                             ResultCode.CODE_GET_MASK_FAIL, ResultCode.MSG_GET_MASK_FAIL
                     );
-                    eventSink.success(authResponseModel.toJson());
+//                    eventSink.success(authResponseModel.toJson());
+                    channel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
                 } catch (Exception e) {
-                    AuthResponseModel authResponseModel = AuthResponseModel.tokenDecodeFailed();
-                    eventSink.success(authResponseModel.toJson());
+                    AuthResponseModel responseModel = AuthResponseModel.tokenDecodeFailed();
+//                    eventSink.success(responseModel.toJson());
+                    channel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
                     e.printStackTrace();
                 }
             }
         });
     }
 
-    public void getLoginToken() {
+    /**
+     * 拉起登录授权页面并获取Token
+     */
+    public void getLoginToken(Object arguments,@NonNull MethodChannel.Result result, @NonNull MethodChannel channel) {
         if (Objects.isNull(mAuthHelper) || !sdkAvailable) {
-            AuthResponseModel authResponseModel = AuthResponseModel.initFailed(initFailedMsg);
-            eventSink.success(authResponseModel.toJson());
+            AuthResponseModel responseModel = AuthResponseModel.initFailed(initFailedMsg);
+//            eventSink.success(responseModel.toJson());
+            result.error(responseModel.getResultCode(), responseModel.getMsg(), null);
             return;
         }
         Activity activity = mActivity.get();
+        if (activity == null) {
+            result.error(ResultCode.MSG_ERROR_UNKNOWN_FAIL, "当前无法获取Flutter Activity,请重启再试", null);
+            return;
+        }
+        //设置超时
+        setLoginTimeout((int) arguments);
         Context context = activity.getBaseContext();
-        baseUIConfig = BaseUIConfig.init(authModel.getAuthUIStyle(), activity, mAuthHelper, eventSink, flutterPluginBinding.getFlutterAssets());
+        baseUIConfig = BaseUIConfig.init(authModel.getAuthUIStyle(), activity, mAuthHelper, channel, flutterPluginBinding.getFlutterAssets());
         assert baseUIConfig != null;
         clearCached();
         baseUIConfig.configAuthPage(authModel.getAuthUIModel());
@@ -211,10 +249,11 @@ public class AuthClient {
                 activity.runOnUiThread(() -> {
                     TokenRet tokenRet;
                     try {
-                        if(s!=null && !s.equals("")){
+                        if (s != null && !s.equals("")) {
                             tokenRet = TokenRet.fromJson(s);
-                            AuthResponseModel authResponseModel = AuthResponseModel.fromTokenRect(tokenRet);
-                            eventSink.success(authResponseModel.toJson());
+                            AuthResponseModel responseModel = AuthResponseModel.fromTokenRect(tokenRet);
+                            channel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
+//                            eventSink.success(authResponseModel.toJson());
                             if (ResultCode.CODE_SUCCESS.equals(tokenRet.getCode())) {
                                 mAuthHelper.hideLoginLoading();
                                 mAuthHelper.quitLoginPage();
@@ -223,6 +262,8 @@ public class AuthClient {
                             }
                         }
                     } catch (Exception e) {
+                        AuthResponseModel responseModel = AuthResponseModel.tokenDecodeFailed();
+                        channel.invokeMethod(ResultCode.MSG_ERROR_UNKNOWN_FAIL, responseModel.toJson());
                         e.printStackTrace();
                     }
                 });
@@ -235,6 +276,8 @@ public class AuthClient {
                 try {
                     tokenRet = TokenRet.fromJson(s);
                     Log.i(TAG, "tokenRet:" + tokenRet);
+                    AuthResponseModel responseModel = AuthResponseModel.fromTokenRect(tokenRet);
+                    channel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -251,34 +294,42 @@ public class AuthClient {
         }
         Intent intent = new Intent(context, DecoyMaskActivity.class);
         activity.startActivity(intent);
+        result.success(null);
     }
 
-    public void getLoginToken(Object arguments) {
+    public void getLoginTokenWithConfig(Object arguments, @NonNull MethodChannel.Result result, @NonNull MethodChannel channel) {
         if (Objects.isNull(mAuthHelper) || !sdkAvailable) {
-            AuthResponseModel authResponseModel = AuthResponseModel.initFailed(initFailedMsg);
-            eventSink.success(authResponseModel.toJson());
+            AuthResponseModel responseModel = AuthResponseModel.initFailed(initFailedMsg);
+//            eventSink.success(authResponseModel.toJson());
+            result.error(responseModel.getResultCode(), responseModel.getMsg(), null);
             return;
         }
         Activity activity = mActivity.get();
+        if (activity == null) {
+            result.error(ResultCode.MSG_ERROR_UNKNOWN_FAIL, "当前无法获取Flutter Activity,请重启再试", null);
+            return;
+        }
+        ///设置超时
         Context context = activity.getBaseContext();
         try {
-
             String jsonBean = new Gson().toJson(arguments);
             authModel = new Gson().fromJson(jsonBean, AuthModel.class);
             AuthUIModel authUIModel = new Gson().fromJson(jsonBean, AuthUIModel.class);
             authModel.setAuthUIModel(authUIModel);
         } catch (JsonSyntaxException e) {
             Log.e(TAG, errorArgumentsMsg + ": " + e);
-            AuthResponseModel authResponseModel = AuthResponseModel.initFailed(errorArgumentsMsg + ": " + e.getMessage());
-            eventSink.success(authResponseModel.toJson());
+            AuthResponseModel responseModel = AuthResponseModel.initFailed(errorArgumentsMsg + ": " + e.getMessage());
+//            eventSink.success(responseModel.toJson());
+            result.error(responseModel.getResultCode(), responseModel.getMsg(), e.getStackTrace());
             return;
         } catch (Exception e) {
             Log.e(TAG, "解析AuthModel遇到错误：" + e);
-            AuthResponseModel authResponseModel = AuthResponseModel.initFailed("解析AuthModel遇到错误：" + e.getMessage());
-            eventSink.success(authResponseModel.toJson());
+            AuthResponseModel responseModel = AuthResponseModel.initFailed("解析AuthModel遇到错误：" + e.getMessage());
+//            eventSink.success(authResponseModel.toJson());
+            result.error(responseModel.getResultCode(), responseModel.getMsg(), e.getStackTrace());
             return;
         }
-        baseUIConfig = BaseUIConfig.init(authModel.getAuthUIStyle(), activity, mAuthHelper, eventSink, flutterPluginBinding.getFlutterAssets());
+        baseUIConfig = BaseUIConfig.init(authModel.getAuthUIStyle(), activity, mAuthHelper, channel, flutterPluginBinding.getFlutterAssets());
         assert baseUIConfig != null;
         clearCached();
         baseUIConfig.configAuthPage(authModel.getAuthUIModel());
@@ -292,9 +343,9 @@ public class AuthClient {
                         if (s != null && !s.equals("")) {
                             tokenRet = TokenRet.fromJson(s);
 
-                            AuthResponseModel authResponseModel = AuthResponseModel.fromTokenRect(tokenRet);
-
-                            eventSink.success(authResponseModel.toJson());
+                            AuthResponseModel responseModel = AuthResponseModel.fromTokenRect(tokenRet);
+//                            eventSink.success(responseModel.toJson());
+                            channel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
                             if (ResultCode.CODE_SUCCESS.equals(tokenRet.getCode())) {
                                 mAuthHelper.hideLoginLoading();
                                 mAuthHelper.quitLoginPage();
@@ -304,6 +355,8 @@ public class AuthClient {
                             Log.i(TAG, "tokenRet:" + tokenRet);
                         }
                     } catch (Exception e) {
+                        AuthResponseModel responseModel = AuthResponseModel.tokenDecodeFailed();
+                        channel.invokeMethod(ResultCode.MSG_ERROR_UNKNOWN_FAIL, responseModel.toJson());
                         e.printStackTrace();
                     }
                 });
@@ -316,6 +369,8 @@ public class AuthClient {
                 try {
                     tokenRet = TokenRet.fromJson(s);
                     Log.i(TAG, "tokenRet:" + tokenRet);
+                    AuthResponseModel responseModel = AuthResponseModel.fromTokenRect(tokenRet);
+                    channel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -331,8 +386,8 @@ public class AuthClient {
             activity.overridePendingTransition(R.anim.slide_up, 0);
         }
         Intent intent = new Intent(context, DecoyMaskActivity.class);
-
         activity.startActivity(intent);
+        result.success(null);
     }
 
     /**
@@ -360,14 +415,6 @@ public class AuthClient {
         this.mActivity = activity;
     }
 
-    public void setEventSink(EventChannel.EventSink eventSink) {
-        this.eventSink = eventSink;
-    }
-
-
-    public EventChannel.EventSink getEventSink() {
-        return eventSink;
-    }
 
     public AuthModel getAuthModel() {
         return authModel;
@@ -377,11 +424,19 @@ public class AuthClient {
         this.flutterPluginBinding = flutterPluginBinding;
     }
 
-    public void setLoginTimeout(int mLoginTimeout) {
-        this.mLoginTimeout = mLoginTimeout;
+    public void setLoginTimeout(int timeout) {
+        this.mLoginTimeout = timeout;
     }
 
     public int getLoginTimeout() {
         return mLoginTimeout;
     }
+
+//    public MethodChannel getChannel() {
+//        return mChannel;
+//    }
+//
+//    public void setChannel(MethodChannel channel) {
+//        this.mChannel = channel;
+//    }
 }

@@ -14,6 +14,10 @@ public class AuthUIModel {
     public String alertContentViewColor;  // 十六进制的颜色
     public String alertBlurViewColor;  // 底部蒙层背景颜色，默认黑色
     public Double alertBlurViewAlpha;  // 底部蒙层背景透明度，默认0.5
+
+    public Double alertBorderWidth;
+
+    public String alertBorderColor;
     public Double alertBorderRadius;  // 四个角的圆角，默认为10
     public Double alertWindowWidth;
     public Double alertWindowHeight;

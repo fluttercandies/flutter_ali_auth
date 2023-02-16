@@ -23,12 +23,13 @@ import org.json.JSONObject;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.EventChannel;
+import io.flutter.plugin.common.MethodChannel;
 
 public class FullPortPrivacyConfig extends BaseUIConfig {
     private final String TAG = "全屏竖屏弹窗样式";
 
-    public FullPortPrivacyConfig(Activity activity, PhoneNumberAuthHelper authHelper, EventChannel.EventSink eventSink,FlutterPlugin.FlutterAssets flutterAssets) {
-        super(activity, authHelper,eventSink,flutterAssets);
+    public FullPortPrivacyConfig(Activity activity, PhoneNumberAuthHelper authHelper, MethodChannel methodChannel, FlutterPlugin.FlutterAssets flutterAssets) {
+        super(activity, authHelper,methodChannel,flutterAssets);
     }
 
     @Override

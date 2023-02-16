@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_ali_auth/flutter_ali_auth.dart';
 import 'package:flutter_ali_auth_example/main.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
 class ReleasePage extends StatefulWidget {
   const ReleasePage({Key? key}) : super(key: key);
@@ -34,28 +36,17 @@ class _ReleasePageState extends State<ReleasePage> {
   @override
   void initState() {
     super.initState();
-    //uncomment this line to initialize();
+    //uncomment this line to initialize sdk;
+    //initialize();
   }
 
   @override
   void dispose() {
-    AliAuthClient.removeListener();
     super.dispose();
   }
 
   void initialize() {
-    try {
-      AliAuthClient.onListen(
-        _onEvent,
-        onError: _onError,
-        onDone: () {
-          ///remove listener will trigger onDone
-          debugPrint('$runtimeType onDone');
-        },
-      );
-    } catch (e) {
-      //SmartDialog.showToast('注册监听失败');
-    }
+    AliAuthClient.handleEvent(onEvent: _onEvent);
   }
 
   /// 登录成功处理
@@ -63,10 +54,6 @@ class _ReleasePageState extends State<ReleasePage> {
     //print(event);
   }
 
-  /// 登录错误处理
-  void _onError(Object error) {
-    //print(error);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,17 +64,28 @@ class _ReleasePageState extends State<ReleasePage> {
           ElevatedButton(
             child: const Text('初始化SDK'),
             onPressed: () async {
-              await AliAuthClient.onListen(_onEvent, onError: _onError);
-              await AliAuthClient.initSdk(
-                authConfig: _authConfig,
-              );
+              try {
+                AliAuthClient.initSdk(authConfig: _authConfig);
+              } on PlatformException catch (e) {
+                final AuthResultCode resultCode = AuthResultCode.fromCode(
+                  e.code,
+                );
+                SmartDialog.showToast(resultCode.message);
+              }
               //print(res);
             },
           ),
           ElevatedButton(
             child: const Text('一键登陆'),
             onPressed: () async {
-              await AliAuthClient.login();
+              try {
+                await AliAuthClient.login();
+              } on PlatformException catch (e) {
+                final AuthResultCode resultCode = AuthResultCode.fromCode(
+                  e.code,
+                );
+                SmartDialog.showToast(resultCode.message);
+              }
             },
           ),
         ],

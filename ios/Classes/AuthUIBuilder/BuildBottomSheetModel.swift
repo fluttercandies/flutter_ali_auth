@@ -52,8 +52,6 @@ extension AuthUIBuilder {
         
         model.alertCornerRadiusArray = [borderRadius, borderRadius, borderRadius, borderRadius]
         
-        model.changeBtnIsHidden = config.changeBtnIsHidden ?? true
-                
         // alertTitle
         var alertTitleAttributes: [NSAttributedString.Key: Any] = [:]
 
@@ -63,7 +61,7 @@ extension AuthUIBuilder {
         
         model.alertTitle = NSAttributedString(string: "", attributes: nil)
         
-        model.alertTitleBarColor = config.alertTitleBarColor?.uicolor() ?? UIColor.white
+        model.alertTitleBarColor = config.alertTitleBarColor?.uicolor() ?? model.alertContentViewColor
         
         model.alertCloseItemIsHidden = config.alertCloseItemIsHidden ?? false
         
@@ -74,7 +72,7 @@ extension AuthUIBuilder {
             model.alertCloseItemFrameBlock = {
                 _, _, frame -> CGRect in
                 
-                let offsetX = CGFloat(config.alertCloseImageOffsetX ?? 0.0)
+                let offsetX = CGFloat((config.alertCloseImageOffsetX ?? 0.0) + kPadding)
                 
                 let offsetY = CGFloat(config.alertCloseImageOffsetY ?? kPadding)
                 
@@ -188,15 +186,50 @@ extension AuthUIBuilder {
 
         model.loginBtnText = NSAttributedString(string: config.loginBtnText ?? "一键登录", attributes: loginAttribute)
         
+        var loginButtonOffsetY: Float = 0.0
+        
+        var kLoginButtonSize = CGSize()
+        
         model.loginBtnFrameBlock = { _, superViewSize, frame -> CGRect in
             
             let offsetX = CGFloat(config.loginBtnFrameOffsetX ?? Float(frame.origin.x))
             
-            let offsetY = CGFloat(config.loginBtnFrameOffsetY ??
-                Float(superViewSize.height) * 0.60
-            )
+            loginButtonOffsetY = config.loginBtnFrameOffsetY ?? Float(superViewSize.height) * 0.55
             
-            return CGRect(x: offsetX, y: offsetY, width: frame.width, height: frame.height)
+            kLoginButtonSize.width = CGFloat(config.loginBtnWidth ?? Float(frame.width))
+            
+            kLoginButtonSize.height = CGFloat(config.loginBtnHeight ?? Float(frame.height))
+            
+            return CGRect(x: offsetX, y: CGFloat(loginButtonOffsetY), width: kLoginButtonSize.width, height: kLoginButtonSize.height)
+        }
+        
+        model.changeBtnIsHidden = config.changeBtnIsHidden ?? true
+        
+        var changeBtnAttribute: [NSAttributedString.Key: Any] = [:]
+
+        changeBtnAttribute.updateValue(config.changeBtnTextColor?.uicolor() ?? UIColor.darkGray, forKey: NSAttributedString.Key.foregroundColor)
+
+        changeBtnAttribute.updateValue(UIFont(name: PF_Regular, size: CGFloat(config.changeBtnTextSize ?? Font_14))!, forKey: NSAttributedString.Key.font)
+
+        model.changeBtnTitle = NSAttributedString(string: config.changeBtnTitle ?? "切换其他登录方式", attributes: changeBtnAttribute)
+
+        model.changeBtnFrameBlock = { screenSize, _, frame -> CGRect in
+            if kHorizontal == nil {
+                kHorizontal = self.isHorizontal(screenSize)
+            }
+            if kHorizontal! {
+                return CGRect.zero
+            }
+            let width: CGFloat = frame.width // 150
+
+            let height: CGFloat = frame.height // 38
+
+            let offsetX: CGFloat = frame.origin.x
+            // let offsetY: CGFloat = screenSize.width / 2 + kLoginButtonSize.height + CGFloat(kPadding)
+
+            let offsetY = CGFloat(config.changeBtnFrameOffsetY ?? loginButtonOffsetY + Float(kLoginButtonSize.height) + kPadding * 2)
+
+            return CGRect(x: offsetX, y: offsetY, width: width, height: height)
         }
 
         // CheckBox

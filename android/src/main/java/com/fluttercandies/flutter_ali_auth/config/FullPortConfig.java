@@ -16,15 +16,16 @@ import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper;
 import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.EventChannel;
+import io.flutter.plugin.common.MethodChannel;
 
 public class FullPortConfig extends BaseUIConfig {
-    public FullPortConfig(Activity activity, PhoneNumberAuthHelper authHelper, EventChannel.EventSink eventSink, FlutterPlugin.FlutterAssets flutterAssets) {
-        super(activity, authHelper, eventSink,flutterAssets);
+    public FullPortConfig(Activity activity, PhoneNumberAuthHelper authHelper, MethodChannel methodChannel, FlutterPlugin.FlutterAssets flutterAssets) {
+        super(activity, authHelper, methodChannel,flutterAssets);
     }
     @Override
     public void configAuthPage( AuthUIModel authUIModel) {
 
-        CustomAuthUIControlClickListener customAuthUIControlClickListener = new CustomAuthUIControlClickListener(mAuthHelper, mContext, mEventSink);
+        CustomAuthUIControlClickListener customAuthUIControlClickListener = new CustomAuthUIControlClickListener(mAuthHelper, mContext, mChannel);
 
         mAuthHelper.setUIClickListener(customAuthUIControlClickListener);
 

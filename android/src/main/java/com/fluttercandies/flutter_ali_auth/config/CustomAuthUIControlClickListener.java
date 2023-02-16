@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.fluttercandies.flutter_ali_auth.AuthClient;
 import com.fluttercandies.flutter_ali_auth.R;
 import com.fluttercandies.flutter_ali_auth.model.AuthResponseModel;
 import com.mobile.auth.gatewayauth.AuthUIControlClickListener;
@@ -15,16 +16,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.flutter.plugin.common.EventChannel;
+import io.flutter.plugin.common.MethodChannel;
 
 public class CustomAuthUIControlClickListener implements AuthUIControlClickListener {
     private PhoneNumberAuthHelper mAuthHelper;
     private Context mContext;
-    private EventChannel.EventSink fEventSink;
+    private MethodChannel mChannel;
     public CustomAuthUIControlClickListener(PhoneNumberAuthHelper phoneNumberAuthHelper,
-                                            Context context, EventChannel.EventSink eventSink){
+                                            Context context, MethodChannel methodChannel){
         mAuthHelper = phoneNumberAuthHelper;
         mContext = context;
-        fEventSink = eventSink;
+        mChannel = methodChannel;
     }
     @Override
     public void onClick(String code, Context context, String jsonString) {
@@ -45,7 +47,8 @@ public class CustomAuthUIControlClickListener implements AuthUIControlClickListe
                 responseModel.setRequestId(Long.toString(System.currentTimeMillis()));
                 responseModel.setResultCode(ResultCode.CODE_ERROR_USER_CANCEL);
                 responseModel.setMsg("点击了授权页默认返回按钮");
-                fEventSink.success(responseModel.toJson());
+//                fEventSink.success(responseModel.toJson());
+                mChannel.invokeMethod(AuthClient.DART_CALL_METHOD_ON_INIT,responseModel.toJson());
                 mAuthHelper.quitLoginPage();
                // mActivity.finish();
                 break;
@@ -56,9 +59,9 @@ public class CustomAuthUIControlClickListener implements AuthUIControlClickListe
                 responseModel.setRequestId(Long.toString(System.currentTimeMillis()));
 
                 responseModel.setResultCode(ResultCode.CODE_ERROR_USER_SWITCH);
-                responseModel.setMsg("点击了授权页默认切换其他登录方式");
-                fEventSink.success(responseModel.toJson());
-
+                responseModel.setMsg("用户切换其他登录方式");
+//                fEventSink.success(responseModel.toJson());
+                mChannel.invokeMethod(AuthClient.DART_CALL_METHOD_ON_INIT,responseModel.toJson());
                 break;
             //点击一键登录按钮会发出此回调
             //当协议栏没有勾选时 点击按钮会有默认toast 如果不需要或者希望自定义内容 setLogBtnToastHidden(true)隐藏默认Toast
@@ -76,7 +79,8 @@ public class CustomAuthUIControlClickListener implements AuthUIControlClickListe
 
                 responseModel.setResultCode(ResultCode.CODE_ERROR_USER_CHECKBOX);
                 responseModel.setMsg("checkbox状态变为" + jsonObj.optBoolean("isChecked"));
-                fEventSink.success(responseModel.toJson());
+//                fEventSink.success(responseModel.toJson());
+                mChannel.invokeMethod(AuthClient.DART_CALL_METHOD_ON_INIT,responseModel.toJson());
 
                 break;
             //点击协议栏触发此回调
@@ -86,7 +90,8 @@ public class CustomAuthUIControlClickListener implements AuthUIControlClickListe
 
                 responseModel.setResultCode(ResultCode.CODE_ERROR_USER_PROTOCOL_CONTROL);
                 responseModel.setMsg("点击协议，" + "name: " + jsonObj.optString("name") + ", url: " + jsonObj.optString("url"));
-                fEventSink.success(responseModel.toJson());
+//                fEventSink.success(responseModel.toJson());
+                mChannel.invokeMethod(AuthClient.DART_CALL_METHOD_ON_INIT,responseModel.toJson());
 
                 break;
             case ResultCode.CODE_START_AUTH_PRIVACY:
@@ -95,7 +100,8 @@ public class CustomAuthUIControlClickListener implements AuthUIControlClickListe
 
                 responseModel.setResultCode(ResultCode.CODE_START_AUTH_PRIVACY);
                 responseModel.setMsg("点击授权页一键登录按钮拉起了授权页协议二次弹窗");
-                fEventSink.success(responseModel.toJson());
+//                fEventSink.success(responseModel.toJson());
+                mChannel.invokeMethod(AuthClient.DART_CALL_METHOD_ON_INIT,responseModel.toJson());
 
                 break;
             case ResultCode.CODE_AUTH_PRIVACY_CLOSE:
@@ -104,7 +110,8 @@ public class CustomAuthUIControlClickListener implements AuthUIControlClickListe
 
                 responseModel.setResultCode(ResultCode.CODE_AUTH_PRIVACY_CLOSE);
                 responseModel.setMsg("授权页协议二次弹窗已关闭");
-                fEventSink.success(responseModel.toJson());
+//                fEventSink.success(responseModel.toJson());
+                mChannel.invokeMethod(AuthClient.DART_CALL_METHOD_ON_INIT,responseModel.toJson());
 
                 break;
             case ResultCode.CODE_CLICK_AUTH_PRIVACY_CONFIRM:
@@ -113,7 +120,8 @@ public class CustomAuthUIControlClickListener implements AuthUIControlClickListe
 
                 responseModel.setResultCode(ResultCode.CODE_CLICK_AUTH_PRIVACY_CONFIRM);
                 responseModel.setMsg("授权页协议二次弹窗点击同意并继续");
-                fEventSink.success(responseModel.toJson());
+//                fEventSink.success(responseModel.toJson());
+                mChannel.invokeMethod(AuthClient.DART_CALL_METHOD_ON_INIT,responseModel.toJson());
 
                 break;
             case ResultCode.CODE_CLICK_AUTH_PRIVACY_WEBURL:
@@ -122,7 +130,8 @@ public class CustomAuthUIControlClickListener implements AuthUIControlClickListe
 
                 responseModel.setResultCode(ResultCode.CODE_CLICK_AUTH_PRIVACY_WEBURL);
                 responseModel.setMsg("点击授权页协议二次弹窗协议");
-                fEventSink.success(responseModel.toJson());
+//                fEventSink.success(responseModel.toJson());
+                mChannel.invokeMethod(AuthClient.DART_CALL_METHOD_ON_INIT,responseModel.toJson());
 
                 break;
             default:

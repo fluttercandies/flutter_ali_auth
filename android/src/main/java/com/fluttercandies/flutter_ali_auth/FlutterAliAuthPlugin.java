@@ -28,7 +28,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
  * FlutterAliAuthPlugin
  */
 public class FlutterAliAuthPlugin implements FlutterPlugin,
-        MethodCallHandler, ActivityAware, EventChannel.StreamHandler {
+        MethodCallHandler, ActivityAware {
 
     public static final String TAG = FlutterAliAuthPlugin.class.getSimpleName();
 
@@ -39,78 +39,111 @@ public class FlutterAliAuthPlugin implements FlutterPlugin,
     ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
     /// when the Flutter Engine is detached from the Activity
-    private MethodChannel channel;
+    private MethodChannel mChannel;
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
 
-        channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "flutter_ali_auth");
+        mChannel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "flutter_ali_auth");
 
         authClient = AuthClient.getInstance();
 
-        EventChannel auth_event = new EventChannel(flutterPluginBinding.getBinaryMessenger(), "auth_event");
+//        authClient.setChannel(channel);
+
+//        EventChannel auth_event = new EventChannel(flutterPluginBinding.getBinaryMessenger(), "auth_event");
 
         authClient.setFlutterPluginBinding(flutterPluginBinding);
 
-        auth_event.setStreamHandler(this);
+//        auth_event.setStreamHandler(this);
 
-        channel.setMethodCallHandler(this);
+        mChannel.setMethodCallHandler(this);
 
     }
 
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
-        Log.i(TAG,call.method);
         switch (call.method) {
             case "getPlatformVersion":
                 result.success("Android " + android.os.Build.VERSION.RELEASE);
-                return;
+                break;
             case "getAliAuthVersion":
                 getAliAuthVersion(result);
-                return;
-            case "cancelStream":
-                if (authClient.getEventSink() != null) {
-                    authClient.getEventSink().endOfStream();
-                }
-                result.success(null);
-                return;
+                break;
+            case "init":
+                authClient.initSdk(call.arguments, result, mChannel);
+                break;
+            case "login":
+                authClient.getLoginToken(call.arguments, result, mChannel);
+                break;
+            case "loginWithConfig":
+                authClient.getLoginTokenWithConfig(call.arguments, result, mChannel);
+                break;
             case "hideLoginLoading":
                 authClient.hideLoginLoading();
                 result.success(null);
-                return;
+                break;
             case "quitLoginPage":
                 authClient.quitLoginPage();
                 result.success(null);
-                return;
-        }
-        if (Objects.isNull(authClient.getEventSink())) {
-            AuthResponseModel authResponseModel = AuthResponseModel.initFailed(failedListeningMsg);
-            result.success(authResponseModel.toJson());
-            return;
-        }
-        ///初始化相关
-        switch (call.method) {
-            case "init":
-                authClient.initSdk(call.arguments);
-                break;
-            case "checkEnv":
-                authClient.checkEnv();
-                break;
-            case "accelerateLoginPage":
-                authClient.accelerateLoginPage();
-                break;
-            case "login":
-                authClient.setLoginTimeout(AppUtils.integerTryParser(call.arguments, 5000));
-                authClient.getLoginToken();
-                break;
-            case "loginWithConfig":
-                authClient.getLoginToken(call.arguments);
                 break;
             default:
                 result.notImplemented();
-                break;
         }
+//        switch (call.method) {
+//            case "getPlatformVersion":
+//                result.success("Android " + android.os.Build.VERSION.RELEASE);
+//                return;
+//            case "getAliAuthVersion":
+//                getAliAuthVersion(result);
+//                return;
+//            case "cancelStream":
+//                if (authClient.getEventSink() != null) {
+//                    authClient.getEventSink().endOfStream();
+//                }
+//                result.success(null);
+//                return;
+//            case "hideLoginLoading":
+//                authClient.hideLoginLoading();
+//                result.success(null);
+//                return;
+//            case "quitLoginPage":
+//                authClient.quitLoginPage();
+//                result.success(null);
+//                return;
+//        }
+//        if (Objects.isNull(authClient.getEventSink())) {
+//            AuthResponseModel authResponseModel = AuthResponseModel.initFailed(failedListeningMsg);
+//            result.success(authResponseModel.toJson());
+//            return;
+//        }
+        ///初始化相关
+//        switch (call.method) {
+//            case "init":
+//                authClient.initSdk(call.arguments, result);
+//                result.success(null);
+//                break;
+//            case "checkEnv":
+//                authClient.checkEnv();
+//                result.success(null);
+//                break;
+//            case "accelerateLoginPage":
+//                authClient.accelerateLoginPage();
+//                result.success(null);
+//                break;
+//            case "login":
+//                authClient.setLoginTimeout(AppUtils.integerTryParser(call.arguments, 5000));
+//                authClient.getLoginToken();
+//                result.success(null);
+//                break;
+//            case "loginWithConfig":
+//                authClient.getLoginToken(call.arguments);
+//                result.success(null);
+//                break;
+//            default:
+//                result.notImplemented();
+//                break;
+//        }
     }
 
     private void getAliAuthVersion(@NonNull Result result) {
@@ -120,9 +153,8 @@ public class FlutterAliAuthPlugin implements FlutterPlugin,
 
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-        channel.setMethodCallHandler(null);
         authClient.setFlutterPluginBinding(null);
-        onCancel(null);
+        mChannel.setMethodCallHandler(null);
     }
 
     @Override
@@ -141,23 +173,24 @@ public class FlutterAliAuthPlugin implements FlutterPlugin,
 
     @Override
     public void onDetachedFromActivity() {
-
+        authClient.setFlutterPluginBinding(null);
+        mChannel.setMethodCallHandler(null);
     }
 
-    @Override
-    public void onListen(Object arguments, EventChannel.EventSink events) {
-        if (authClient.getEventSink() != null) {
-            authClient.getEventSink().endOfStream();
-            authClient.setEventSink(null);
-        }
-        authClient.setEventSink(events);
-    }
-
-    @Override
-    public void onCancel(Object arguments) {
-        if (Objects.nonNull(authClient.getEventSink())) {
-            authClient.setEventSink(null);
-        }
-        Log.i(FlutterAliAuthPlugin.TAG, "取消监听" + authClient.getEventSink());
-    }
+//    @Override
+//    public void onListen(Object arguments, EventChannel.EventSink events) {
+//        if (authClient.getEventSink() != null) {
+//            authClient.getEventSink().endOfStream();
+//            authClient.setEventSink(null);
+//        }
+//        authClient.setEventSink(events);
+//    }
+//
+//    @Override
+//    public void onCancel(Object arguments) {
+//        if (Objects.nonNull(authClient.getEventSink())) {
+//            authClient.setEventSink(null);
+//        }
+//        Log.i(FlutterAliAuthPlugin.TAG, "取消监听" + authClient.getEventSink());
+//    }
 }

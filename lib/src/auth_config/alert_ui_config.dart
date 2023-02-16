@@ -10,6 +10,8 @@ class AlertUIConfig extends AuthUIConfig {
     this.alertBlurViewColor,
     this.alertBlurViewAlpha,
     this.alertBorderRadius,
+    this.alertBorderWidth,
+    this.alertBorderColor,
     this.alertWindowHeight,
     this.alertWindowWidth,
     super.logoConfig,
@@ -34,7 +36,17 @@ class AlertUIConfig extends AuthUIConfig {
 
   /// 四个角的圆角，默认为10
   final double? alertBorderRadius;
+
+  /// 边框宽度,仅Android生效
+  final double? alertBorderWidth;
+
+  /// 边框颜色,仅Android生效
+  final String? alertBorderColor;
+
+  /// 宽度
   final double? alertWindowWidth;
+
+  /// 高度
   final double? alertWindowHeight;
 
   @override
@@ -44,6 +56,8 @@ class AlertUIConfig extends AuthUIConfig {
       'alertBlurViewColor': alertBlurViewColor,
       'alertBlurViewAlpha': alertBlurViewAlpha,
       'alertBorderRadius': alertBorderRadius,
+      'alertBorderWidth': alertBorderWidth,
+      'alertBorderColor': alertBorderColor,
       'alertWindowWidth': alertWindowWidth,
       'alertWindowHeight': alertWindowHeight,
       'customViewBlockList':

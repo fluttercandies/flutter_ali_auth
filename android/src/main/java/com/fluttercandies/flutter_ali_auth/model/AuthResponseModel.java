@@ -30,7 +30,7 @@ public class AuthResponseModel {
     public static String initFailedMsg = "初始化失败或未初始化";
     public static String nullSdkErrorMsg = "初始化失败，sdk为空";
     public static String failedListeningMsg = "请先对插件进行监听";
-    public static String errorArgumentsMsg = "初始化失败,AuthModel解析失败";
+    public static String errorArgumentsMsg = "初始化失败,[AuthModel]解析失败";
     public static String tokenDecodeFailedMsg = "回调信息解析失败";
     public static String MSG_GET_MASK_SUCCESS = "600016";
     public static String preLoginSuccessMsg = "预取号成功";
