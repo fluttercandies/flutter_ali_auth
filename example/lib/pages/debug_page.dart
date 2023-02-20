@@ -18,15 +18,13 @@ class _DebugPageState extends State<DebugPage> {
   final List<String> _logs = <String>[];
 
   String get iosSdk {
-    // // TODO: provide your own iosSdkKey
-    // throw UnimplementedError("provide your own iosSdkKey");
-    return '';
+    // TODO: provide your own iosSdkKey
+    throw UnimplementedError("provide your own iosSdkKey");
   }
 
   String get androidSdk {
-    // // TODO: provide your own androidSdk
-    // throw UnimplementedError("provide your own androidSdk");
-    return 'cDayqs3OUxdTERwuS4cCSEHuTqqsEvva7nkfdxKqfxAOIq46rES8NiSGFzU7xyk1qD02WkPsLAwfs82Oi1xpn+cOv3lr4nUzcsjdIgzgphoLlky9JKcMkGZW9i6ZM6WX8o9htuufxJV90bEtHYH/im5ZLxVDB1hbAi1Bg4zZ9sHeG160cAt0lLmAh3btrKvPqglD++Zel5L0N/Y4bVm2hvgRqusRvHW8Uqng9MzHOc9FgW9oXoA1AwvyQWXRXR98Hh2gBiF2VJGL1fwgkC2xFUvzIM2sMw5JMJ8KxRspWmKyLIp1EOOgUd6bY4TctbzX2DGgiTPtdrVF3ZZ8q6BCQQ==';
+    // TODO: provide your own androidSdk
+    throw UnimplementedError("provide your own androidSdk");
   }
 
   late final AuthConfig _authConfig = AuthConfig(
