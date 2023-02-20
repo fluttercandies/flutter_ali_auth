@@ -56,7 +56,7 @@ class _DebugPageState extends State<DebugPage> {
   /// 登录页面点击事件回调处理
   Future<void> _onEvent(AuthResponseModel responseModel) async {
     // final responseModel = AuthResponseModel.fromJson(Map.from(event));
-    print('responseModel:$responseModel');
+    debugPrint('responseModel:$responseModel');
     final AuthResultCode resultCode = AuthResultCode.fromCode(
       responseModel.resultCode!,
     );
@@ -115,7 +115,6 @@ class _DebugPageState extends State<DebugPage> {
         break;
       case AuthResultCode.onCustomViewTap:
         break;
-
 
       case AuthResultCode.carrierChanged:
       case AuthResultCode.callPreLoginInAuthPage:
@@ -184,7 +183,7 @@ class _DebugPageState extends State<DebugPage> {
                             "初始化SDK出现错误:${AuthResultCode.interfaceTimeout.message}");
                         return null;
                       });
-                      if(!(initSuccess ?? false)){
+                      if (!(initSuccess ?? false)) {
                         _addLog("初始化SDK失败");
                       }
                     } on PlatformException catch (e) {

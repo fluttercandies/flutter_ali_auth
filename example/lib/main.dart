@@ -34,7 +34,8 @@ class _MyAppState extends State<MyApp> {
       alignment: Alignment.center,
       animationType: SmartAnimationType.fade,
     );
-    brightness = MediaQueryData.fromWindow(WidgetsBinding.instance.window).platformBrightness;
+    brightness = MediaQueryData.fromWindow(WidgetsBinding.instance.window)
+        .platformBrightness;
   }
 
   Future<void> initPlatformState() async {
@@ -55,7 +56,6 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-
       themeMode: themeMode,
       theme: ThemeData.light(
         useMaterial3: true,
@@ -91,7 +91,6 @@ class _MyAppState extends State<MyApp> {
               ),
             ),
           ),
-
         ),
         body: IndexedStack(
           index: _currentIndex,

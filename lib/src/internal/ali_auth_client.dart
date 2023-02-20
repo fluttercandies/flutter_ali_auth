@@ -37,7 +37,6 @@ class AliAuthClient {
     // required ValueChanged<AuthResponseModel> onLoginEvent,
   }) {
     _methodChannel.setMethodCallHandler((call) async {
-      print("call.method:${call.method}");
       switch (call.method) {
         case "onEvent":
           final AuthResponseModel responseModel = AuthResponseModel.fromJson(
