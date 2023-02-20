@@ -28,3 +28,9 @@ let kPadding: Float = 8.0
 let kBottomInset: Float = 32
 
 let OnCustomViewTapCode = "700010"
+
+
+/// 终端环境检测成功
+let PNSCodeEnvCheckSuccess:String = "600024"
+/// 预取号成功
+let PNSCodeGetMaskPhoneSuccess:String = "600016"

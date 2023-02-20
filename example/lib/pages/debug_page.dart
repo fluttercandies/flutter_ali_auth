@@ -18,13 +18,15 @@ class _DebugPageState extends State<DebugPage> {
   final List<String> _logs = <String>[];
 
   String get iosSdk {
-    // TODO: provide your own iosSdkKey
-    throw UnimplementedError("provide your own iosSdkKey");
+    // // TODO: provide your own iosSdkKey
+    // throw UnimplementedError("provide your own iosSdkKey");
+    return '';
   }
 
   String get androidSdk {
-    // TODO: provide your own androidSdk
-    throw UnimplementedError("provide your own androidSdk");
+    // // TODO: provide your own androidSdk
+    // throw UnimplementedError("provide your own androidSdk");
+    return 'cDayqs3OUxdTERwuS4cCSEHuTqqsEvva7nkfdxKqfxAOIq46rES8NiSGFzU7xyk1qD02WkPsLAwfs82Oi1xpn+cOv3lr4nUzcsjdIgzgphoLlky9JKcMkGZW9i6ZM6WX8o9htuufxJV90bEtHYH/im5ZLxVDB1hbAi1Bg4zZ9sHeG160cAt0lLmAh3btrKvPqglD++Zel5L0N/Y4bVm2hvgRqusRvHW8Uqng9MzHOc9FgW9oXoA1AwvyQWXRXR98Hh2gBiF2VJGL1fwgkC2xFUvzIM2sMw5JMJ8KxRspWmKyLIp1EOOgUd6bY4TctbzX2DGgiTPtdrVF3ZZ8q6BCQQ==';
   }
 
   late final AuthConfig _authConfig = AuthConfig(
@@ -45,7 +47,6 @@ class _DebugPageState extends State<DebugPage> {
   @override
   void initState() {
     super.initState();
-    AliAuthClient.handleEvent(onEvent: _onEvent);
   }
 
   @override
@@ -55,7 +56,7 @@ class _DebugPageState extends State<DebugPage> {
   }
 
   /// 登录页面点击事件回调处理
-  void _onEvent(AuthResponseModel responseModel) async {
+  Future<void> _onEvent(AuthResponseModel responseModel) async {
     // final responseModel = AuthResponseModel.fromJson(Map.from(event));
     print('responseModel:$responseModel');
     final AuthResultCode resultCode = AuthResultCode.fromCode(
@@ -90,9 +91,11 @@ class _DebugPageState extends State<DebugPage> {
       case AuthResultCode.getMaskPhoneSuccess:
         SmartDialog.showToast('预先取号成功');
         break;
+      case AuthResultCode.interfaceTimeout:
+        SmartDialog.showToast(resultCode.message);
+        break;
       case AuthResultCode.unknownError:
       case AuthResultCode.getTokenFailed:
-      case AuthResultCode.interfaceTimeout:
       case AuthResultCode.loginControllerPresentFailed:
       case AuthResultCode.decodeAppInfoFailed:
         SmartDialog.showToast('暂时无法一键登录，请使用其他登录方式(${resultCode.code})');
@@ -114,7 +117,8 @@ class _DebugPageState extends State<DebugPage> {
         break;
       case AuthResultCode.onCustomViewTap:
         break;
-      case AuthResultCode.getMaskPhoneFailed:
+
+
       case AuthResultCode.carrierChanged:
       case AuthResultCode.callPreLoginInAuthPage:
       case AuthResultCode.liftBodyVerifyReadyStating:
@@ -125,6 +129,7 @@ class _DebugPageState extends State<DebugPage> {
       case AuthResultCode.loginControllerPresentSuccess:
         SmartDialog.showToast('唤起授权页成功');
         break;
+      case AuthResultCode.getMaskPhoneFailed:
       case AuthResultCode.loginControllerClickLoginBtn:
       case AuthResultCode.loginControllerClickCancel:
       case AuthResultCode.loginControllerClickCheckBoxBtn:
@@ -138,12 +143,6 @@ class _DebugPageState extends State<DebugPage> {
         //AliAuthClient.quitLoginPage();
         break;
     }
-  }
-
-  /// 登录错误处理
-  void _onError(Object error) {
-    //print("-------------失败分割线------------");
-    _addLog("error:$error");
   }
 
   void _addLog(String log) {
@@ -173,34 +172,23 @@ class _DebugPageState extends State<DebugPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // ElevatedButton(
-                //   child: const Text('注册监听'),
-                //   onPressed: () async {
-                //     try {
-                //       await AliAuthClient.onListen(
-                //         _onEvent,
-                //         onError: _onError,
-                //         onDone: () {
-                //           ///remove listener will trigger onDone
-                //           debugPrint('$runtimeType onDone');
-                //         },
-                //       );
-                //       SmartDialog.showToast('注册监听成功');
-                //       _addLog('注册监听成功');
-                //     } catch (e) {
-                //       SmartDialog.showToast('注册监听失败');
-                //       _addLog('注册监听失败');
-                //     }
-                //   },
-                // ),
                 ElevatedButton(
                   child: const Text('初始化SDK'),
                   onPressed: () async {
                     try {
                       SmartDialog.showToast("正在初始化...");
-                      await AliAuthClient.initSdk(
+                      AliAuthClient.removeHandler();
+                      AliAuthClient.handleEvent(onEvent: _onEvent);
+                      bool? initSuccess = await AliAuthClient.initSdk(
                         authConfig: _authConfig,
-                      );
+                      ).timeout(const Duration(seconds: 10), onTimeout: () {
+                        _addLog(
+                            "初始化SDK出现错误:${AuthResultCode.interfaceTimeout.message}");
+                        return null;
+                      });
+                      if(!(initSuccess ?? false)){
+                        _addLog("初始化SDK失败");
+                      }
                     } on PlatformException catch (e) {
                       final AuthResultCode resultCode = AuthResultCode.fromCode(
                         e.code,
@@ -297,7 +285,7 @@ class _DebugPageState extends State<DebugPage> {
                         logoIsHidden: false,
                         logoImage: "images/flutter_candies_logo.png",
                       ),
-                      sloganConfig:  SloganConfig(
+                      sloganConfig: SloganConfig(
                         sloganIsHidden: false,
                         sloganText: '欢迎登录FlutterCandies',
                         sloganTextColor: theme.colorScheme.onBackground.toHex(),
@@ -334,7 +322,7 @@ class _DebugPageState extends State<DebugPage> {
                   try {
                     ThemeData theme = Theme.of(context);
                     _authConfig.authUIStyle = AuthUIStyle.alert;
-                    _authConfig.authUIConfig =  AlertUIConfig(
+                    _authConfig.authUIConfig = AlertUIConfig(
                       alertContentViewColor: theme.canvasColor.toHex(),
                       alertBorderColor: theme.dividerColor.toHex(),
                       alertBorderWidth: 2.0,
@@ -343,7 +331,7 @@ class _DebugPageState extends State<DebugPage> {
                         logoIsHidden: false,
                         logoImage: "images/flutter_candies_logo.png",
                       ),
-                      sloganConfig:  SloganConfig(
+                      sloganConfig: SloganConfig(
                         sloganIsHidden: false,
                         sloganText: 'Slogan text，请自行替换',
                         sloganTextColor: theme.colorScheme.onBackground.toHex(),

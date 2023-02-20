@@ -4,6 +4,12 @@ that can be found in the LICENSE file. -->
 
 # Changelog
 
+## 0.4.1
+### 🔨 Enhance Android.
+
+* ✂️ enhance android 
+* 🧩 add removeHandler method
+
 ## 0.4.0+1
 ### 🔨 Fix unexpected bugs on Android.
 

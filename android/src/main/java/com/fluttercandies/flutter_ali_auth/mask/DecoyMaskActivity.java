@@ -1,6 +1,7 @@
 package com.fluttercandies.flutter_ali_auth.mask;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -20,15 +21,17 @@ public class DecoyMaskActivity extends Activity {
 
     public static String TAG = DecoyMaskActivity.class.getSimpleName();
 
-    public static boolean isRunning = false;
+//    public static boolean isRunning = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        isRunning = true;
+//        isRunning = true;
 
         Log.i(TAG,"onCreate");
 
         AuthClient authClient = AuthClient.getInstance();
+
+        AuthClient.decoyMaskActivity = this;
 
         // override the auth path open enter animation
         if (authClient.getAuthModel().getAuthUIStyle() == Constant.DIALOG_PORT){
@@ -75,11 +78,13 @@ public class DecoyMaskActivity extends Activity {
     @Override
     public void finish() {
         super.finish();
+        Log.i(TAG,"finish");
+        AuthClient.decoyMaskActivity = null;
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        isRunning = false;
+//        isRunning = false;
     }
 }

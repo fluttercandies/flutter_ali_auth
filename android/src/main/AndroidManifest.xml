@@ -15,6 +15,7 @@
         android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="m"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
         >
         <!--重点关注！！！！！！！-->
         <!--如果不需要使用窗口模式，不要使用authsdk_activity_dialog主题，会出现异常动画-->
@@ -46,7 +47,7 @@
 
         <!-- for override the enter animation-->
         <activity android:name=".mask.DecoyMaskActivity"
-            android:theme="@style/AppTheme.Normal"
+            android:theme="@style/TransparentTheme"
             />
     </application>
 

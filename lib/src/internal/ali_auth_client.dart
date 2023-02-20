@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../../flutter_ali_auth.dart';
@@ -28,21 +29,21 @@ class AliAuthClient {
 
   /// 初始化之后的SDK的异步回调
   /// [onEvent] 初始化之后会进行环境检查和加速拉起授权页面，这些回调会在这里返回，
-  /// 值得注意的是，IOS初始化,检查环境,加速拉起授权页面 三个步骤返回的code均为[600000]，Android则会有不同的状态码，分别是[600000,600024,600016]
   /// 可根据[AuthResponseModel.resultCode]和[AuthResponseModel.innerCode]的进行判断，
   /// 详情可以参考[AuthResultCode]
   ///
   static void handleEvent({
-    required ValueChanged<AuthResponseModel> onEvent,
+    required AsyncValueSetter<AuthResponseModel> onEvent,
     // required ValueChanged<AuthResponseModel> onLoginEvent,
   }) {
     _methodChannel.setMethodCallHandler((call) async {
+      print("call.method:${call.method}");
       switch (call.method) {
         case "onEvent":
           final AuthResponseModel responseModel = AuthResponseModel.fromJson(
             Map.from(call.arguments),
           );
-          onEvent.call(responseModel);
+          await onEvent.call(responseModel);
           break;
         default:
           throw UnsupportedError('Unrecognized JSON message');
@@ -65,6 +66,10 @@ class AliAuthClient {
       'loginWithConfig',
       authConfig.toJson(),
     );
+  }
+
+  static void removeHandler() {
+    _methodChannel.setMethodCallHandler(null);
   }
 
   // static Stream<dynamic>? _pluginStream;

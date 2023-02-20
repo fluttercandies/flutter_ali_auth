@@ -87,6 +87,8 @@ mAlicomAuthHelper.getLoginToken(context, 5000);
 ```dart
 /// 传入回调函数 onEvent
 AliAuthClient.handleEvent(onEvent: _onEvent);
+/// 移除回调事件
+AliAuthClient.removeHandler();
 ```
 在`onEvent`中监听回调并且自行进行判断
 ```dart

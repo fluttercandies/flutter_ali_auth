@@ -50,7 +50,7 @@ class _ReleasePageState extends State<ReleasePage> {
   }
 
   /// 登录成功处理
-  void _onEvent(AuthResponseModel responseModel) async {
+  Future<void> _onEvent(AuthResponseModel responseModel) async {
     final AuthResultCode resultCode = AuthResultCode.fromCode(
       responseModel.resultCode!,
     );
