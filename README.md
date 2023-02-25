@@ -45,6 +45,39 @@ Language: 中文
 | --- | --- | --- |
 | ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/full_screen_with_custom_view_android.jpg "full_screen_image_android") | ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/bottomsheet_android.jpg) | ![](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/alert_android.jpg) |
 
+## 插件须知 ⚠️
+### 关于权限
+1. 安卓权限，本插件已经添加必要的权限支持：
+```xml
+<uses-permission android:name="android.permission.INTERNET" /> <!-- 网络访问 -->
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 检查wifi网络状态 -->
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 检查网络状态 -->
+<uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" /> <!-- 切换网络通道 -->
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> <!-- 本地信息缓存 -->
+<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> <!-- 开关Wi-Fi状态，解决中国内地机型移动网络权限问题需要 -->
+```
+需要加上自行根据实际情况，设置HTTP白名单
+```xml
+ <network-security-config>
+  <domain-config cleartextTrafficPermitted="true" >
+    <domain includeSubdomains="true">enrichgw.10010.com</domain> <!-- 联通内部5G请求域名，开发者需要添加 -->
+    <domain includeSubdomains="true">onekey.cmpassport.com</domain>  <!-- 移动内部请求域名，开发者需要添加 -->
+  </domain-config>
+</network-security-config>
+```
+>目前中国移动提供的个别接口为HTTP请求，对于全局禁用HTTP的项目，需要设置HTTP白名单。以下为运营商HTTP接口域名：onekey.cmpassport.com，enrichgw.10010.com，
+详情可参见[官方文档](https://help.aliyun.com/document_detail/144231.html#section-no4-043-b31)
+
+2.苹果开发
+
+- 插件已经集成主库`ATAuthSDK.framework`，不需要添加`-ObjC`。
+
+- 开发工具建议使用Xcode 11及以上。
+
+- 支持iOS 10及以上系统。
+
+## 最后，有用请🌟~
+
 ## 准备工作 🔧
 
 请登录阿里云控制台[号码认证服务](https://dypns.console.aliyun.com/?spm=5176.13329450.favorite.ddypns.2fdd4df5w4jELK#/overview)
@@ -192,38 +225,7 @@ await AliAuthClient.hideLoginLoading();
 await AliAuthClient.quitLoginPage();
 ```
 
-## 插件须知 ⚠️
-### 关于权限
-1. 安卓权限，本插件已经添加必要的权限支持：
-```xml
-<uses-permission android:name="android.permission.INTERNET" /> <!-- 网络访问 -->
-<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 检查wifi网络状态 -->
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 检查网络状态 -->
-<uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" /> <!-- 切换网络通道 -->
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> <!-- 本地信息缓存 -->
-<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> <!-- 开关Wi-Fi状态，解决中国内地机型移动网络权限问题需要 -->
-```
-  需要加上自行根据实际情况，设置HTTP白名单
-```xml
- <network-security-config>
-  <domain-config cleartextTrafficPermitted="true" >
-    <domain includeSubdomains="true">enrichgw.10010.com</domain> <!-- 联通内部5G请求域名，开发者需要添加 -->
-    <domain includeSubdomains="true">onekey.cmpassport.com</domain>  <!-- 移动内部请求域名，开发者需要添加 -->
-  </domain-config>
-</network-security-config>
-```
->目前中国移动提供的个别接口为HTTP请求，对于全局禁用HTTP的项目，需要设置HTTP白名单。以下为运营商HTTP接口域名：onekey.cmpassport.com，enrichgw.10010.com，
-详情可参见[官方文档](https://help.aliyun.com/document_detail/144231.html#section-no4-043-b31)
 
-2.苹果开发
-
-- 插件已经集成主库`ATAuthSDK.framework`，不需要添加`-ObjC`。
-
-- 开发工具建议使用Xcode 11及以上。
-
-- 支持iOS 10及以上系统。
-
-## 最后，有用请🌟~
 
 
 
