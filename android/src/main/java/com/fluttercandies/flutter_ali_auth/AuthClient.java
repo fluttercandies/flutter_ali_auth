@@ -120,8 +120,7 @@ public class AuthClient {
                 try {
                     System.out.println("String s: " + s);
                     tokenRet = TokenRet.fromJson(s);
-//                    Log.d(TAG, "onTokenSuccess: " + tokenRet);
-                    System.out.println("onTokenSuccess: " + tokenRet);
+                    Log.d(TAG, "onTokenSuccess: " + tokenRet);
                     AuthResponseModel responseModel = AuthResponseModel.fromTokenRect(tokenRet);
                     //消息回调到flutter
                     mChannel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
@@ -203,19 +202,16 @@ public class AuthClient {
             @Override
             public void onTokenSuccess(String s) {
                 try {
-                    TokenRet tokenRet;
-                    if (s != null && !s.equals("")) {
-
-                        tokenRet = TokenRet.fromJson(s);
-                        if (ResultCode.CODE_SUCCESS.equals(tokenRet.getCode())) {
-                            AuthResponseModel responseModel = AuthResponseModel.customModel(
-                                    MSG_GET_MASK_SUCCESS, preLoginSuccessMsg
-                            );
-                            mChannel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
-                        } else {
-                            AuthResponseModel responseModel = AuthResponseModel.fromTokenRect(tokenRet);
-                            mChannel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
-                        }
+                    TokenRet tokenRet = TokenRet.fromJson(s);
+                    Log.d(TAG, "onTokenSuccess: " + tokenRet);
+                    if (ResultCode.CODE_SUCCESS.equals(tokenRet.getCode())) {
+                        AuthResponseModel responseModel = AuthResponseModel.customModel(
+                                MSG_GET_MASK_SUCCESS, preLoginSuccessMsg
+                        );
+                        mChannel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
+                    } else {
+                        AuthResponseModel responseModel = AuthResponseModel.fromTokenRect(tokenRet);
+                        mChannel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
                     }
                 } catch (Exception e) {
                     AuthResponseModel responseModel = AuthResponseModel.tokenDecodeFailed();

@@ -203,15 +203,14 @@ await AliAuthClient.quitLoginPage();
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> <!-- 本地信息缓存 -->
 <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> <!-- 开关Wi-Fi状态，解决中国内地机型移动网络权限问题需要 -->
 ```
-  已经添加增加usesCleartextTraffic配置
+  需要加上自行根据实际情况，设置HTTP白名单
 ```xml
- <application
-        android:name=".DemoApplication"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
+ <network-security-config>
+  <domain-config cleartextTrafficPermitted="true" >
+    <domain includeSubdomains="true">enrichgw.10010.com</domain> <!-- 联通内部5G请求域名，开发者需要添加 -->
+    <domain includeSubdomains="true">onekey.cmpassport.com</domain>  <!-- 移动内部请求域名，开发者需要添加 -->
+  </domain-config>
+</network-security-config>
 ```
 >目前中国移动提供的个别接口为HTTP请求，对于全局禁用HTTP的项目，需要设置HTTP白名单。以下为运营商HTTP接口域名：onekey.cmpassport.com，enrichgw.10010.com，
 详情可参见[官方文档](https://help.aliyun.com/document_detail/144231.html#section-no4-043-b31)
