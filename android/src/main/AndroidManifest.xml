@@ -12,7 +12,6 @@
 
     <!--目前中国移动提供的个别接口为HTTP请求，对于全局禁用HTTP的项目，需要设置HTTP白名单。以下为运营商HTTP接口域名：onekey.cmpassport.com，enrichgw.10010.com-->
     <application
-        android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="m"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
