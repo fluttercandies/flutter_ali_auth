@@ -31,6 +31,7 @@ import com.mobile.auth.gatewayauth.model.TokenRet;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -86,7 +87,6 @@ public class AuthClient {
         }
         return instance;
     }
-
 
 
     public void initSdk(Object arguments, @NonNull MethodChannel.Result result) {
@@ -202,8 +202,8 @@ public class AuthClient {
             @Override
             public void onTokenSuccess(String s) {
                 try {
+                    Log.d(TAG, "accelerateLoginPage onTokenSuccess: " + s);
                     TokenRet tokenRet = TokenRet.fromJson(s);
-                    Log.d(TAG, "onTokenSuccess: " + tokenRet);
                     if (ResultCode.CODE_SUCCESS.equals(tokenRet.getCode())) {
                         AuthResponseModel responseModel = AuthResponseModel.customModel(
                                 MSG_GET_MASK_SUCCESS, preLoginSuccessMsg
@@ -224,15 +224,13 @@ public class AuthClient {
             @Override
             public void onTokenFailed(String s, String s1) {
                 try {
-
+                    Log.d(TAG, "accelerateLoginPage onTokenFailed: " + s);
                     AuthResponseModel responseModel = AuthResponseModel.customModel(
                             ResultCode.CODE_GET_MASK_FAIL, ResultCode.MSG_GET_MASK_FAIL
                     );
-//                    eventSink.success(authResponseModel.toJson());
                     mChannel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
                 } catch (Exception e) {
                     AuthResponseModel responseModel = AuthResponseModel.tokenDecodeFailed();
-//                    eventSink.success(responseModel.toJson());
                     mChannel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
                     e.printStackTrace();
                 }
@@ -351,20 +349,22 @@ public class AuthClient {
         }
         ///设置超时
         try {
-            String jsonBean = new Gson().toJson(arguments);
+            List<?> argumentList = (List<?>) arguments;
+            ///config
+            String jsonBean = new Gson().toJson(argumentList.get(0));
             authModel = new Gson().fromJson(jsonBean, AuthModel.class);
             AuthUIModel authUIModel = new Gson().fromJson(jsonBean, AuthUIModel.class);
             authModel.setAuthUIModel(authUIModel);
+            ///timeout
+            setLoginTimeout(((int) argumentList.get(1)));
         } catch (JsonSyntaxException e) {
             Log.e(TAG, errorArgumentsMsg + ": " + e);
             AuthResponseModel responseModel = AuthResponseModel.initFailed(errorArgumentsMsg + ": " + e.getMessage());
-//            eventSink.success(responseModel.toJson());
             result.error(responseModel.getResultCode(), responseModel.getMsg(), e.getStackTrace());
             return;
         } catch (Exception e) {
             Log.e(TAG, "解析AuthModel遇到错误：" + e);
             AuthResponseModel responseModel = AuthResponseModel.initFailed("解析AuthModel遇到错误：" + e.getMessage());
-//            eventSink.success(authResponseModel.toJson());
             result.error(responseModel.getResultCode(), responseModel.getMsg(), e.getStackTrace());
             return;
         }
@@ -399,7 +399,7 @@ public class AuthClient {
                             }
 
                             Log.i(TAG, "onTokenSuccess tokenRet:" + tokenRet);
-                        }else{
+                        } else {
                             if (decoyMaskActivity != null) {
                                 decoyMaskActivity.finish();
 

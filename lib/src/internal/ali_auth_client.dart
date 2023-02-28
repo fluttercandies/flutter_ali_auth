@@ -9,6 +9,7 @@ class AliAuthClient {
   const AliAuthClient._();
 
   static const MethodChannel _methodChannel = MethodChannel('flutter_ali_auth');
+
   // static const EventChannel _loginEventChannel = EventChannel('auth_event');
 
   static Future<String?> getPlatformVersion() {
@@ -58,12 +59,14 @@ class AliAuthClient {
 
   /// 一键登陆，建议debug时使用, 用新的配置去拉起授权页 需要用try-catch[PlatformException]捕获插件返回的异常
   /// 无返回内容,调用之后，会在[onHandle]的[onLogin]返回回调
-  static Future<void> loginWithConfig(
-    AuthConfig authConfig,
-  ) {
+  /// [timeout] 超时，单位秒
+  static Future<void> loginWithConfig({
+    required AuthConfig authConfig,
+    int timeout = 5,
+  }) {
     return _methodChannel.invokeMethod(
       'loginWithConfig',
-      authConfig.toJson(),
+      [authConfig.toJson(), timeout],
     );
   }
 

@@ -6,6 +6,8 @@ import 'package:flutter_ali_auth/flutter_ali_auth.dart';
 import 'package:flutter_ali_auth_example/main.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
+import 'config.dart';
+
 class DebugPage extends StatefulWidget {
   const DebugPage({Key? key}) : super(key: key);
 
@@ -16,16 +18,6 @@ class DebugPage extends StatefulWidget {
 class _DebugPageState extends State<DebugPage> {
   final ScrollController _scrollController = ScrollController();
   final List<String> _logs = <String>[];
-
-  String get iosSdk {
-    // TODO: provide your own iosSdkKey
-    throw UnimplementedError("provide your own iosSdkKey");
-  }
-
-  String get androidSdk {
-    // TODO: provide your own androidSdk
-    throw UnimplementedError("provide your own androidSdk");
-  }
 
   late final AuthConfig _authConfig = AuthConfig(
     iosSdk: iosSdk,
@@ -255,7 +247,10 @@ class _DebugPageState extends State<DebugPage> {
                   try {
                     _authConfig.authUIStyle = AuthUIStyle.fullScreen;
                     _authConfig.authUIConfig = _extraUIBuilder(context);
-                    await AliAuthClient.loginWithConfig(_authConfig);
+                    await AliAuthClient.loginWithConfig(
+                      authConfig: _authConfig,
+                      timeout: 10,
+                    );
                   } on PlatformException catch (e) {
                     final AuthResultCode resultCode = AuthResultCode.fromCode(
                       e.code,
@@ -300,7 +295,10 @@ class _DebugPageState extends State<DebugPage> {
                     _authConfig.authUIStyle = AuthUIStyle.bottomSheet;
                     _authConfig.authUIConfig = alertConfig;
 
-                    await AliAuthClient.loginWithConfig(_authConfig);
+                    await AliAuthClient.loginWithConfig(
+                      authConfig: _authConfig,
+                      timeout: 10,
+                    );
                   } on PlatformException catch (e) {
                     final AuthResultCode resultCode = AuthResultCode.fromCode(
                       e.code,
@@ -340,7 +338,10 @@ class _DebugPageState extends State<DebugPage> {
                         changeBtnTextColor: theme.colorScheme.onSurface.toHex(),
                       ),
                     );
-                    await AliAuthClient.loginWithConfig(_authConfig);
+                    await AliAuthClient.loginWithConfig(
+                      authConfig: _authConfig,
+                      timeout: 10,
+                    );
                   } on PlatformException catch (e) {
                     final AuthResultCode resultCode = AuthResultCode.fromCode(
                       e.code,

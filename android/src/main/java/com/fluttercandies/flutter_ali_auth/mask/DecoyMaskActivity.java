@@ -28,26 +28,17 @@ public class DecoyMaskActivity extends Activity {
 //        isRunning = true;
 
         Log.i(TAG,"onCreate");
-
         AuthClient authClient = AuthClient.getInstance();
-
         AuthClient.decoyMaskActivity = this;
-
         // override the auth path open enter animation
         if (authClient.getAuthModel().getAuthUIStyle() == Constant.DIALOG_PORT){
             overridePendingTransition(R.anim.zoom_in,R.anim.stay_animation);
         }else{
             overridePendingTransition(R.anim.slide_up,R.anim.stay_animation);
         }
-
         PhoneNumberAuthHelper authHelper = authClient.mAuthHelper;
-
         authHelper.getLoginToken(this.getBaseContext(),authClient.getLoginTimeout());
-
         super.onCreate(savedInstanceState);
-
-
-        //setContentView(R.layout.activity_calculator);
     }
 
     boolean isPause = false;

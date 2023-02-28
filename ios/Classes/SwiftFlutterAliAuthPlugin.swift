@@ -329,6 +329,21 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
         }
 
         var _config: AuthConfig?
+        var _timeout: TimeInterval = 5.0
+        
+        if let argumentList = arguments as? [Any]{
+            if let configMap = argumentList.first as? [String: Any]  {
+                _config = AuthConfig(params: configMap)
+            }else{
+                result(FlutterError(code: PNSCodeEnvCheckFail, message: "初始化失败，SDK未初始化或参数不正确", details: nil))
+                return
+            }
+            //(arguments as? TimeInterval) ?? 5.0
+            if let timeout = argumentList.last as? TimeInterval{
+                _timeout = timeout;
+            }
+        }
+        
 
         if let rawConfig = arguments as? [String: Any] {
             _config = AuthConfig(params: rawConfig)
@@ -381,7 +396,7 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
                 }
 
                 // print("拉起授权页面")
-                TXCommonHandler.sharedInstance().getLoginToken(withTimeout: 3.0, controller: viewController, model: model) { resultDict in
+                TXCommonHandler.sharedInstance().getLoginToken(withTimeout: _timeout, controller: viewController, model: model) { resultDict in
 
                     guard let dict = resultDict as? [String: Any] else {
                         _responseModel = ResponseModel(resultDict)
