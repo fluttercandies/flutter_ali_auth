@@ -68,7 +68,6 @@ dependencies{
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation 'com.google.code.gson:gson:2.9.0'
 
-
     implementation(name:'auth_number_product-2.12.11.2-log-online-standard-release', ext:'aar')
     implementation(name:'crashshield-2.1.4-release', ext:'aar')
     implementation(name:'main-2.1.4-release', ext:'aar')

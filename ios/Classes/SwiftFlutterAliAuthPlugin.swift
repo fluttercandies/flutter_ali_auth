@@ -342,6 +342,9 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
             if let timeout = argumentList.last as? TimeInterval{
                 _timeout = timeout;
             }
+        }else{
+            result(FlutterError(code: PNSCodeLoginControllerPresentFailed, message: "初始化失败，SDK未初始化或参数不正确", details: nil))
+            return
         }
         
 

@@ -53,9 +53,7 @@ public class FlutterAliAuthPlugin implements FlutterPlugin,
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
-        Log.i(TAG,"call.method:"+call.method);
         switch (call.method) {
-
             case "getPlatformVersion":
                 result.success("Android " + android.os.Build.VERSION.RELEASE);
                 break;
@@ -113,6 +111,7 @@ public class FlutterAliAuthPlugin implements FlutterPlugin,
     public void onDetachedFromActivity() {
         authClient.setFlutterPluginBinding(null);
         authClient.getChannel().setMethodCallHandler(null);
+        authClient.setActivity(null);
     }
 
 

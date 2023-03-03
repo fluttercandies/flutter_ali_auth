@@ -64,7 +64,8 @@ public class AuthClient {
 
     private boolean initSdkSuccess = false;
 
-    private int mLoginTimeout = 5;
+    ///超时，默认5000，单位毫秒
+    private int mLoginTimeout = 5000;
 
     private static volatile AuthClient instance;
 
@@ -118,9 +119,8 @@ public class AuthClient {
             public void onTokenSuccess(String s) {
                 TokenRet tokenRet;
                 try {
-                    System.out.println("String s: " + s);
+                    Log.d(TAG, "initSdk onTokenSuccess: " + s);
                     tokenRet = TokenRet.fromJson(s);
-                    Log.d(TAG, "onTokenSuccess: " + tokenRet);
                     AuthResponseModel responseModel = AuthResponseModel.fromTokenRect(tokenRet);
                     //消息回调到flutter
                     mChannel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
@@ -128,7 +128,7 @@ public class AuthClient {
                         sdkAvailable = true;
                     } else if (ResultCode.CODE_ERROR_ENV_CHECK_SUCCESS.equals(tokenRet.getCode())) {
                         //终端支持认证 当前环境可以进行一键登录 并且加速拉起授权页面
-                        accelerateLoginPage();
+                        accelerateLoginPage(mLoginTimeout);
                     }
                 } catch (Exception e) {
                     Log.e(TAG, "错误", e);
@@ -142,7 +142,7 @@ public class AuthClient {
 
             @Override
             public void onTokenFailed(String s) {
-                Log.i(TAG, "onTokenFailed:" + s);
+                Log.d(TAG, "initSdk onTokenFailed: " + s);
                 sdkAvailable = false;
                 TokenRet tokenRet;
                 try {
@@ -180,45 +180,24 @@ public class AuthClient {
     }
 
     /**
-     * 检查环境是否可用
-     */
-//    public void checkEnv() {
-//        mAuthHelper.checkEnvAvailable(PhoneNumberAuthHelper.SERVICE_TYPE_LOGIN);
-//    }
-
-    /**
      * 在不是一进app就需要登录的场景 建议调用此接口 加速拉起一键登录页面
      * 等到用户点击登录的时候 授权页可以秒拉
      * 预取号的成功与否不影响一键登录功能，所以不需要等待预取号的返回。
      */
-    public void accelerateLoginPage() {
+    public void accelerateLoginPage(int timeout) {
         if (Objects.isNull(mAuthHelper) || !sdkAvailable) {
             AuthResponseModel responseModel = AuthResponseModel.initFailed(initFailedMsg);
-//            eventSink.success(responseModel.toJson());
             mChannel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
             return;
         }
-        mAuthHelper.accelerateLoginPage(mLoginTimeout, new PreLoginResultListener() {
+        mAuthHelper.accelerateLoginPage(timeout, new PreLoginResultListener() {
             @Override
             public void onTokenSuccess(String s) {
-                try {
-                    Log.d(TAG, "accelerateLoginPage onTokenSuccess: " + s);
-                    TokenRet tokenRet = TokenRet.fromJson(s);
-                    if (ResultCode.CODE_SUCCESS.equals(tokenRet.getCode())) {
-                        AuthResponseModel responseModel = AuthResponseModel.customModel(
-                                MSG_GET_MASK_SUCCESS, preLoginSuccessMsg
-                        );
-                        mChannel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
-                    } else {
-                        AuthResponseModel responseModel = AuthResponseModel.fromTokenRect(tokenRet);
-                        mChannel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
-                    }
-                } catch (Exception e) {
-                    AuthResponseModel responseModel = AuthResponseModel.tokenDecodeFailed();
-//                    eventSink.success(responseModel.toJson());
-                    mChannel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
-                    e.printStackTrace();
-                }
+                Log.d(TAG, "accelerateLoginPage onTokenSuccess: " + s);
+                AuthResponseModel responseModel = AuthResponseModel.customModel(
+                        MSG_GET_MASK_SUCCESS, preLoginSuccessMsg
+                );
+                mChannel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
             }
 
             @Override
@@ -244,7 +223,6 @@ public class AuthClient {
     public void getLoginToken(Object arguments, @NonNull MethodChannel.Result result) {
         if (Objects.isNull(mAuthHelper) || !sdkAvailable) {
             AuthResponseModel responseModel = AuthResponseModel.initFailed(initFailedMsg);
-//            eventSink.success(responseModel.toJson());
             result.error(responseModel.getResultCode(), responseModel.getMsg(), null);
             return;
         }
@@ -273,6 +251,7 @@ public class AuthClient {
                 activity.runOnUiThread(() -> {
                     TokenRet tokenRet;
                     try {
+
                         if (s != null && !s.equals("")) {
                             tokenRet = TokenRet.fromJson(s);
                             AuthResponseModel responseModel = AuthResponseModel.fromTokenRect(tokenRet);
@@ -375,7 +354,7 @@ public class AuthClient {
         tokenResultListener = new TokenResultListener() {
             @Override
             public void onTokenSuccess(String s) {
-                // Log.w(TAG,"获取Token成功:"+s);
+                Log.w(TAG, "getLoginTokenWithConfig onTokenSuccess:" + s);
                 activity.runOnUiThread(() -> {
                     TokenRet tokenRet;
                     try {
@@ -397,7 +376,6 @@ public class AuthClient {
 
                                 }
                             }
-
                             Log.i(TAG, "onTokenSuccess tokenRet:" + tokenRet);
                         } else {
                             if (decoyMaskActivity != null) {
@@ -419,7 +397,7 @@ public class AuthClient {
 
             @Override
             public void onTokenFailed(String s) {
-                Log.w(TAG, "获取Token失败:" + s + " ," + "DecoyMaskActivity.isRunning:" + decoyMaskActivity);
+                Log.w(TAG, "getLoginTokenWithConfig onTokenFailed:" + s + " ," + "DecoyMaskActivity.isRunning:" + decoyMaskActivity);
                 if (decoyMaskActivity != null) {
                     decoyMaskActivity.finish();
 
@@ -484,10 +462,11 @@ public class AuthClient {
     }
 
     public void setLoginTimeout(int timeout) {
-        this.mLoginTimeout = timeout;
+        this.mLoginTimeout = timeout * 1000;
+
     }
 
-    public int getLoginTimeout() {
+    public Integer getLoginTimeout() {
         return mLoginTimeout;
     }
 

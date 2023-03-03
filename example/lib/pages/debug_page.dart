@@ -6,6 +6,7 @@ import 'package:flutter_ali_auth/flutter_ali_auth.dart';
 import 'package:flutter_ali_auth_example/main.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
+///TODO:导入自己的[iosSdk]和[androidSdk]
 import 'config.dart';
 
 class DebugPage extends StatefulWidget {
@@ -170,11 +171,7 @@ class _DebugPageState extends State<DebugPage> {
                       AliAuthClient.handleEvent(onEvent: _onEvent);
                       bool? initSuccess = await AliAuthClient.initSdk(
                         authConfig: _authConfig,
-                      ).timeout(const Duration(seconds: 10), onTimeout: () {
-                        _addLog(
-                            "初始化SDK出现错误:${AuthResultCode.interfaceTimeout.message}");
-                        return null;
-                      });
+                      );
                       if (!(initSuccess ?? false)) {
                         _addLog("初始化SDK失败");
                       }
@@ -187,43 +184,6 @@ class _DebugPageState extends State<DebugPage> {
                     }
                   },
                 ),
-                // ElevatedButton(
-                //   child: const Text('检查环境是否支持认证'),
-                //   onPressed: () async {
-                //     try {
-                //       await AliAuthClient.checkVerifyEnable();
-                //     } catch (e) {
-                //       SmartDialog.dismiss(status: SmartStatus.loading);
-                //     }
-                //   },
-                // ),
-                // ElevatedButton(
-                //   child: const Text('加速一键登录授权页弹起'),
-                //   onPressed: () async {
-                //     try {
-                //       await AliAuthClient.accelerateLoginPage();
-                //     } catch (e) {
-                //       SmartDialog.dismiss(status: SmartStatus.loading);
-                //     }
-                //   },
-                // ),
-                // ElevatedButton(
-                //   child: const Text('取消登录事件监听'),
-                //   onPressed: () async {
-                //     try {
-                //       final success = await AliAuthClient.removeListener();
-                //       if (!success) {
-                //         SmartDialog.showToast("你还没对登录事件进行监听");
-                //         _addLog('你还没对登录事件进行监听');
-                //       } else {
-                //         SmartDialog.showToast("取消监听成功");
-                //         _addLog('取消监听成功');
-                //       }
-                //     } catch (e) {
-                //       SmartDialog.dismiss(status: SmartStatus.loading);
-                //     }
-                //   },
-                // ),
               ],
             ),
           ),
@@ -340,7 +300,7 @@ class _DebugPageState extends State<DebugPage> {
                     );
                     await AliAuthClient.loginWithConfig(
                       authConfig: _authConfig,
-                      timeout: 10,
+                      timeout: 10000,
                     );
                   } on PlatformException catch (e) {
                     final AuthResultCode resultCode = AuthResultCode.fromCode(
@@ -412,7 +372,7 @@ class _DebugPageState extends State<DebugPage> {
       navConfig: const NavConfig(
         navIsHidden: true,
       ),
-      // backgroundImage: "images/app_bg.png",
+      backgroundImage: "images/app_bg.png",
       logoConfig: LogoConfig(
         logoIsHidden: false,
         logoImage: "images/flutter_candies_logo.png",

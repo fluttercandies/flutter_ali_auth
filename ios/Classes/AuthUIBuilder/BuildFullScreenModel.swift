@@ -14,6 +14,7 @@ extension AuthUIBuilder {
     // MARK: - 构建全屏授权页面
 
     func buildFullScreenModel(config: AuthUIConfig) -> TXCustomModel {
+        print("\(String(describing: config))")
         var kHorizontal: Bool?
         var kLoginButtonSize = CGSize()
         let model = TXCustomModel()
@@ -34,6 +35,14 @@ extension AuthUIBuilder {
             if let image = FlutterAssetImage(backgroundImage) {
                 model.backgroundImage = image
                 model.backgroundImageContentMode = UIView.ContentMode.scaleAspectFill
+            }
+        } else {
+            if let backgroundColor = config.backgroundColor {
+                model.backgroundColor = backgroundColor.uicolor()
+            } else {
+                if #available(iOS 13.0, *) {
+                    model.backgroundColor = UIColor.systemBackground
+                }
             }
         }
 
@@ -69,7 +78,6 @@ extension AuthUIBuilder {
         model.logoIsHidden = false
 
         if let logoImage = config.logoImage {
-       
             if let logoImageAssets = FlutterAssetImage(logoImage) {
                 model.logoImage = logoImageAssets
             }
@@ -291,5 +299,4 @@ extension AuthUIBuilder {
 
         return model
     }
-
 }

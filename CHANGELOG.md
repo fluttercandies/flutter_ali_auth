@@ -4,6 +4,11 @@ that can be found in the LICENSE file. -->
 
 # Changelog
 
+## 0.6.0
+### 🔨 Fix android timeout issue
+
+* 🙇🏻‍♂️️ loginWithConfig with timeout
+
 ## 0.5.0
 ### 💥 Improve code
 
