@@ -120,6 +120,8 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
                     _responseMoedel = ResponseModel(resultDict)
 
                     self.methodChannel?.invokeMethod(SwiftFlutterAliAuthPlugin.DART_CALL_METHOD_ON_INIT, arguments: _responseMoedel.json)
+                    
+                    result(false)
 
                     return
                 }
@@ -128,6 +130,7 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
                     self.sdkAvailable = false
                     /// resultCode 未空 无法判断，直接返回
                     self.methodChannel?.invokeMethod(SwiftFlutterAliAuthPlugin.DART_CALL_METHOD_ON_INIT, arguments: _responseMoedel.json)
+                    result(false)
                     return
                 }
 
@@ -135,8 +138,11 @@ public class SwiftFlutterAliAuthPlugin: NSObject, FlutterPlugin {
 
                 if code == PNSCodeSuccess {
                     // 初始化成功：{msg: AppID、Appkey解析成功, resultCode: 600000, requestId: 481a2c9b50264cf3}
+                    result(true)
                     self.initSdkSuccess = true
                     self.checkEnvAvailable()
+                }else{
+                    result(false)
                 }
             }
         } else {
