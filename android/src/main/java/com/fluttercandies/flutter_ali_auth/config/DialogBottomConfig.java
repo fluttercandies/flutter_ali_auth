@@ -112,8 +112,18 @@ public class DialogBottomConfig extends BaseUIConfig {
         double privacyFrameOffsetYFromBottom = authUIModel.privacyFrameOffsetY == null ? 32 : authUIModel.privacyFrameOffsetY;
         String privacyPreText = authUIModel.privacyPreText == null ? "点击一键登录表示您已经阅读并同意" : authUIModel.privacyPreText;
         boolean checkBoxIsHidden = authUIModel.checkBoxIsHidden == null || authUIModel.checkBoxIsHidden;
-        String checkedImage = authUIModel.checkedImage == null ? "icon_check" : authUIModel.checkedImage;
-        String unCheckImage = authUIModel.uncheckImage == null ? "icon_uncheck" : authUIModel.uncheckImage;
+        String checkedImage;
+        if (authUIModel.checkedImage != null) {
+            checkedImage = mFlutterAssets.getAssetFilePathByName(authUIModel.checkedImage);
+        } else {
+            checkedImage = "icon_check";
+        }
+        String unCheckImage;
+        if (authUIModel.uncheckImage != null) {
+            unCheckImage = mFlutterAssets.getAssetFilePathByName(authUIModel.uncheckImage);
+        } else {
+            unCheckImage = "icon_uncheck";
+        }
 
         ///自定义控件
         if (authUIModel.customViewBlockList != null) {

@@ -297,12 +297,15 @@ public class AuthClient {
                     Log.i(TAG, "tokenRet:" + tokenRet);
                     AuthResponseModel responseModel = AuthResponseModel.fromTokenRect(tokenRet);
                     mChannel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
+                    if (tokenRet.getCode().equals(ResultCode.CODE_ERROR_FUNCTION_TIME_OUT)){
+                        mAuthHelper.hideLoginLoading();
+                        mAuthHelper.quitLoginPage();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 if (decoyMaskActivity != null) {
                     decoyMaskActivity.finish();
-
                 }
                 mAuthHelper.setAuthListener(null);
                 clearCached();
@@ -408,8 +411,15 @@ public class AuthClient {
                     Log.i(TAG, "onTokenFailed tokenRet:" + tokenRet);
                     AuthResponseModel responseModel = AuthResponseModel.fromTokenRect(tokenRet);
                     mChannel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
+                    if (tokenRet.getCode().equals(ResultCode.CODE_ERROR_FUNCTION_TIME_OUT)){
+                        mAuthHelper.hideLoginLoading();
+                        mAuthHelper.quitLoginPage();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+                if (decoyMaskActivity != null) {
+                    decoyMaskActivity.finish();
                 }
                 mAuthHelper.setAuthListener(null);
                 clearCached();

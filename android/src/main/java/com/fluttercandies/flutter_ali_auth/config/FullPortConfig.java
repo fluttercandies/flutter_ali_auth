@@ -13,6 +13,8 @@ import com.fluttercandies.flutter_ali_auth.model.AuthUIModel;
 import com.mobile.auth.gatewayauth.AuthUIConfig;
 import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper;
 
+import java.util.Optional;
+
 import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.EventChannel;
@@ -20,10 +22,11 @@ import io.flutter.plugin.common.MethodChannel;
 
 public class FullPortConfig extends BaseUIConfig {
     public FullPortConfig(Activity activity, PhoneNumberAuthHelper authHelper, MethodChannel methodChannel, FlutterPlugin.FlutterAssets flutterAssets) {
-        super(activity, authHelper, methodChannel,flutterAssets);
+        super(activity, authHelper, methodChannel, flutterAssets);
     }
+
     @Override
-    public void configAuthPage( AuthUIModel authUIModel) {
+    public void configAuthPage(AuthUIModel authUIModel) {
 
         CustomAuthUIControlClickListener customAuthUIControlClickListener = new CustomAuthUIControlClickListener(mAuthHelper, mContext, mChannel);
 
@@ -83,8 +86,18 @@ public class FullPortConfig extends BaseUIConfig {
         double privacyFrameOffsetYFromBottom = authUIModel.privacyFrameOffsetY == null ? 32 : authUIModel.privacyFrameOffsetY;
         String privacyPreText = authUIModel.privacyPreText == null ? "已经阅读并同意" : authUIModel.privacyPreText;
         boolean checkBoxIsHidden = authUIModel.checkBoxIsHidden != null && authUIModel.checkBoxIsHidden;
-        String checkedImage = authUIModel.checkedImage == null ? "icon_check" : authUIModel.checkedImage;
-        String unCheckImage = authUIModel.uncheckImage == null ? "icon_uncheck" : authUIModel.uncheckImage;
+        String checkedImage;
+        if (authUIModel.checkedImage != null) {
+            checkedImage = mFlutterAssets.getAssetFilePathByName(authUIModel.checkedImage);
+        } else {
+            checkedImage = "icon_check";
+        }
+        String unCheckImage;
+        if (authUIModel.uncheckImage != null) {
+            unCheckImage = mFlutterAssets.getAssetFilePathByName(authUIModel.uncheckImage);
+        } else {
+            unCheckImage = "icon_uncheck";
+        }
 
         String backgroundImagePath = null;
         if (authUIModel.backgroundImage != null) {

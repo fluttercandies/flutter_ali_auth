@@ -4,6 +4,11 @@ that can be found in the LICENSE file. -->
 
 # Changelog
 
+## 0.6.1
+### 🦖 Added missing Android judgment
+
+* 🦖️️ Added missing Android judgment
+
 ## 0.6.0
 ### 🔨 Fix android timeout issue
 

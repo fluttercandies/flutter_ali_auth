@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:discard="@layout/unused2"
+    tools:keep="@drawable/authsdk*,
+@layout/widget_pns_*,
+@anim/authsdk*,
+@theme/authsdk_*,
+@id/pns_*,
+@id/authsdk*,
+@color/pns_*,
+@dimen/pns_*" />
