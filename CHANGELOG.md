@@ -4,6 +4,11 @@ that can be found in the LICENSE file. -->
 
 # Changelog
 
+## 0.6.2
+### 😅 Fixed Android unexpected error
+
+* 😅 Fixed Android unexpected error
+
 ## 0.6.1
 ### 🦖 Added missing Android judgment
 

@@ -297,7 +297,10 @@ public class AuthClient {
                     Log.i(TAG, "tokenRet:" + tokenRet);
                     AuthResponseModel responseModel = AuthResponseModel.fromTokenRect(tokenRet);
                     mChannel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
-                    if (tokenRet.getCode().equals(ResultCode.CODE_ERROR_FUNCTION_TIME_OUT)){
+                    boolean shouldCloseManually = tokenRet.getCode().equals(ResultCode.CODE_ERROR_FUNCTION_TIME_OUT)
+                            || tokenRet.getCode().equals(ResultCode.CODE_ERROR_UNKNOWN_FAIL);
+                    if (shouldCloseManually) {
+                        Log.i(TAG, "关闭授权页面！");
                         mAuthHelper.hideLoginLoading();
                         mAuthHelper.quitLoginPage();
                     }
@@ -411,7 +414,7 @@ public class AuthClient {
                     Log.i(TAG, "onTokenFailed tokenRet:" + tokenRet);
                     AuthResponseModel responseModel = AuthResponseModel.fromTokenRect(tokenRet);
                     mChannel.invokeMethod(DART_CALL_METHOD_ON_INIT, responseModel.toJson());
-                    if (tokenRet.getCode().equals(ResultCode.CODE_ERROR_FUNCTION_TIME_OUT)){
+                    if (tokenRet.getCode().equals(ResultCode.CODE_ERROR_FUNCTION_TIME_OUT)) {
                         mAuthHelper.hideLoginLoading();
                         mAuthHelper.quitLoginPage();
                     }

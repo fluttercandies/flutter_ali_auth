@@ -108,11 +108,10 @@ public class AuthResponseModel {
             authResponseModel.setToken(token);
         }
         Map<String, Object> carrierFailedResultData = null;
-        if(Objects.nonNull(tokenRet.getCarrierFailedResultData()) && !TextUtils.isEmpty(tokenRet.getCarrierFailedResultData()) && !String.valueOf(tokenRet.getCarrierFailedResultData()).equals("null") ){
+        if (Objects.nonNull(tokenRet.getCarrierFailedResultData()) && !TextUtils.isEmpty(tokenRet.getCarrierFailedResultData()) && !String.valueOf(tokenRet.getCarrierFailedResultData()).equals("null")) {
             Gson gson = new Gson();
-            String failedJsonString = gson.toJson(tokenRet.getCarrierFailedResultData());
-             carrierFailedResultData = gson.fromJson(failedJsonString, new TypeToken<Map<String, Object>>() { }.getType()); //反序列化
-            Log.d(AuthResponseModel.class.getSimpleName(), "获取Token失败，此为运营商消息，carrierFailedResultData: " + carrierFailedResultData);
+            carrierFailedResultData = gson.fromJson(tokenRet.getCarrierFailedResultData(), new TypeToken<Map<String, Object>>() {
+            }.getType()); //反序列化
         }
         if (Objects.nonNull(carrierFailedResultData)) {
             assert carrierFailedResultData != null;
