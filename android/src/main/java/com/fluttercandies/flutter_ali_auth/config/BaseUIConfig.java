@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.Surface;
 import android.view.View;
 import android.widget.ImageView;
@@ -43,7 +44,7 @@ public abstract class BaseUIConfig {
     public PhoneNumberAuthHelper mAuthHelper;
     public int mScreenWidthDp;
     public int mScreenHeightDp;
-//    public EventChannel.EventSink mEventSink;
+    //    public EventChannel.EventSink mEventSink;
     public MethodChannel mChannel;
     public FlutterPlugin.FlutterAssets mFlutterAssets;
 
@@ -128,9 +129,9 @@ public abstract class BaseUIConfig {
 
     public void buildCustomView( @NonNull List<CustomViewBlock> customViewConfigList) {
         for (CustomViewBlock customViewBlock : customViewConfigList) {
-            ImageView imageView = null;
+            View view = null;
             if (customViewBlock.image != null){
-                 imageView = new ImageView(mContext);
+                ImageView imageView = new ImageView(mContext);
                 String flutterAssetFilePath = mFlutterAssets.getAssetFilePathByName(customViewBlock.image);
                 AssetManager assets = mContext.getAssets();
                 try {
@@ -141,6 +142,15 @@ public abstract class BaseUIConfig {
                     e.printStackTrace();
                 }
                 imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                view = imageView;
+            }
+            else if (customViewBlock.text != null){
+                TextView textView = new TextView(mContext);
+                textView.setText(customViewBlock.text);
+                textView.setTextColor(Color.parseColor(customViewBlock.textColor));
+                textView.setTextSize(customViewBlock.textSize.floatValue());
+                textView.setGravity(Gravity.CENTER);
+                view = textView;
             }
 
             int width = dp2px(mContext, customViewBlock.width == null ? 30 : customViewBlock.width.floatValue());
@@ -149,8 +159,8 @@ public abstract class BaseUIConfig {
             int offsetX = dp2px(mContext, customViewBlock.offsetX == null ? 0 : customViewBlock.offsetX.floatValue());
             int offsetY = dp2px(mContext, customViewBlock.offsetY == null ? 0 : customViewBlock.offsetY.floatValue());
             layoutParams.setMargins(offsetX,  offsetY, 0, 0);
-            if(imageView != null){
-                imageView.setLayoutParams(layoutParams);
+            if(view != null){
+                view.setLayoutParams(layoutParams);
             }
             CustomInterface customInterface = null;
             if (customViewBlock.enableTap != null && customViewBlock.enableTap){
@@ -163,7 +173,7 @@ public abstract class BaseUIConfig {
                 };
             }
             mAuthHelper.addAuthRegistViewConfig(customViewBlock.viewId.toString(), new AuthRegisterViewConfig.Builder()
-                    .setView(imageView)
+                    .setView(view)
                     .setRootViewId(AuthRegisterViewConfig.RootViewId.ROOT_VIEW_ID_BODY)
                     .setCustomInterface(customInterface).build()
             );
