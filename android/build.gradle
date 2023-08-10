@@ -67,10 +67,9 @@ dependencies{
     // implementation 'com.alibaba.fastjson2:fastjson2:2.0.14.android'
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation 'com.google.code.gson:gson:2.9.0'
-
-    implementation(name:'auth_number_product-2.12.11.2-log-online-standard-release', ext:'aar')
+    implementation(name:'auth_number_product-2.12.15-log-online-standard-release', ext:'aar')
     implementation(name:'crashshield-2.1.4-release', ext:'aar')
-    implementation(name:'main-2.1.4-release', ext:'aar')
-    implementation(name:'logger-2.1.5.2-release', ext:'aar')
+    implementation(name:'main-2.1.8-release', ext:'aar')
+    implementation(name:'logger-2.1.8-release', ext:'aar')
 
 }

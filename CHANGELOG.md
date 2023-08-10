@@ -4,6 +4,9 @@ that can be found in the LICENSE file. -->
 
 # Changelog
 
+## 0.7.0
+### 🚀 Update sdk to v2.12-1.15
+
 ## 0.6.2
 ### 😅 Fixed Android unexpected error
 

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,8 +35,10 @@ class _MyAppState extends State<MyApp> {
       alignment: Alignment.center,
       animationType: SmartAnimationType.fade,
     );
-    brightness = MediaQueryData.fromWindow(WidgetsBinding.instance.window)
-        .platformBrightness;
+
+    brightness =
+        MediaQueryData.fromView(PlatformDispatcher.instance.views.first)
+            .platformBrightness;
   }
 
   Future<void> initPlatformState() async {

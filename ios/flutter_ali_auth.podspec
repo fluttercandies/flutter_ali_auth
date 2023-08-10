@@ -22,7 +22,7 @@ Flutter Ali Auth Plugin 阿里云一键登录Flutter插件
   s.dependency 'MJExtension'
   s.dependency 'MBProgressHUD'
 
-  s.platform = :ios, '9.0'
+  s.platform = :ios, '12.0'
 
   s.vendored_frameworks = 'frameworks/*.framework'
   s.framework = 'Network'
@@ -37,6 +37,5 @@ Flutter Ali Auth Plugin 阿里云一键登录Flutter插件
   # s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
   s.pod_target_xcconfig = {'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64'   }
   s.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
-
   s.swift_version = '5.0'
 end
