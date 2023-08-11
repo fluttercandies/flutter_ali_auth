@@ -76,6 +76,8 @@ Language: 中文
 
 - 支持iOS 10及以上系统。
 
+- 如果集成本插件之后遇到`File not found: /Applications/Xcode-beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/arc/libarclite_iphoneos.a` 的问题，问题可能是 本插件依赖MBProgressHUD，而MBProgressHUD的deployment target过低，你只需要将其改到12以上即可。
+
 ## 最后，有用请🌟~
 
 ## 准备工作 🔧
@@ -224,6 +226,10 @@ await AliAuthClient.hideLoginLoading();
 /// 退出授权认证页
 await AliAuthClient.quitLoginPage();
 ```
+
+
+
+
 
 
 
