@@ -229,7 +229,7 @@ await AliAuthClient.quitLoginPage();
 
 ### 5.如有帮助到你，请我喝咖啡
 
-我相信本项目的代码一定能在商业项目上帮助到您，如果您从本项目中获益，不妨请作者我喝杯咖啡：
+我相信本项目的代码一定能在商业项目上帮助到您，如果您从本项目中获益，不妨请作者我喝杯咖啡,
 您的捐助使我更有动力创作～
 
 
@@ -237,8 +237,8 @@ await AliAuthClient.quitLoginPage();
 
 
 | 微信 | 支付宝 | 
-| --- | --- | --- |
-| ![wechat donate](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/IMG_2046.JPG) | ![alipay donate](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/IMG_2047.JPG) | 
+| ---------------- | ------ | 
+| ![wechat donate](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/IMG_2046.JPG) | ![alipay donate](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/IMG_2047.jpg) | 
 
 
 
