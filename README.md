@@ -233,8 +233,12 @@ await AliAuthClient.quitLoginPage();
 您的捐助使我更有动力创作～
 
 
-![wechat donate](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/IMG_2046.JPG)
-![alipay donate](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/IMG_2047.JPG)
+
+
+
+| 微信 | 支付宝 | 
+| --- | --- | --- |
+| ![wechat donate](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/IMG_2046.JPG) | ![alipay donate](https://github.com/ManInTheWind/assets_repository/blob/main/images/project/IMG_2047.JPG) | 
 
 
 
