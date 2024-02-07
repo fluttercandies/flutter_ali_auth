@@ -4,6 +4,10 @@ that can be found in the LICENSE file. -->
 
 # Changelog
 
+## 0.7.1
+### 🚀 Update sdk to v2.13.3
+### China Unicomm requires the new SDK to be updated by Mar 31, 2024
+
 ## 0.7.0
 ### 🚀 Update sdk to v2.12-1.15
 
